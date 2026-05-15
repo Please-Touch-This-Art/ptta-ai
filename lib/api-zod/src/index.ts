@@ -1,2 +1,1 @@
-export * from "./generated/api";
-export * from "./generated/types";
+// Stub — original content was iCloud-evicted and unrecoverable. ptta-demo does not import this.

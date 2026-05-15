@@ -8,8 +8,8 @@ import { useLanguage } from "@/context/LanguageContext";
 const titleStyle = { letterSpacing: "-0.01em" } as const;
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-const ACCENT_RGB = "214,67,36";
-const ACCENT = "#D64324";
+const ACCENT_RGB = "var(--accent-rgb)";
+const ACCENT = "var(--color-accent)";
 
 // -----------------------------------------------------------------------------
 // Shared step scaffolding
@@ -159,7 +159,7 @@ function AnalysisViz() {
           visible={isPhase("depth")}
           style={{
             background:
-              "radial-gradient(ellipse 58% 52% at 50% 42%, rgba(254,240,138,0.85) 0%, rgba(214,67,36,0.75) 30%, rgba(120,18,6,0.55) 65%, rgba(12,10,9,0.5) 100%)",
+              "radial-gradient(ellipse 58% 52% at 50% 42%, rgba(254,240,138,0.85) 0%, rgba(var(--accent-rgb),0.75) 30%, rgba(120,18,6,0.55) 65%, rgba(12,10,9,0.5) 100%)",
             mixBlendMode: "color",
           }}
         />

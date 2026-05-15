@@ -57,8 +57,8 @@ const STEPS: Step[] = [
 ];
 
 const STEP_MS = 2500;
-const ACCENT = "#D64324";
-const ACCENT_RGB = "214,67,36";
+const ACCENT = "var(--color-accent)";
+const ACCENT_RGB = "var(--accent-rgb)";
 
 export function AudioProcessingStage({ model, onDone, onBack }: Props) {
   const [stepIndex, setStepIndex] = useState(0);

@@ -163,7 +163,7 @@ export function PolishStage({ model, onDone, onBack }: Props) {
               width: 28,
               height: 28,
               background:
-                "radial-gradient(circle, rgba(214,67,36,0.25), transparent)",
+                "radial-gradient(circle, rgba(var(--accent-rgb),0.25), transparent)",
               transform: "translate(-50%, -50%)",
             }}
             animate={{
@@ -179,7 +179,7 @@ export function PolishStage({ model, onDone, onBack }: Props) {
             <motion.span
               aria-hidden
               className="absolute inset-[-3px] rounded-full"
-              style={{ border: "1px dashed rgba(214,67,36,0.6)" }}
+              style={{ border: "1px dashed rgba(var(--accent-rgb),0.6)" }}
               animate={{ rotate: 360 }}
               transition={{ duration: 1.5, ease: "linear", repeat: Infinity }}
             />

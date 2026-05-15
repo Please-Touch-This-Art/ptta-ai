@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
+/* EB Garamond + Inter are loaded via <link> in index.html (Hermès design preview). */
 
 @custom-variant dark (&:is(.dark *));
 
@@ -149,8 +150,7 @@
   --font-mono: var(--app-font-mono);
 
   --color-cream: #FFFAEE;
-  --color-accent: #D64324;
-  --color-accent-foreground: #FFFAEE;
+  --accent-rgb: 214, 67, 36;
 
   /* Theme-aware semantic tokens — flip via .dark on <html> */
   --color-page: var(--ptta-page);
@@ -181,7 +181,7 @@
 
   --border: 30 15% 85%;
   --input: 30 15% 85%;
-  --ring: 38 90% 52%;             /* amber ring */
+  --ring: 10 71% 49%;             /* accent ring (vermilion default) */
 
   --card: 34 20% 94%;
   --card-foreground: 20 10% 14%;
@@ -191,8 +191,8 @@
   --popover-foreground: 20 10% 14%;
   --popover-border: 30 15% 85%;
 
-  --primary: 38 95% 52%;          /* amber-400 */
-  --primary-foreground: 20 10% 12%;
+  --primary: 10 71% 49%;           /* tracks accent */
+  --primary-foreground: 40 89% 97%;
 
   --secondary: 30 15% 90%;
   --secondary-foreground: 20 10% 20%;
@@ -200,8 +200,8 @@
   --muted: 30 12% 92%;
   --muted-foreground: 20 8% 46%;
 
-  --accent: 38 95% 52%;
-  --accent-foreground: 20 10% 12%;
+  --accent: 10 71% 49%;            /* vermilion (default) */
+  --accent-foreground: 40 89% 97%; /* cream */
 
   --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
@@ -209,13 +209,13 @@
   --sidebar: 34 20% 95%;
   --sidebar-foreground: 20 10% 14%;
   --sidebar-border: 30 15% 85%;
-  --sidebar-primary: 38 95% 52%;
-  --sidebar-primary-foreground: 20 10% 12%;
+  --sidebar-primary: 10 71% 49%;
+  --sidebar-primary-foreground: 40 89% 97%;
   --sidebar-accent: 30 15% 90%;
   --sidebar-accent-foreground: 20 10% 20%;
-  --sidebar-ring: 38 90% 52%;
+  --sidebar-ring: 10 71% 49%;
 
-  --chart-1: 38 95% 52%;
+  --chart-1: 10 71% 49%;
   --chart-2: 20 10% 40%;
   --chart-3: 34 60% 65%;
   --chart-4: 38 75% 70%;
@@ -267,7 +267,7 @@
 
   --border: 20 8% 22%;
   --input: 20 8% 22%;
-  --ring: 38 90% 52%;
+  --ring: 10 71% 49%;
 
   --card: 20 10% 14%;
   --card-foreground: 34 20% 92%;
@@ -277,8 +277,8 @@
   --popover-foreground: 34 20% 92%;
   --popover-border: 20 8% 22%;
 
-  --primary: 38 95% 52%;
-  --primary-foreground: 20 10% 10%;
+  --primary: 10 71% 49%;
+  --primary-foreground: 40 89% 97%;
 
   --secondary: 20 8% 20%;
   --secondary-foreground: 34 20% 88%;
@@ -286,8 +286,8 @@
   --muted: 20 8% 18%;
   --muted-foreground: 30 12% 55%;
 
-  --accent: 38 95% 52%;
-  --accent-foreground: 20 10% 10%;
+  --accent: 10 71% 49%;
+  --accent-foreground: 40 89% 97%;
 
   --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
@@ -295,13 +295,13 @@
   --sidebar: 20 10% 12%;
   --sidebar-foreground: 34 20% 88%;
   --sidebar-border: 20 8% 22%;
-  --sidebar-primary: 38 95% 52%;
-  --sidebar-primary-foreground: 20 10% 10%;
+  --sidebar-primary: 10 71% 49%;
+  --sidebar-primary-foreground: 40 89% 97%;
   --sidebar-accent: 20 8% 20%;
   --sidebar-accent-foreground: 34 20% 88%;
-  --sidebar-ring: 38 90% 52%;
+  --sidebar-ring: 10 71% 49%;
 
-  --chart-1: 38 95% 52%;
+  --chart-1: 10 71% 49%;
   --chart-2: 34 20% 70%;
   --chart-3: 34 60% 55%;
   --chart-4: 38 75% 65%;
@@ -415,10 +415,10 @@
      Holds opacity while the ring grows, then fades — so it's visible instead
      of lost in a spread/opacity inverse trade-off. */
   @keyframes ptta-cta-halo {
-    0%   { box-shadow: 0 0 0 0    rgba(214, 67, 36, 0.75); }
-    25%  { box-shadow: 0 0 0 8px  rgba(214, 67, 36, 0.60); }
-    55%  { box-shadow: 0 0 0 20px rgba(214, 67, 36, 0);    }
-    100% { box-shadow: 0 0 0 20px rgba(214, 67, 36, 0);    }
+    0%   { box-shadow: 0 0 0 0    rgba(var(--accent-rgb), 0.75); }
+    25%  { box-shadow: 0 0 0 8px  rgba(var(--accent-rgb), 0.60); }
+    55%  { box-shadow: 0 0 0 20px rgba(var(--accent-rgb), 0);    }
+    100% { box-shadow: 0 0 0 20px rgba(var(--accent-rgb), 0);    }
   }
   .ptta-cta-halo {
     animation: ptta-cta-halo 2s ease-out infinite;
@@ -551,4 +551,332 @@
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
     inset: -1px;
   }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * HERMÈS LANDING — typography classes used by HermesLanding.tsx
+ * Fonts:
+ *   – EB Garamond (Google Fonts) — display italic, Garamond revival close to
+ *     Hermès's licensed serif italic.
+ *   – Inter (Google Fonts) — sans body / nav with tight tracking control.
+ * ───────────────────────────────────────────────────────────────────────── */
+
+.hermes-root {
+  /* Inter has tight default tracking; the body looks more "Hermès" with a
+   * subtle positive tracking adjustment on body copy. */
+  --hermes-display-tracking: -0.005em;
+  --hermes-nav-tracking: 0.16em;
+}
+
+.font-hermes-sans,
+.hermes-body {
+  font-family: "Inter", "Helvetica Neue", "Helvetica", "Arial", system-ui, sans-serif;
+}
+
+.font-hermes-serif,
+.hermes-display,
+.hermes-display-italic {
+  font-family: "EB Garamond", "Instrument Serif", "Garamond", "Georgia", serif;
+}
+
+.hermes-display {
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: var(--hermes-display-tracking);
+  font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+}
+
+.hermes-display-italic {
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: var(--hermes-display-tracking);
+}
+
+.hermes-nav-text {
+  font-family: "Inter", "Helvetica Neue", "Helvetica", "Arial", system-ui, sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--hermes-nav-tracking);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * PRADA LANDING — typography classes used by PradaLanding.tsx
+ * Fonts:
+ *   – Cormorant Garamond (Google Fonts) — elegant Garamond revival for the
+ *     "Please Touch This Art" wordmark.
+ *   – Jost (Google Fonts) — open-source Futura-equivalent, designed on the
+ *     same Bauhaus geometric principles. Used for ALL body / display / nav.
+ * ───────────────────────────────────────────────────────────────────────── */
+
+.prada-root {
+  --prada-display-tracking: -0.01em;
+  --prada-nav-tracking: 0.04em;
+  --prada-futura: "Jost", "Futura", "Futura PT", "Avenir", "Helvetica Neue", "Helvetica", "Arial", system-ui, sans-serif;
+}
+
+.prada-wordmark {
+  font-family: "Cormorant Garamond", "Garamond", "EB Garamond", "Georgia", serif;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  font-style: normal;
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* Ken-Burns animated still that stands in for the missing hero/editorial
+   video. The frame fades in/out via inline opacity; this rule animates the
+   inner <img> with a slow scale + drift to create the "alive" feel. */
+.prada-hero-stage .prada-hero-frame {
+  transition: opacity 1500ms ease-in-out;
+}
+.prada-hero-img {
+  animation: prada-ken-burns 18s ease-in-out infinite alternate;
+  transform-origin: center center;
+  will-change: transform;
+}
+@keyframes prada-ken-burns {
+  0%   { transform: scale(1.0)  translate(0,    0);  }
+  50%  { transform: scale(1.08) translate(-1%,  -1%); }
+  100% { transform: scale(1.12) translate(1.5%, 1%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .prada-hero-img { animation: none; }
+}
+@media (min-width: 768px) {
+  .prada-wordmark {
+    font-size: 26px;
+  }
+}
+
+.prada-display {
+  font-family: var(--prada-futura);
+  font-weight: 700;
+  letter-spacing: var(--prada-display-tracking);
+  font-style: normal;
+}
+
+.prada-body,
+.prada-caption {
+  font-family: var(--prada-futura);
+  font-weight: 400;
+}
+
+.prada-caption {
+  font-weight: 500;
+}
+
+.prada-nav {
+  font-family: var(--prada-futura);
+  font-weight: 500;
+  letter-spacing: var(--prada-nav-tracking);
+}
+
+/* Prada's signature underlined small-caps CTA ("ENTDECKEN", "FÜR SIE"). */
+.prada-link-cta {
+  display: inline-block;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid currentColor;
+  border-radius: 0;
+  color: #000;
+  font-family: var(--prada-futura);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.25rem 0 0.35rem;
+  cursor: pointer;
+  transition: opacity 200ms ease;
+}
+.prada-link-cta:hover {
+  opacity: 0.65;
+}
+.prada-link-cta:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+.prada-link-cta--on-dark {
+  color: #fff;
+}
+
+/* Tab nav — "Damen / Herren" style. */
+.prada-tab {
+  background: transparent;
+  border: none;
+  padding: 0.4rem 0;
+  font-family: var(--prada-futura);
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.55);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 180ms ease, border-color 180ms ease;
+}
+.prada-tab:hover {
+  color: rgba(0, 0, 0, 0.85);
+}
+.prada-tab--active {
+  color: #000;
+  border-bottom-color: #000;
+  font-weight: 700;
+}
+
+/* The signature Hermès CTA — underlined small-caps text link, not a button. */
+.hermes-link-cta {
+  display: inline-block;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid currentColor;
+  border-radius: 0;
+  color: var(--color-ink);
+  font-family: "Inter", "Helvetica Neue", "Helvetica", "Arial", system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: var(--hermes-nav-tracking);
+  text-transform: uppercase;
+  padding: 0.3rem 0;
+  cursor: pointer;
+  transition: opacity 200ms ease;
+}
+.hermes-link-cta:hover {
+  opacity: 0.6;
+}
+.hermes-link-cta:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 4px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * HERMÈS DESIGN VARIANT — preview-only overlay
+ *
+ * Activated by JS setting `data-design="hermes"` on <html> (see
+ * DesignContext.tsx). Scoped to Landing-page surfaces (.ptta-root) plus the
+ * site Header so other pages remain untouched while the user evaluates.
+ *
+ * Design language references:
+ *  – Cream parchment background (already PTTA's)
+ *  – Italic display serif (Instrument Serif, already loaded)
+ *  – Light/regular sans-serif body & nav, all-caps wide-tracked labels
+ *  – Accent only as a quiet supporting note — never as a solid block
+ *  – Generous vertical breathing, centered alignment, no heavy borders
+ * ───────────────────────────────────────────────────────────────────────── */
+
+/* HEADER — flatten the right-side accent block to cream + charcoal icons. */
+[data-design="hermes"] header[role="banner"] nav[aria-label="Site controls"] {
+  background-color: transparent;
+  color: var(--color-ink);
+}
+[data-design="hermes"] header[role="banner"] nav[aria-label="Site controls"] button {
+  color: var(--color-ink);
+}
+[data-design="hermes"] header[role="banner"] nav[aria-label="Site controls"] button:focus-visible {
+  outline-color: var(--color-ink);
+}
+[data-design="hermes"] header[role="banner"] {
+  border-bottom-color: var(--color-hairline);
+}
+/* Wider tracking on the editorial label to echo Hermès nav rhythm. */
+[data-design="hermes"] header[role="banner"] .ptta-label {
+  letter-spacing: 0.2em;
+  font-weight: 400;
+}
+
+/* HERO TITLE — softer weight, slightly larger, fully italic serif. */
+[data-design="hermes"] .ptta-root h1.font-serif {
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  font-size: clamp(2.25rem, 5vw + 0.5rem, 4rem);
+  line-height: 1.08;
+}
+
+/* HERO SUBLINE — lighter, no bold burst. */
+[data-design="hermes"] .ptta-root h1 + p {
+  font-weight: 300;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  opacity: 1;
+  max-width: 36rem;
+}
+[data-design="hermes"] .ptta-root h1 + p strong {
+  font-weight: 400;
+}
+
+/* HERO CTA — solid pill → underlined small-caps text link (Hermès register). */
+[data-design="hermes"] .ptta-root .ptta-cta-halo {
+  background-color: transparent;
+  color: var(--color-ink);
+  border-radius: 0;
+  padding: 0.4rem 0;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--color-ink);
+  width: auto;
+  max-width: none;
+  min-height: 0;
+  animation: none;
+  margin-top: 0.5rem;
+}
+[data-design="hermes"] .ptta-root .ptta-cta-halo:hover {
+  opacity: 0.65;
+}
+
+/* SLOGAN heading — promote to italic serif (no sans bold). */
+[data-design="hermes"] .ptta-root section[aria-label="Mission statement"] blockquote p {
+  font-family: var(--app-font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+  line-height: 1.2;
+}
+[data-design="hermes"] .ptta-root section[aria-label="Mission statement"] blockquote p .font-medium {
+  font-weight: 400;
+}
+
+/* PROBLEM / SOLUTION cards — strip borders, softer surface. */
+[data-design="hermes"] .ptta-root section[aria-label="Problem and solution"] article {
+  background-color: var(--color-surface-muted);
+  border: none;
+  border-radius: 0.25rem;
+}
+
+/* Stats that used `text-accent` go to ink — accent is reserved. */
+[data-design="hermes"] .ptta-root section[aria-label="Problem and solution"] .text-accent {
+  color: var(--color-ink);
+}
+
+/* The 30-dot pictogram + small filled markers — muted, not red. */
+[data-design="hermes"] .ptta-root section[aria-label="Problem and solution"] .bg-accent {
+  background-color: var(--color-muted-fg);
+  opacity: 0.55;
+}
+/* Footer marker stays as a quiet ink square. */
+[data-design="hermes"] .ptta-root footer .bg-accent {
+  background-color: var(--color-ink);
+}
+
+/* Section labels — wider tracked, lighter weight. */
+[data-design="hermes"] .ptta-root .ptta-label {
+  letter-spacing: 0.2em;
+  font-weight: 400;
+}
+
+/* Generous vertical breathing room across sections. */
+[data-design="hermes"] .ptta-root section {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+@media (min-width: 768px) {
+  [data-design="hermes"] .ptta-root section {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+}
+
+/* FOOTER closer — already italic; just refine the weight + tracking. */
+[data-design="hermes"] .ptta-root footer p.font-serif {
+  font-weight: 400;
+  letter-spacing: -0.005em;
 }

@@ -1,6 +1,8 @@
 import { useLocation } from "wouter";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTheme } from "@/context/ThemeContext";
+import { AccentPicker } from "@/components/AccentPicker";
+import { DesignPicker } from "@/components/DesignPicker";
 
 interface HeaderProps {
   showBack?: boolean;
@@ -102,6 +104,8 @@ export function Header({ showBack = false, backHref = "/", tag }: HeaderProps) {
               </svg>
             )}
           </button>
+          <AccentPicker />
+          <DesignPicker />
         </div>
       </nav>
     </header>

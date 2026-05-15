@@ -57,9 +57,10 @@ const STEPS: Step[] = [
 
 const STEP_MS = 2500;
 
-// Accent red used throughout the rest of the app.
-const ACCENT = "#D64324";
-const ACCENT_RGB = "214,67,36";
+// Accent driven by the active theme — values come from CSS variables so the
+// user's accent-picker selection flows through automatically.
+const ACCENT = "var(--color-accent)";
+const ACCENT_RGB = "var(--accent-rgb)";
 
 export function ProcessingStage({ model, onDone, onBack }: Props) {
   const [stepIndex, setStepIndex] = useState(0);
@@ -134,7 +135,7 @@ export function ProcessingStage({ model, onDone, onBack }: Props) {
               visible={isStep("depth")}
               style={{
                 background:
-                  "radial-gradient(ellipse 58% 52% at 50% 42%, rgba(254,240,138,0.85) 0%, rgba(214,67,36,0.75) 30%, rgba(120,18,6,0.55) 65%, rgba(12,10,9,0.5) 100%)",
+                  "radial-gradient(ellipse 58% 52% at 50% 42%, rgba(254,240,138,0.85) 0%, rgba(var(--accent-rgb),0.75) 30%, rgba(120,18,6,0.55) 65%, rgba(12,10,9,0.5) 100%)",
                 mixBlendMode: "color",
               }}
             />

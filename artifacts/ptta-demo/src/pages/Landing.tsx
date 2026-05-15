@@ -5,6 +5,9 @@ import { Header } from "@/components/Header";
 import { CyclingText } from "@/components/CyclingText";
 import { SectionLabel, Marker } from "@/components/editorial";
 import { useLanguage } from "@/context/LanguageContext";
+import { useDesign } from "@/context/DesignContext";
+import HermesLanding from "@/pages/HermesLanding";
+import PradaLanding from "@/pages/PradaLanding";
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 const VIDEO_SRC = `${BASE}/videos/people-using-tactile.mp4`;
@@ -16,6 +19,7 @@ const headingTight = { letterSpacing: "-0.02em" } as const;
 
 export default function Landing() {
   const { t } = useLanguage();
+  const { design } = useDesign();
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const [, navigate] = useLocation();
@@ -30,6 +34,15 @@ export default function Landing() {
   const handleCta = useCallback(() => {
     navigate("/how-it-works");
   }, [navigate]);
+
+  // Render the dedicated design variant when picker selects it.
+  // Placed after all hooks to keep hook-call order stable across modes.
+  if (design.id === "hermes") {
+    return <HermesLanding />;
+  }
+  if (design.id === "prada") {
+    return <PradaLanding />;
+  }
 
   return (
     <div className="ptta-root min-h-screen bg-page text-ink">

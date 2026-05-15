@@ -174,7 +174,7 @@ export function FabricateStage({ model, onDone, onBack }: Props) {
               top: `${hiddenPct}%`,
               height: 18,
               background:
-                "linear-gradient(to bottom, rgba(214,67,36,0.4), transparent)",
+                "linear-gradient(to bottom, rgba(var(--accent-rgb),0.4), transparent)",
               transform: "translateY(-18px)",
               transition: "top 0.08s linear",
               mixBlendMode: "screen",
@@ -187,8 +187,9 @@ export function FabricateStage({ model, onDone, onBack }: Props) {
               top: `${hiddenPct}%`,
               height: 2,
               background:
-                "linear-gradient(90deg, transparent, #D64324, transparent)",
-              boxShadow: "0 0 10px #D64324, 0 0 20px rgba(214,67,36,0.5)",
+                "linear-gradient(90deg, transparent, var(--color-accent), transparent)",
+              boxShadow:
+                "0 0 10px var(--color-accent), 0 0 20px rgba(var(--accent-rgb),0.5)",
               transform: "translateY(-1px)",
               transition: "top 0.08s linear",
             }}
@@ -229,7 +230,8 @@ export function FabricateStage({ model, onDone, onBack }: Props) {
                 bottom: -4,
                 width: 3,
                 height: 5,
-                boxShadow: "0 0 6px #D64324, 0 0 12px #D64324",
+                boxShadow:
+                  "0 0 6px var(--color-accent), 0 0 12px var(--color-accent)",
               }}
             />
             <span
@@ -245,7 +247,7 @@ export function FabricateStage({ model, onDone, onBack }: Props) {
                 width: 16,
                 height: 6,
                 background:
-                  "radial-gradient(ellipse, rgba(214,67,36,0.55), transparent 70%)",
+                  "radial-gradient(ellipse, rgba(var(--accent-rgb),0.55), transparent 70%)",
               }}
             />
           </motion.div>
