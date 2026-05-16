@@ -16,21 +16,46 @@ const ERROR_COPY: Record<string, (name: string) => string> = {
     "That message is too long — keep it under 500 characters.",
 };
 
-export function ArtistPersona() {
-  const chat = useArtistChat("van-gogh");
+interface ArtistPersonaProps {
+  /** Initial artist to show. Defaults to "van-gogh". */
+  initialArtist?: ArtistId;
+  /**
+   * When true, the artist picker is hidden — the chat is locked to
+   * `initialArtist`. Use inside the journey, where the painter has
+   * already been determined by the chosen artwork.
+   */
+  lockArtist?: boolean;
+  /** Extra classes for the root section (e.g. flex sizing in the journey). */
+  className?: string;
+}
+
+export function ArtistPersona({
+  initialArtist = "van-gogh",
+  lockArtist = false,
+  className = "",
+}: ArtistPersonaProps = {}) {
+  const chat = useArtistChat(initialArtist);
   const artist = ARTISTS[chat.artistId];
   const reduceMotion = useReducedMotion() ?? false;
 
   return (
-    <section className="flex flex-col" aria-label="AI Artist Persona">
-      <ArtistPicker
-        selected={chat.artistId}
-        onSelect={(id: ArtistId) => chat.switchArtist(id)}
-      />
+    <section
+      className={`flex flex-col min-h-0 ${className}`}
+      aria-label="AI Artist Persona"
+    >
+      {!lockArtist && (
+        <div className="shrink-0">
+          <ArtistPicker
+            selected={chat.artistId}
+            onSelect={(id: ArtistId) => chat.switchArtist(id)}
+          />
+        </div>
+      )}
 
       <AnimatePresence mode="wait">
         <motion.div
           key={chat.artistId}
+          className="shrink-0"
           initial={reduceMotion ? false : { opacity: 0 }}
           animate={reduceMotion ? undefined : { opacity: 1 }}
           exit={reduceMotion ? undefined : { opacity: 0 }}
@@ -68,16 +93,18 @@ export function ArtistPersona() {
         </div>
       )}
 
-      <ChatInput
-        placeholder={artist.placeholder}
-        suggested={artist.suggested}
-        showSuggested={
-          chat.messages.length === 0 && chat.status !== "streaming"
-        }
-        disabled={chat.status === "streaming"}
-        accentColor={artist.palette.accent}
-        onSend={(text) => void chat.send(text)}
-      />
+      <div className="shrink-0">
+        <ChatInput
+          placeholder={artist.placeholder}
+          suggested={artist.suggested}
+          showSuggested={
+            chat.messages.length === 0 && chat.status !== "streaming"
+          }
+          disabled={chat.status === "streaming"}
+          accentColor={artist.palette.accent}
+          onSend={(text) => void chat.send(text)}
+        />
+      </div>
     </section>
   );
 }

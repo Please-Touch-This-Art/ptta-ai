@@ -41,7 +41,7 @@ export default function DemoPlaceholder() {
             className="font-serif text-ink text-4xl md:text-5xl leading-[0.98] mb-4"
             style={titleStyle}
           >
-            — {title}
+            {title}
           </h1>
           <p className="text-body-fg text-base md:text-lg mb-10">
             {t.placeholder.comingSoon}

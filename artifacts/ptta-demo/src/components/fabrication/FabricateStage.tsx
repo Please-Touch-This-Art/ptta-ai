@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
-import { ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import type { ModelEntry } from "@/content/models";
 import { fabricateRenders } from "@/content/fabrication-images";
@@ -9,9 +8,11 @@ interface Props {
   model: ModelEntry;
   onDone: () => void;
   onBack: () => void;
+  /** Divide all internal timings by this. Default 1 (unchanged). */
+  speedMultiplier?: number;
 }
 
-const FABRICATE_MS = 5500;
+const FABRICATE_MS_BASE = 5500;
 const TOTAL_LAYERS_FAKE = 240;
 const START_LAYER_FAKE = 1;
 
@@ -28,7 +29,12 @@ const IMAGE_WRAP_STYLE: CSSProperties = {
   overflow: "hidden",
 };
 
-export function FabricateStage({ model, onDone, onBack }: Props) {
+export function FabricateStage({
+  model,
+  onDone,
+  speedMultiplier = 1,
+}: Props) {
+  const FABRICATE_MS = FABRICATE_MS_BASE / speedMultiplier;
   const [progress, setProgress] = useState(0);
   const [layerFake, setLayerFake] = useState(START_LAYER_FAKE);
   const startedAt = useRef<number>(Date.now());
@@ -36,7 +42,7 @@ export function FabricateStage({ model, onDone, onBack }: Props) {
   useEffect(() => {
     const t = setTimeout(onDone, FABRICATE_MS);
     return () => clearTimeout(t);
-  }, [onDone]);
+  }, [onDone, FABRICATE_MS]);
 
   useEffect(() => {
     const id = window.setInterval(() => {
@@ -60,28 +66,8 @@ export function FabricateStage({ model, onDone, onBack }: Props) {
     : { filter: "grayscale(1) contrast(1.05) brightness(0.95)" };
 
   return (
-    <div className="min-h-[100dvh] bg-stone-950 text-cream flex flex-col overflow-hidden relative">
-      <header className="flex items-center gap-3 px-5 pt-6 pb-2 relative z-30">
-        <button
-          onClick={onBack}
-          aria-label="Back to fabrication picker"
-          className="w-11 h-11 flex items-center justify-center rounded-full text-white/80 hover:bg-white/10 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <div className="min-w-0">
-          <p className="ptta-label text-accent" style={{ fontSize: "9pt" }}>
-            Fabrication · Bay 02
-          </p>
-          <p
-            className="font-serif text-base leading-none truncate"
-            style={{ letterSpacing: "-0.01em" }}
-          >
-            — {model.title}
-          </p>
-        </div>
-      </header>
-
+    <div className="h-full bg-stone-950 text-cream flex flex-col overflow-hidden relative">
+      <div className="pt-4" />
       <ReferenceCard model={model} />
 
       <p
@@ -89,7 +75,7 @@ export function FabricateStage({ model, onDone, onBack }: Props) {
         style={{ fontSize: "14pt", letterSpacing: "-0.01em" }}
         aria-live="polite"
       >
-        — Being fabricated…
+        Being fabricated…
       </p>
 
       {/* Stage area — fills remaining vertical space. Inner wrapper keeps
@@ -108,7 +94,7 @@ export function FabricateStage({ model, onDone, onBack }: Props) {
                 src={renders[0]}
                 alt=""
                 aria-hidden
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-contain"
                 initial={{ opacity: 1 }}
                 animate={{ opacity: [1, 1, 0, 0, 0, 0] }}
                 transition={{
@@ -121,7 +107,7 @@ export function FabricateStage({ model, onDone, onBack }: Props) {
                 src={renders[1]}
                 alt=""
                 aria-hidden
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-contain"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: [0, 0, 1, 1, 0, 0] }}
                 transition={{
@@ -134,7 +120,7 @@ export function FabricateStage({ model, onDone, onBack }: Props) {
                 src={renders[2]}
                 alt=""
                 aria-hidden
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-contain"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: [0, 0, 0, 0, 1, 1] }}
                 transition={{
@@ -150,7 +136,7 @@ export function FabricateStage({ model, onDone, onBack }: Props) {
                 src={model.image}
                 alt=""
                 aria-hidden
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-contain"
                 style={fallbackStyle}
               />
             )
