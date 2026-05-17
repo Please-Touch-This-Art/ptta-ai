@@ -37,17 +37,14 @@ export default function ArtworkPicker() {
           </h1>
           <p className="text-body-fg text-sm md:text-base leading-snug">
             Choose any artwork to begin. You&apos;ll travel through every
-            process — modeling, fabrication, audio, and the artist&apos;s
-            voice — for the piece you picked.
+            process (modeling, fabrication, audio, and the artist&apos;s
+            voice) for the piece you picked.
           </p>
         </div>
 
         <section className="mb-8 md:mb-10" aria-label="Paintings">
           <div className="flex items-center justify-between mb-3 md:mb-4">
-            <span
-              className="ptta-label text-ink"
-              style={{ fontSize: "10pt" }}
-            >
+            <span className="ptta-label text-ink" style={{ fontSize: "10pt" }}>
               Paintings
             </span>
             <span
@@ -71,10 +68,7 @@ export default function ArtworkPicker() {
 
         <section aria-label="Monuments">
           <div className="flex items-center justify-between mb-3 md:mb-4">
-            <span
-              className="ptta-label text-ink"
-              style={{ fontSize: "10pt" }}
-            >
+            <span className="ptta-label text-ink" style={{ fontSize: "10pt" }}>
               Monuments
             </span>
             <span

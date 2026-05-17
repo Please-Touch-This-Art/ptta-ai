@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import Landing from "@/pages/Landing";
 import ArtworkPicker from "@/pages/ArtworkPicker";
 import JourneyShell from "@/pages/JourneyShell";
 import DemoPlaceholder from "@/pages/DemoPlaceholder";
@@ -14,7 +15,8 @@ const queryClient = new QueryClient();
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={ArtworkPicker} />
+      <Route path="/" component={Landing} />
+      <Route path="/demo" component={ArtworkPicker} />
       <Route path="/journey/:artworkId" component={JourneyShell} />
       <Route path="/journey/:artworkId/:processSlug" component={JourneyShell} />
       <Route path="/future-features" component={FutureFeatures} />

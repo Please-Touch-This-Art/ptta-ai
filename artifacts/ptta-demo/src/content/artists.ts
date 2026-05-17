@@ -113,7 +113,7 @@ export const ARTISTS: Record<ArtistId, ArtistMeta> = {
     portraitAlt: "Self-portrait of Rembrandt van Rijn in old age",
     lifespan: "1606–1669",
     tagline: "Amsterdam, 1669",
-    quote: "Choose only one master — Nature.",
+    quote: "Choose only one master: Nature.",
     palette: {
       accent: "#c08a3e",
       gradientFrom: "#3b2a17",
@@ -193,7 +193,7 @@ export const ARTISTS: Record<ArtistId, ArtistMeta> = {
     portraitAlt: "Photograph of Cassius Marcellus Coolidge",
     lifespan: "1844–1934",
     tagline: "New York, 1903",
-    quote: "I never took it too seriously — and that was the whole joke.",
+    quote: "I never took it too seriously, and that was the whole joke.",
     palette: {
       accent: "#c98a3d",
       gradientFrom: "#2f4636",
@@ -213,7 +213,7 @@ export const ARTISTS: Record<ArtistId, ArtistMeta> = {
     portraitAlt: "Self-portrait of Jacques-Louis David",
     lifespan: "1748–1825",
     tagline: "Brussels, 1820s",
-    quote: "Calm and serene — paint as the ancients did.",
+    quote: "Calm and serene, paint as the ancients did.",
     palette: {
       accent: "#b5462f",
       gradientFrom: "#36465f",

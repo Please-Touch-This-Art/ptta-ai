@@ -7,13 +7,13 @@ import { ChatTranscript } from "./ChatTranscript";
 import { ChatInput } from "./ChatInput";
 
 const ERROR_COPY: Record<string, (name: string) => string> = {
-  rate_limit: (name) => `Too many questions at once — give ${name} a breath.`,
+  rate_limit: (name) => `Too many questions at once. Give ${name} a breath.`,
   upstream: (name) => `${name} is away from the easel. Try again in a moment.`,
   timeout: (name) => `${name} is away from the easel. Try again in a moment.`,
   network: (name) =>
     `Couldn't reach ${name}. Check your connection and try again.`,
   validation: () =>
-    "That message is too long — keep it under 500 characters.",
+    "That message is too long. Keep it under 500 characters.",
 };
 
 interface ArtistPersonaProps {

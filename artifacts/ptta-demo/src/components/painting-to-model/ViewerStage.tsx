@@ -210,7 +210,7 @@ export function ViewerStage({ model }: Props) {
                 className="ptta-label text-white/75"
                 style={{ fontSize: "10pt" }}
               >
-                Loading 3D model — {Math.round(progress * 100)}%
+                Loading 3D model · {Math.round(progress * 100)}%
               </p>
             </>
           )}

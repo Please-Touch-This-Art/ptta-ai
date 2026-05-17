@@ -278,7 +278,7 @@ function ArtistProcess({
         <p className="text-body-fg text-sm md:text-base">
           {isMonument ? (
             <>
-              {model.title} is a monument, not a painting — there&apos;s no
+              {model.title} is a monument, not a painting, so there&apos;s no
               single artist persona to converse with. Pick a painting from
               the gallery to chat with its creator.
             </>
@@ -286,7 +286,7 @@ function ArtistProcess({
             <>
               An AI persona for {model.artist} isn&apos;t available yet.
               We&apos;re still training {model.artist.split(" ").slice(-1)[0]}
-              &apos;s voice — check back soon.
+              &apos;s voice. Check back soon.
             </>
           )}
         </p>
@@ -304,7 +304,7 @@ function ArtistProcess({
           Talk to {model.artist.split(" ").slice(-1)[0]}.
         </h1>
         <p className="text-muted-fg text-xs md:text-sm mt-0.5">
-          Ask about a brushstroke, a memory, a dream — AI-interpreted, not
+          Ask about a brushstroke, a memory, a dream. AI-interpreted, not
           historical fact.
         </p>
       </div>
