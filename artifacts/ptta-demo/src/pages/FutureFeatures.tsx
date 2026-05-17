@@ -16,7 +16,7 @@ export default function FutureFeatures() {
           What&rsquo;s next.
         </h1>
         <p className="text-body-fg text-base md:text-lg mb-10 max-w-[620px]">
-          Two AI-powered directions we&rsquo;re building toward — to carry tactile access beyond a single artwork and into the whole museum visit.
+          Two AI-powered directions we&rsquo;re building toward: to carry tactile access beyond a single artwork and into the whole museum visit.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
