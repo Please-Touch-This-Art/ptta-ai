@@ -9,6 +9,7 @@ import { useLocation } from "wouter";
 import { motion, useReducedMotion } from "framer-motion";
 import { Pause, Play } from "lucide-react";
 import { Header } from "@/components/Header";
+import { CyclingText } from "@/components/CyclingText";
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 const HERO_VIDEO = `${BASE}/videos/people-using-tactile.mp4`;
@@ -25,8 +26,8 @@ const tight = { letterSpacing: "-0.02em" } as const;
 function Eyebrow({ children }: { children: ReactNode }) {
   return (
     <p
-      className="text-accent mb-3 font-medium uppercase"
-      style={{ fontSize: "11px", letterSpacing: "0.16em" }}
+      className="ptta-mono-eyebrow text-accent mb-3"
+      style={{ fontSize: "clamp(9.5px, 2.6vw, 11px)" }}
     >
       {children}
     </p>
@@ -69,20 +70,15 @@ export default function Landing() {
   const heroRef = useRef<HTMLVideoElement>(null);
   const [, navigate] = useLocation();
   const reduce = useReducedMotion() ?? false;
-  const [heroPlaying, setHeroPlaying] = useState(!reduce);
+  const [heroPlaying, setHeroPlaying] = useState(true);
   const [showFloatCta, setShowFloatCta] = useState(false);
 
   useEffect(() => {
     const v = heroRef.current;
     if (!v) return;
     v.muted = true;
-    if (reduce) {
-      v.pause();
-      setHeroPlaying(false);
-    } else {
-      v.play().then(() => setHeroPlaying(true)).catch(() => {});
-    }
-  }, [reduce]);
+    v.play().then(() => setHeroPlaying(true)).catch(() => {});
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setShowFloatCta(window.scrollY > 520);
@@ -132,25 +128,40 @@ export default function Landing() {
         >
           <div className="text-center mx-auto max-w-3xl">
             <Eyebrow>
-              AI-powered tactile art · for blind &amp; low-vision visitors
+              <span className="block md:inline">AI-powered tactile art</span>
+              <span className="hidden md:inline"> · </span>
+              <span className="block md:inline">
+                for blind &amp; low-vision visitors
+              </span>
             </Eyebrow>
             <motion.h1
               {...fade(0.05)}
-              className="font-serif text-ink leading-[0.98] mb-5"
-              style={{ ...tight, fontSize: "clamp(2.8rem, 7.5vw, 6rem)" }}
+              className="font-serif text-ink leading-[1.02] mb-5"
+              style={{ ...tight, fontSize: "clamp(1.9rem, 8.5vw, 5.75rem)" }}
             >
-              Museum art you can{" "}
-              <em className="italic text-accent">touch</em>.
+              <span className="block whitespace-nowrap">
+                Museum art<span className="hidden lg:inline"> you can</span>
+              </span>
+              <span className="block whitespace-nowrap">
+                <span className="lg:hidden">you can </span>
+                <em className="italic text-accent">
+                  <CyclingText
+                    words={["touch", "feel", "experience"]}
+                    reduceMotion={false}
+                    caret="_"
+                    blink={false}
+                  />
+                </em>
+              </span>
             </motion.h1>
             <motion.p
               {...fade(0.12)}
               className="text-body-fg mx-auto max-w-2xl text-lg md:text-2xl leading-relaxed"
             >
               We use <strong className="font-bold text-ink">AI</strong> to turn
-              museum paintings into{" "}
-              <strong className="font-bold text-ink">tactile 3D reliefs</strong>, so
-              blind and visually impaired visitors can experience art with their
-              hands, paired with a custom audio guide.
+              museum artworks into{" "}
+              <strong className="font-bold text-ink">tactile 3D models</strong>,
+              for blind visitors and for all.
             </motion.p>
             <motion.div {...fade(0.2)} className="mt-7">
               <button
@@ -178,7 +189,8 @@ export default function Landing() {
                 className="absolute inset-0 h-full w-full object-cover"
                 src={HERO_VIDEO}
                 poster={HERO_POSTER}
-                loop={!reduce}
+                autoPlay
+                loop
                 muted
                 playsInline
                 preload="metadata"
@@ -190,7 +202,7 @@ export default function Landing() {
                 aria-label={
                   heroPlaying ? "Pause background video" : "Play background video"
                 }
-                className="absolute bottom-3 left-3 z-10 flex h-9 w-9 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="absolute bottom-3 left-3 z-10 flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 style={{
                   background: "rgba(3,5,8,0.6)",
                   color: "var(--color-cream)",
@@ -254,13 +266,12 @@ export default function Landing() {
                 className="font-serif text-ink leading-[1.06] mb-5"
                 style={{ ...tight, fontSize: "clamp(2rem, 5vw, 3.25rem)" }}
               >
-                Museums say: don&rsquo;t touch.
+                <span className="block">Museums say: don&rsquo;t touch.</span>
+                <span className="block">We&rsquo;re changing that.</span>
               </h2>
               <p className="text-body-fg text-lg leading-relaxed max-w-xl">
-                For people who are blind or have low vision, the world&rsquo;s
-                art has stayed behind glass and &ldquo;do not touch&rdquo;
-                signs. They can stand in a gallery and never experience the work
-                in it.
+                For blind and low-vision visitors, art has always lived behind
+                glass, present but out of reach.
               </p>
             </div>
             <div className="mt-10 md:mt-0 md:text-right shrink-0">
@@ -408,11 +419,9 @@ export default function Landing() {
                 Read with your hands. Hear the story.
               </h2>
               <p className="text-body-fg text-lg leading-relaxed">
-                Every piece is a durable relief explored by touch: elevation
-                instead of colour, shaped with blind collaborators. A custom
-                audio guide narrates the artwork as your fingers move across it,
-                so a visitor can take in the whole work, unassisted and at their
-                own pace.
+                Each piece is a tactile 3D model, shaped with blind
+                collaborators. A custom audio guide narrates the artwork as
+                your fingers explore it.
               </p>
             </div>
           </div>

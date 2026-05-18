@@ -225,6 +225,7 @@
   --app-font-serif: 'Instrument Serif', 'Georgia', 'Times New Roman', serif;
   --app-font-display: 'Helvetica Neue', 'Helvetica', 'Arial', system-ui, sans-serif;
   --app-font-mono: 'Menlo', monospace;
+  --app-font-mono-display: 'IBM Plex Mono', 'JetBrains Mono', 'Menlo', monospace;
   --radius: 0.5rem;
 
   --shadow-2xs: 0px 1px 2px 0px rgba(20, 14, 8, 0.04);
@@ -480,11 +481,30 @@
   }
 
   .ptta-label {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 12pt;
+    font-family: var(--app-font-mono-display);
+    font-size: 11pt;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.22em;
     font-weight: 400;
+    font-feature-settings: "kern", "liga", "calt", "ss03";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Maison-mono eyebrow — IBM Plex Mono, generously tracked, ultra-light
+     weight. The look used by Prada, Loewe, Gucci and Hermès for nav labels,
+     captions and section eyebrows. Intentionally restrained: same colour
+     contract as the surrounding palette, the refinement is purely typographic. */
+  .ptta-mono-eyebrow {
+    font-family: var(--app-font-mono-display);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    font-feature-settings: "kern", "liga", "calt", "ss03";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   [contenteditable][data-placeholder]:empty::before {
@@ -597,12 +617,15 @@ body {
   color: var(--ptta-ink);
 }
 
-/* Typography — retire the Courier editorial label; unify on the sans
-   family so titles / top-left / stepper read coherently. */
+/* Typography — the brand label in the header uses the same Maison-mono
+   treatment as the section eyebrows (see .ptta-mono-eyebrow). Generous
+   tracking, light weight, careful kerning/ligatures. !important is kept
+   from the previous override so it still trumps the base .ptta-label rule
+   when the gallery theme is active. */
 .ptta-label {
-  font-family: var(--app-font-sans) !important;
-  letter-spacing: 0.16em;
-  font-weight: 500;
+  font-family: var(--app-font-mono-display) !important;
+  letter-spacing: 0.22em;
+  font-weight: 400;
 }
 
 /* Carry the Gallery gradient through the inner demo screens. The journey
