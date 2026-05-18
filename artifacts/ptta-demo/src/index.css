@@ -495,16 +495,24 @@
   /* Maison-mono eyebrow — IBM Plex Mono, generously tracked, ultra-light
      weight. The look used by Prada, Loewe, Gucci and Hermès for nav labels,
      captions and section eyebrows. Intentionally restrained: same colour
-     contract as the surrounding palette, the refinement is purely typographic. */
+     contract as the surrounding palette, the refinement is purely typographic.
+     Letter-spacing scales with viewport so the long hero eyebrow stays
+     readable on small phones without overflowing. */
   .ptta-mono-eyebrow {
     font-family: var(--app-font-mono-display);
     font-weight: 400;
     text-transform: uppercase;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.14em;
     font-feature-settings: "kern", "liga", "calt", "ss03";
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+  @media (min-width: 640px) {
+    .ptta-mono-eyebrow { letter-spacing: 0.2em; }
+  }
+  @media (min-width: 768px) {
+    .ptta-mono-eyebrow { letter-spacing: 0.24em; }
   }
 
   [contenteditable][data-placeholder]:empty::before {

@@ -17,7 +17,7 @@ export function Header({ showBack = false, backHref = "/", tag }: HeaderProps) {
 
   return (
     <header
-      className="sticky top-0 left-0 right-0 z-50 flex items-stretch bg-page border-b border-hairline"
+      className="flex items-stretch bg-page border-b border-hairline"
       role="banner"
     >
       {/* Left: back arrow (if present) + Courier editorial label */}
@@ -51,14 +51,14 @@ export function Header({ showBack = false, backHref = "/", tag }: HeaderProps) {
             e.preventDefault();
             navigate("/");
           }}
-          className="ptta-label text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent text-left text-[10pt] leading-[1.1]"
+          className="ptta-label text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent text-left whitespace-nowrap inline-block text-[8pt] sm:text-[11pt] leading-none"
           aria-label="Please Touch This Art – home"
         >
           {isDefaultTag ? (
             <>
-              <span className="block md:inline">PLEASE TOUCH</span>
-              <span className="hidden md:inline"> </span>
-              <span className="block md:inline">THIS ART</span>
+              PLEASE TOUCH
+              <span aria-hidden="true" className="mx-2 text-accent">·</span>
+              THIS ART
             </>
           ) : (
             tagText

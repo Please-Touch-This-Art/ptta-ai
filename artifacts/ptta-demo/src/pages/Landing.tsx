@@ -27,7 +27,7 @@ function Eyebrow({ children }: { children: ReactNode }) {
   return (
     <p
       className="ptta-mono-eyebrow text-accent mb-3"
-      style={{ fontSize: "clamp(9.5px, 2.6vw, 11px)" }}
+      style={{ fontSize: "clamp(12px, 3.4vw, 13px)" }}
     >
       {children}
     </p>
@@ -137,12 +137,15 @@ export default function Landing() {
             <motion.h1
               {...fade(0.05)}
               className="font-serif text-ink leading-[1.02] mb-5"
-              style={{ ...tight, fontSize: "clamp(1.9rem, 8.5vw, 5.75rem)" }}
+              style={{
+                letterSpacing: "-0.06em",
+                fontSize: "clamp(2.85rem, 13vw, 5.75rem)",
+              }}
             >
               <span className="block whitespace-nowrap">
                 Museum art<span className="hidden lg:inline"> you can</span>
               </span>
-              <span className="block whitespace-nowrap">
+              <span className="block lg:whitespace-nowrap">
                 <span className="lg:hidden">you can </span>
                 <em className="italic text-accent">
                   <CyclingText
