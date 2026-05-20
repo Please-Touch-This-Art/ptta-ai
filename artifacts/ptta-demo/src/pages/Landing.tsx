@@ -126,63 +126,11 @@ export default function Landing() {
           aria-label="Introduction"
           className="mx-auto w-full max-w-[480px] md:max-w-3xl lg:max-w-5xl px-5 md:px-8 pt-7 md:pt-12"
         >
-          <div className="text-center mx-auto max-w-3xl">
-            <Eyebrow>
-              <span className="block md:inline">AI-powered tactile art</span>
-              <span className="hidden md:inline"> · </span>
-              <span className="block md:inline">
-                for blind &amp; low-vision visitors
-              </span>
-            </Eyebrow>
-            <motion.h1
-              {...fade(0.05)}
-              className="font-serif text-ink leading-[1.02] mb-5"
-              style={{
-                letterSpacing: "-0.06em",
-                fontSize: "clamp(2.85rem, 13vw, 5.75rem)",
-              }}
-            >
-              <span className="block whitespace-nowrap">
-                Museum art<span className="hidden lg:inline"> you can</span>
-              </span>
-              <span className="block lg:whitespace-nowrap">
-                <span className="lg:hidden">you can </span>
-                <em className="italic text-accent">
-                  <CyclingText
-                    words={["touch", "feel", "experience"]}
-                    reduceMotion={false}
-                    caret="_"
-                    blink={false}
-                  />
-                </em>
-              </span>
-            </motion.h1>
-            <motion.p
-              {...fade(0.12)}
-              className="text-body-fg mx-auto max-w-2xl text-lg md:text-2xl leading-relaxed"
-            >
-              We use <strong className="font-bold text-ink">AI</strong> to turn
-              museum artworks into{" "}
-              <strong className="font-bold text-ink">tactile 3D models</strong>,
-              for blind visitors and for all.
-            </motion.p>
-            <motion.div {...fade(0.2)} className="mt-7">
-              <button
-                type="button"
-                onClick={tryDemo}
-                className="ptta-cta-attn inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 font-semibold text-lg transition-transform hover:scale-[1.03] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                style={{ color: "#241A0E", minHeight: 56 }}
-              >
-                Try the demo →
-              </button>
-            </motion.div>
-          </div>
-
           <motion.div
-            {...fade(0.26)}
-            className="relative mx-auto mt-9 md:mt-12 w-full overflow-hidden rounded-[20px] md:rounded-[28px]"
+            {...fade(0.05)}
+            className="relative mx-auto w-full overflow-hidden rounded-[20px] md:rounded-[28px]"
             style={{
-              maxWidth: "calc(58dvh * 16 / 9)",
+              maxWidth: "min(100%, calc(42dvh * 16 / 9), 880px)",
               border: "1px solid var(--color-hairline)",
             }}
           >
@@ -220,6 +168,51 @@ export default function Landing() {
               </button>
             </div>
           </motion.div>
+
+          <div className="text-center mx-auto max-w-3xl mt-9 md:mt-12">
+            <motion.h1
+              {...fade(0.1)}
+              className="font-serif text-ink leading-[1.06] mb-5"
+              style={{
+                letterSpacing: "-0.02em",
+                fontSize: "clamp(2.5rem, 10vw, 4.5rem)",
+              }}
+            >
+              <span className="block whitespace-nowrap">
+                Museum art<span className="hidden lg:inline"> you can</span>
+              </span>
+              <span className="block lg:whitespace-nowrap">
+                <span className="lg:hidden">you can </span>
+                <em className="italic text-accent">
+                  <CyclingText
+                    words={["touch", "feel", "experience"]}
+                    reduceMotion={false}
+                    caret="_"
+                    blink={false}
+                  />
+                </em>
+              </span>
+            </motion.h1>
+            <motion.p
+              {...fade(0.17)}
+              className="text-body-fg mx-auto max-w-2xl text-lg md:text-2xl leading-relaxed"
+            >
+              We use <strong className="font-bold text-ink">AI</strong> to turn
+              museum artworks into{" "}
+              <strong className="font-bold text-ink">tactile 3D models</strong>,
+              for blind visitors and for all.
+            </motion.p>
+            <motion.div {...fade(0.25)} className="mt-7">
+              <button
+                type="button"
+                onClick={tryDemo}
+                className="ptta-cta-attn inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 font-semibold text-lg transition-transform hover:scale-[1.03] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                style={{ color: "#241A0E", minHeight: 56 }}
+              >
+                Try the demo →
+              </button>
+            </motion.div>
+          </div>
         </section>
 
         {/* TRUSTED BY (client logos) */}
