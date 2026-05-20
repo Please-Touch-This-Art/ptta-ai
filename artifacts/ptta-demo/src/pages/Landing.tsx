@@ -687,9 +687,9 @@ export default function Landing() {
         {/* ── ALREADY IN MUSEUMS ───────────────────────────────────────────── */}
         <section
           aria-label="Already in museums"
-          className="mx-auto w-full max-w-[480px] md:max-w-5xl px-5 md:px-8 py-16 md:py-24"
+          className="mx-auto w-full max-w-[480px] md:max-w-5xl px-5 md:px-8 pt-6 pb-14 md:pt-10 md:pb-20"
         >
-          <div className="text-center mb-10 max-w-2xl mx-auto">
+          <div className="text-center mb-9 md:mb-10 max-w-2xl mx-auto">
             <h2
               className="font-serif text-ink leading-[1.08]"
               style={{ ...tight, fontSize: "clamp(2rem, 5vw, 3.25rem)" }}
@@ -698,35 +698,39 @@ export default function Landing() {
             </h2>
           </div>
 
-          <dl className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-10 items-start justify-items-center">
+          <dl className="flex flex-col md:flex-row md:flex-wrap items-center md:justify-center gap-3 md:gap-6">
             {/* Museums */}
             <div className="flex flex-col items-center text-center">
               <div
-                className="rounded-2xl bg-white inline-flex flex-col items-center justify-center gap-5 px-7 py-6"
+                className="rounded-2xl bg-white inline-flex items-center justify-center gap-7 px-7 py-3"
                 style={{
-                  minHeight: 240,
-                  minWidth: 200,
+                  minHeight: 150,
+                  minWidth: 240,
                   boxShadow: "0 18px 40px -22px rgba(0,0,0,0.55)",
                 }}
               >
-                <img
-                  src={`${BASE}/logos/overbeck-museum.png`}
-                  alt="Overbeck Museum"
-                  loading="lazy"
-                  className="block w-auto h-12 object-contain"
-                />
-                <img
-                  src={`${BASE}/logos/luebecker-museum.svg`}
-                  alt="Die Lübecker Museen"
-                  loading="lazy"
-                  className="block w-auto h-12 object-contain"
-                />
+                {/* Left: Lübecker on top, Overbeck below */}
+                <div className="flex flex-col items-center gap-5">
+                  <img
+                    src={`${BASE}/logos/luebecker-museum.svg`}
+                    alt="Die Lübecker Museen"
+                    loading="lazy"
+                    className="block w-auto h-12 object-contain"
+                  />
+                  <img
+                    src={`${BASE}/logos/overbeck-museum.png`}
+                    alt="Overbeck Museum"
+                    loading="lazy"
+                    className="block w-auto h-12 object-contain"
+                  />
+                </div>
+                {/* Right: St. Nikolai + Tvibit in a row */}
                 <div className="flex items-center gap-5">
                   <img
                     src={`${BASE}/logos/st-nikolai-church-museum.png`}
                     alt="St. Nikolai Church Museum"
                     loading="lazy"
-                    className="block w-auto h-14 object-contain"
+                    className="block w-auto h-20 object-contain"
                   />
                   <img
                     src={`${BASE}/logos/tvibit.webp`}
@@ -755,10 +759,10 @@ export default function Landing() {
             {/* Accessibility partners */}
             <div className="flex flex-col items-center text-center">
               <div
-                className="rounded-2xl bg-white inline-flex flex-col items-center justify-center gap-5 px-7 py-6"
+                className="rounded-2xl bg-white inline-flex items-center justify-center gap-8 px-7 py-3"
                 style={{
-                  minHeight: 240,
-                  minWidth: 200,
+                  minHeight: 150,
+                  minWidth: 240,
                   boxShadow: "0 18px 40px -22px rgba(0,0,0,0.55)",
                 }}
               >
@@ -766,19 +770,19 @@ export default function Landing() {
                   src={`${BASE}/logos/bsvh.png`}
                   alt="BSVH, Blinden- und Sehbehindertenverein Hamburg"
                   loading="lazy"
-                  className="block w-auto h-12 object-contain"
+                  className="block w-auto h-16 object-contain"
                 />
                 <img
-                  src={`${BASE}/logos/bsvb.gif`}
-                  alt="BSVB, Blinden- und Sehbehindertenverband"
+                  src={`${BASE}/logos/bsvb.png`}
+                  alt="BSVB, Blinden- und Sehbehindertenverein Bremen"
                   loading="lazy"
-                  className="block w-auto h-12 object-contain"
+                  className="block w-auto h-16 object-contain"
                 />
               </div>
               <dd className="mt-5">
                 <span
                   aria-hidden
-                  className="block leading-none"
+                  className="hidden md:block leading-none"
                   style={{
                     fontSize: "clamp(1.65rem, 4vw, 2rem)",
                     visibility: "hidden",
@@ -786,42 +790,8 @@ export default function Landing() {
                 >
                   &nbsp;
                 </span>
-                <span className="text-body-fg block mt-1.5 text-base">
+                <span className="text-body-fg block md:mt-1.5 text-base">
                   Accessibility partners
-                </span>
-              </dd>
-            </div>
-
-            {/* ESA */}
-            <div className="flex flex-col items-center text-center">
-              <div
-                className="rounded-2xl bg-white inline-flex items-center justify-center px-8 py-6"
-                style={{
-                  minHeight: 240,
-                  minWidth: 200,
-                  boxShadow: "0 18px 40px -22px rgba(0,0,0,0.55)",
-                }}
-              >
-                <img
-                  src={`${BASE}/logos/european-space-agency.svg`}
-                  alt="European Space Agency"
-                  loading="lazy"
-                  className="block w-auto h-12 md:h-16 object-contain"
-                />
-              </div>
-              <dd className="mt-5">
-                <span
-                  aria-hidden
-                  className="block leading-none"
-                  style={{
-                    fontSize: "clamp(1.65rem, 4vw, 2rem)",
-                    visibility: "hidden",
-                  }}
-                >
-                  &nbsp;
-                </span>
-                <span className="text-body-fg block mt-1.5 text-base">
-                  Mars-surface commission
                 </span>
               </dd>
             </div>
