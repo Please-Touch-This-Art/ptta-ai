@@ -124,7 +124,7 @@ export default function Landing() {
         {/* ── HERO ─────────────────────────────────────────────────────────── */}
         <section
           aria-label="Introduction"
-          className="mx-auto w-full max-w-[480px] md:max-w-3xl lg:max-w-5xl px-5 md:px-8 pt-7 md:pt-12"
+          className="mx-auto w-full max-w-[480px] md:max-w-3xl lg:max-w-5xl px-5 md:px-8 pt-7 md:pt-12 pb-40 md:pb-24"
         >
           <motion.div
             {...fade(0.05)}
