@@ -362,10 +362,11 @@ export default function Landing() {
             </div>
             <div className="text-center md:text-left">
               <p
-                className="font-serif italic text-ink leading-snug"
+                className="font-sans text-ink leading-snug"
                 style={{
-                  fontSize: "clamp(1.15rem, 2.6vw, 1.5rem)",
-                  letterSpacing: "-0.01em",
+                  fontSize: "clamp(1.05rem, 2.4vw, 1.35rem)",
+                  fontWeight: 400,
+                  letterSpacing: "-0.005em",
                 }}
               >
                 &ldquo;Current museums aren&rsquo;t inclusive enough for us. We
