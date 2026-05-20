@@ -690,3 +690,15 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .ptta-cta-attn { animation: none; }
 }
+
+/* Continuous horizontal marquee for the Experience gallery. The list is
+   rendered twice so a 50% translate creates a seamless loop. */
+@keyframes ptta-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.ptta-marquee {
+  animation: ptta-marquee 45s linear infinite;
+  will-change: transform;
+}
+.ptta-marquee:hover { animation-play-state: paused; }

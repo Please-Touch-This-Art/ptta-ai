@@ -18,10 +18,59 @@ const TESTIMONIALS_VIDEO = `${BASE}/videos/testimonials.mp4`;
 const PAINTING_IMG = `${BASE}/paintings/starry-night.webp`;
 const RELIEF_IMG = `${BASE}/printed/starry-night.png`;
 const EXPERIENCE_IMG = `${BASE}/images/hands-exploring-model.jpeg`;
-const IN_HANDS_IMG = `${BASE}/images/hands-touching-model.jpeg`;
 const CONTACT_EMAIL = "contact@ptta.art";
 
+const PEOPLE_IMAGES = [
+  "people-01.jpg",
+  "people-09.jpeg",
+  "people-02.png",
+  "people-10.jpeg",
+  "people-03.png",
+  "people-11.jpeg",
+  "people-04.png",
+  "people-12.jpeg",
+  "people-05.png",
+  "people-06.png",
+  "people-07.png",
+  "people-08.png",
+].map((f) => `${BASE}/images/people-using-models/${f}`);
+
 const tight = { letterSpacing: "-0.02em" } as const;
+
+function DotGrid({
+  total,
+  filled,
+  cols,
+  accent = false,
+}: {
+  total: number;
+  filled: number;
+  cols: number;
+  accent?: boolean;
+}) {
+  const filledColor = accent
+    ? "var(--color-accent)"
+    : "rgba(242,233,214,0.70)";
+  const emptyColor = "rgba(242,233,214,0.10)";
+  return (
+    <div
+      className="grid w-fit"
+      style={{
+        gridTemplateColumns: `repeat(${cols}, 7px)`,
+        gap: "5px",
+      }}
+      aria-hidden
+    >
+      {Array.from({ length: total }).map((_, i) => (
+        <span
+          key={i}
+          className="block w-[7px] h-[7px] rounded-full"
+          style={{ background: i < filled ? filledColor : emptyColor }}
+        />
+      ))}
+    </div>
+  );
+}
 
 function Eyebrow({ children }: { children: ReactNode }) {
   return (
@@ -50,12 +99,6 @@ const STEPS = [
     t: "Print & narrate",
     d: "The model is 3D-printed as a durable tactile relief and paired with a custom audio guide that tells the artwork's story.",
   },
-];
-
-const FACTS = [
-  { v: "27+", l: "Museum installations" },
-  { v: "BSVH · BSVB", l: "Accessibility partners" },
-  { v: "European Space Agency", l: "Mars-surface commission" },
 ];
 
 const LOGOS = [
@@ -206,8 +249,8 @@ export default function Landing() {
               <button
                 type="button"
                 onClick={tryDemo}
-                className="ptta-cta-attn inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 font-semibold text-lg transition-transform hover:scale-[1.03] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                style={{ color: "#241A0E", minHeight: 56 }}
+                className="ptta-cta-attn inline-flex items-center gap-2 rounded-full bg-accent px-7 md:px-8 py-3.5 md:py-4 font-semibold text-base md:text-lg transition-transform hover:scale-[1.03] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                style={{ color: "#241A0E", minHeight: 52 }}
               >
                 Try the demo →
               </button>
@@ -291,23 +334,72 @@ export default function Landing() {
               </p>
             </div>
           </div>
+
+          {/* Voice of the community: demand callout */}
+          <div
+            className="mt-14 md:mt-16 rounded-2xl px-6 md:px-10 py-8 md:py-10 md:grid md:grid-cols-[auto_1fr] md:gap-12 md:items-center"
+            style={{
+              background: "rgba(242,233,214,0.05)",
+              border: "1px solid var(--color-hairline)",
+            }}
+          >
+            <div className="text-center md:text-left mb-4 md:mb-0 shrink-0">
+              <p
+                className="font-serif italic text-accent leading-none"
+                style={{
+                  fontSize: "clamp(3.5rem, 10vw, 5.25rem)",
+                  letterSpacing: "-0.03em",
+                }}
+              >
+                86%
+              </p>
+              <p
+                className="ptta-mono-eyebrow text-muted-fg mt-3"
+                style={{ fontSize: "11px" }}
+              >
+                say the same
+              </p>
+            </div>
+            <div className="text-center md:text-left">
+              <p
+                className="font-serif italic text-ink leading-snug"
+                style={{
+                  fontSize: "clamp(1.15rem, 2.6vw, 1.5rem)",
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                &ldquo;Current museums aren&rsquo;t inclusive enough for us. We
+                would visit far more often if their content were accessible.&rdquo;
+              </p>
+              <p className="text-muted-fg mt-3 text-sm">
+                Survey of blind and visually impaired museum visitors.
+              </p>
+            </div>
+          </div>
         </section>
 
-        {/* ── HOW IT WORKS (AI) ────────────────────────────────────────────── */}
+        {/* ── OUR SOLUTION ─────────────────────────────────────────────────── */}
         <section
-          aria-label="How it works"
+          aria-label="Our solution"
           className="w-full px-5 md:px-8 py-16 md:py-24"
           style={{ background: "rgba(242,233,214,0.035)" }}
         >
           <div className="mx-auto max-w-[480px] md:max-w-5xl">
             <div className="text-center mb-12 md:mb-14 max-w-2xl mx-auto">
-              <Eyebrow>How it works</Eyebrow>
+              <Eyebrow>Our solution</Eyebrow>
               <h2
-                className="font-serif text-ink leading-[1.05]"
+                className="font-serif text-ink leading-[1.05] mb-6"
                 style={{ ...tight, fontSize: "clamp(2.2rem, 5.5vw, 3.75rem)" }}
               >
-                From a painting, to your fingertips.
+                Art you can read with your hands.
               </h2>
+              <p className="text-body-fg text-lg leading-relaxed">
+                We turn museum artworks, from paintings to sculptures, into{" "}
+                <strong className="font-bold text-ink">3D printed tactile models</strong>{" "}
+                with a{" "}
+                <strong className="font-bold text-ink">custom audio guide</strong>,
+                made with blind collaborators for all visitors.
+              </p>
             </div>
 
             <div className="flex flex-col md:flex-row items-center justify-center gap-5 md:gap-3 mb-14 md:mb-16">
@@ -389,37 +481,168 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* ── THE DIFFERENCE ───────────────────────────────────────────────── */}
+        <section
+          aria-label="The difference"
+          className="mx-auto w-full max-w-[480px] md:max-w-4xl px-5 md:px-8 py-12 md:py-16"
+        >
+          <div className="text-center max-w-2xl mx-auto mb-9 md:mb-10">
+            <Eyebrow>The difference</Eyebrow>
+            <h2
+              className="font-serif text-ink leading-[1.06] mb-4"
+              style={{ ...tight, fontSize: "clamp(2rem, 5vw, 3.25rem)" }}
+            >
+              A better product, at a fraction of the cost and time.
+            </h2>
+            <p className="text-body-fg text-base md:text-lg leading-relaxed">
+              Wood-carved or clay-sculpted tactile reliefs with audio guides
+              run upwards of{" "}
+              <strong className="font-bold text-ink">€35,000</strong> and{" "}
+              <strong className="font-bold text-ink">5 months</strong> per
+              piece. PTTA closes this gap.
+            </p>
+          </div>
+
+          <div className="space-y-7 md:space-y-9 max-w-3xl mx-auto">
+            {/* COST */}
+            <div>
+              <p
+                className="ptta-mono-eyebrow text-muted-fg mb-4 text-center"
+                style={{ fontSize: "11px" }}
+              >
+                Cost per piece &nbsp;·&nbsp; one dot = €1,000
+              </p>
+              <div className="grid grid-cols-2 gap-6 md:gap-10">
+                <div className="flex flex-col gap-3 items-center text-center">
+                  <DotGrid total={35} filled={35} cols={7} />
+                  <div>
+                    <p
+                      className="font-serif italic text-ink leading-none"
+                      style={{
+                        fontSize: "clamp(1.75rem, 4.5vw, 2.5rem)",
+                        letterSpacing: "-0.03em",
+                      }}
+                    >
+                      €35,000+
+                    </p>
+                    <p className="text-muted-fg text-sm mt-1">Conventional</p>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-3 items-center text-center">
+                  <DotGrid total={35} filled={3} cols={7} accent />
+                  <div>
+                    <p
+                      className="font-serif italic text-accent leading-none"
+                      style={{
+                        fontSize: "clamp(1.75rem, 4.5vw, 2.5rem)",
+                        letterSpacing: "-0.03em",
+                      }}
+                    >
+                      A fraction
+                    </p>
+                    <p className="text-muted-fg text-sm mt-1">With PTTA</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* TIME */}
+            <div>
+              <p
+                className="ptta-mono-eyebrow text-muted-fg mb-4 text-center"
+                style={{ fontSize: "11px" }}
+              >
+                Time per piece &nbsp;·&nbsp; one dot = 1 week
+              </p>
+              <div className="grid grid-cols-2 gap-6 md:gap-10">
+                <div className="flex flex-col gap-3 items-center text-center">
+                  <DotGrid total={20} filled={20} cols={5} />
+                  <div>
+                    <p
+                      className="font-serif italic text-ink leading-none"
+                      style={{
+                        fontSize: "clamp(1.75rem, 4.5vw, 2.5rem)",
+                        letterSpacing: "-0.03em",
+                      }}
+                    >
+                      5 months
+                    </p>
+                    <p className="text-muted-fg text-sm mt-1">Conventional</p>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-3 items-center text-center">
+                  <DotGrid total={20} filled={1} cols={5} accent />
+                  <div>
+                    <p
+                      className="font-serif italic text-accent leading-none"
+                      style={{
+                        fontSize: "clamp(1.75rem, 4.5vw, 2.5rem)",
+                        letterSpacing: "-0.03em",
+                      }}
+                    >
+                      1 week
+                    </p>
+                    <p className="text-muted-fg text-sm mt-1">With PTTA</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ── THE EXPERIENCE ───────────────────────────────────────────────── */}
         <section
           aria-label="The experience"
-          className="mx-auto w-full max-w-[480px] md:max-w-5xl px-5 md:px-8 py-16 md:py-24"
+          className="w-full px-0 md:px-0 py-16 md:py-24"
         >
-          <div className="md:grid md:grid-cols-2 md:gap-14 items-center">
-            <div
-              className="relative w-full aspect-[4/3] overflow-hidden rounded-2xl order-2 md:order-1"
-              style={{ border: "1px solid var(--color-hairline)" }}
+          <div className="mx-auto max-w-[480px] md:max-w-3xl px-5 md:px-8 text-center mb-10 md:mb-14">
+            <Eyebrow>The experience</Eyebrow>
+            <h2
+              className="font-serif text-ink leading-[1.08] mb-5"
+              style={{ ...tight, fontSize: "clamp(2rem, 5vw, 3.25rem)" }}
             >
-              <img
-                src={EXPERIENCE_IMG}
-                alt="A visitor's hands reading the raised ridges of a tactile relief"
-                loading="lazy"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            </div>
-            <div className="mb-8 md:mb-0 order-1 md:order-2">
-              <Eyebrow>The experience</Eyebrow>
-              <h2
-                className="font-serif text-ink leading-[1.08] mb-5"
-                style={{ ...tight, fontSize: "clamp(2rem, 5vw, 3.25rem)" }}
-              >
-                Read with your hands. Hear the story.
-              </h2>
-              <p className="text-body-fg text-lg leading-relaxed">
-                Each piece is a tactile 3D model, shaped with blind
-                collaborators. A custom audio guide narrates the artwork as
-                your fingers explore it.
-              </p>
-            </div>
+              Read with your hands. Hear the story.
+            </h2>
+            <p className="text-body-fg text-lg leading-relaxed max-w-2xl mx-auto">
+              Each piece is a tactile 3D model, shaped with blind
+              collaborators. A custom audio guide narrates the artwork as
+              your fingers explore it.
+            </p>
+          </div>
+
+          <div
+            className="relative overflow-hidden"
+            aria-label="Gallery of visitors exploring PTTA tactile models in museums"
+            style={{
+              maskImage:
+                "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+            }}
+          >
+            <ul
+              className="ptta-marquee flex gap-3 md:gap-5 py-2"
+              style={{ width: "fit-content" }}
+            >
+              {[...PEOPLE_IMAGES, ...PEOPLE_IMAGES].map((src, i) => (
+                <li
+                  key={`${src}-${i}`}
+                  className="shrink-0 w-[200px] md:w-[280px] aspect-[3/4] overflow-hidden rounded-2xl"
+                  style={{
+                    border: "1px solid var(--color-hairline)",
+                    boxShadow: "0 18px 40px -22px rgba(0,0,0,0.7)",
+                  }}
+                >
+                  <img
+                    src={src}
+                    alt=""
+                    aria-hidden={i >= PEOPLE_IMAGES.length}
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 
@@ -436,7 +659,7 @@ export default function Landing() {
                 className="font-serif text-ink leading-[1.08]"
                 style={{ ...tight, fontSize: "clamp(2rem, 5vw, 3.25rem)" }}
               >
-                See it in their hands.
+                Hear what they have to say.
               </h2>
             </div>
             <div
@@ -453,9 +676,9 @@ export default function Landing() {
               />
             </div>
             <p className="text-muted-fg mt-3 text-sm text-center">
-              Footage from museum installations: blind and low-vision visitors
-              exploring tactile reliefs, with reactions from staff and
-              accessibility partners.
+              Footage from museum installations: blind and visually impaired
+              visitors exploring tactile models, sharing their testimonials
+              and reactions.
             </p>
           </div>
         </section>
@@ -474,34 +697,134 @@ export default function Landing() {
             </h2>
           </div>
 
-          <dl className="grid grid-cols-1 sm:grid-cols-3 divide-y divide-[var(--color-hairline)] sm:divide-y-0 sm:divide-x">
-            {FACTS.map((f) => (
-              <div key={f.l} className="px-4 py-5 text-center">
-                <dt
-                  className="font-serif italic text-accent leading-tight"
+          <dl className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-10 items-start justify-items-center">
+            {/* Museums */}
+            <div className="flex flex-col items-center text-center">
+              <div
+                className="rounded-2xl bg-white inline-flex flex-col items-center justify-center gap-5 px-7 py-6"
+                style={{
+                  minHeight: 240,
+                  minWidth: 200,
+                  boxShadow: "0 18px 40px -22px rgba(0,0,0,0.55)",
+                }}
+              >
+                <img
+                  src={`${BASE}/logos/overbeck-museum.png`}
+                  alt="Overbeck Museum"
+                  loading="lazy"
+                  className="block w-auto h-12 object-contain"
+                />
+                <img
+                  src={`${BASE}/logos/luebecker-museum.svg`}
+                  alt="Die Lübecker Museen"
+                  loading="lazy"
+                  className="block w-auto h-12 object-contain"
+                />
+                <div className="flex items-center gap-5">
+                  <img
+                    src={`${BASE}/logos/st-nikolai-church-museum.png`}
+                    alt="St. Nikolai Church Museum"
+                    loading="lazy"
+                    className="block w-auto h-14 object-contain"
+                  />
+                  <img
+                    src={`${BASE}/logos/tvibit.webp`}
+                    alt="Tvibit"
+                    loading="lazy"
+                    className="block w-auto h-14 object-contain"
+                  />
+                </div>
+              </div>
+              <dd className="mt-5">
+                <span
+                  className="font-serif italic text-accent block leading-none"
                   style={{
-                    fontSize: "clamp(1.3rem,3.6vw,1.85rem)",
+                    fontSize: "clamp(1.65rem, 4vw, 2rem)",
                     letterSpacing: "-0.02em",
                   }}
                 >
-                  {f.v}
-                </dt>
-                <dd className="text-muted-fg mt-2 text-sm">{f.l}</dd>
-              </div>
-            ))}
-          </dl>
+                  27+
+                </span>
+                <span className="text-body-fg block mt-1.5 text-base">
+                  museum installations
+                </span>
+              </dd>
+            </div>
 
-          <div
-            className="mt-10 mx-auto max-w-3xl overflow-hidden rounded-2xl"
-            style={{ border: "1px solid var(--color-hairline)" }}
-          >
-            <img
-              src={IN_HANDS_IMG}
-              alt="A visitor holding and reading a finished tactile relief in their hands"
-              loading="lazy"
-              className="block w-full h-auto"
-            />
-          </div>
+            {/* Accessibility partners */}
+            <div className="flex flex-col items-center text-center">
+              <div
+                className="rounded-2xl bg-white inline-flex flex-col items-center justify-center gap-5 px-7 py-6"
+                style={{
+                  minHeight: 240,
+                  minWidth: 200,
+                  boxShadow: "0 18px 40px -22px rgba(0,0,0,0.55)",
+                }}
+              >
+                <img
+                  src={`${BASE}/logos/bsvh.png`}
+                  alt="BSVH, Blinden- und Sehbehindertenverein Hamburg"
+                  loading="lazy"
+                  className="block w-auto h-12 object-contain"
+                />
+                <img
+                  src={`${BASE}/logos/bsvb.gif`}
+                  alt="BSVB, Blinden- und Sehbehindertenverband"
+                  loading="lazy"
+                  className="block w-auto h-12 object-contain"
+                />
+              </div>
+              <dd className="mt-5">
+                <span
+                  aria-hidden
+                  className="block leading-none"
+                  style={{
+                    fontSize: "clamp(1.65rem, 4vw, 2rem)",
+                    visibility: "hidden",
+                  }}
+                >
+                  &nbsp;
+                </span>
+                <span className="text-body-fg block mt-1.5 text-base">
+                  Accessibility partners
+                </span>
+              </dd>
+            </div>
+
+            {/* ESA */}
+            <div className="flex flex-col items-center text-center">
+              <div
+                className="rounded-2xl bg-white inline-flex items-center justify-center px-8 py-6"
+                style={{
+                  minHeight: 240,
+                  minWidth: 200,
+                  boxShadow: "0 18px 40px -22px rgba(0,0,0,0.55)",
+                }}
+              >
+                <img
+                  src={`${BASE}/logos/european-space-agency.svg`}
+                  alt="European Space Agency"
+                  loading="lazy"
+                  className="block w-auto h-12 md:h-16 object-contain"
+                />
+              </div>
+              <dd className="mt-5">
+                <span
+                  aria-hidden
+                  className="block leading-none"
+                  style={{
+                    fontSize: "clamp(1.65rem, 4vw, 2rem)",
+                    visibility: "hidden",
+                  }}
+                >
+                  &nbsp;
+                </span>
+                <span className="text-body-fg block mt-1.5 text-base">
+                  Mars-surface commission
+                </span>
+              </dd>
+            </div>
+          </dl>
         </section>
 
         {/* ── FOOTER ───────────────────────────────────────────────────────── */}
