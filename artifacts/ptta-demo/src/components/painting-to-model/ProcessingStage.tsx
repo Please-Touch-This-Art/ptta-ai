@@ -91,9 +91,9 @@ export function ProcessingStage({
   const isStep = (id: StepId) => currentStep.id === id;
 
   return (
-    <div className="h-full bg-transparent text-stone-100 flex flex-col">
-      <div className="mx-auto w-full max-w-[440px] flex-1 flex flex-col pt-4">
-        <div className="flex-1 min-h-0 flex items-center justify-center px-6 py-4">
+    <div className="h-full bg-transparent text-stone-100 flex flex-col overflow-hidden">
+      <div className="mx-auto w-full max-w-[440px] flex-1 min-h-0 flex flex-col pt-2 sm:pt-4">
+        <div className="flex-1 min-h-0 flex items-center justify-center px-4 sm:px-6 py-2 sm:py-4">
           <div className="relative rounded-md overflow-hidden max-w-full max-h-full">
             {/* Painting — full image, never cropped (object-contain). */}
             <img
@@ -170,23 +170,23 @@ export function ProcessingStage({
           </div>
         </div>
 
-        <div className="px-6 pt-4 text-center" aria-live="polite">
+        <div className="shrink-0 px-4 sm:px-6 pt-2 sm:pt-4 text-center" aria-live="polite">
           <p
-            className="ptta-label text-accent mb-2"
+            className="ptta-label text-accent mb-1 sm:mb-2"
             style={{ fontSize: "10pt" }}
           >
             Step {stepIndex + 1} / {STEPS.length}
           </p>
           <p
-            className="font-serif italic text-white/85 text-base md:text-lg leading-snug min-h-[2.75em]"
+            className="font-serif italic text-white/85 text-sm sm:text-base md:text-lg leading-snug min-h-[2.5em] sm:min-h-[2.75em]"
             style={{ letterSpacing: "-0.005em" }}
           >
             {currentStep.hint}
           </p>
         </div>
 
-        <div className="px-6 pt-5 pb-9">
-          <div className="grid grid-cols-4 gap-3">
+        <div className="shrink-0 px-4 sm:px-6 pt-3 sm:pt-5 pb-4 sm:pb-9">
+          <div className="grid grid-cols-4 gap-2 sm:gap-3">
             {STEPS.map((s, i) => (
               <ProgressRing
                 key={s.id}

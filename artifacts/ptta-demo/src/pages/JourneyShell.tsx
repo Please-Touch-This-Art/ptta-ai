@@ -35,7 +35,7 @@ const FADE = {
 } as const;
 
 // Compresses every per-stage animation timeline. 1 = original.
-const SPEED = 2.5;
+const SPEED = 1.25;
 
 // Mona Lisa → Leonardo, Van Gogh → Van Gogh, etc. Monuments fall back to a default.
 const ARTWORK_TO_ARTIST: Partial<Record<ModelId, ArtistId>> = {
@@ -82,16 +82,28 @@ export default function JourneyShell() {
     if (next) navigate(`/journey/${model.id}/${next.slug}`);
   }, [model, slug, navigate]);
 
-  const backToPicker = useCallback(() => navigate("/"), [navigate]);
+  // Back goes one step up the journey: previous process, or to the
+  // picker when on the first process.
+  const goBack = useCallback(() => {
+    if (!model) return;
+    const idx = PROCESSES.findIndex((p) => p.slug === slug);
+    if (idx <= 0) {
+      navigate("/demo");
+    } else {
+      navigate(`/journey/${model.id}/${PROCESSES[idx - 1].slug}`);
+    }
+  }, [model, slug, navigate]);
+
+  const backToPicker = useCallback(() => navigate("/demo"), [navigate]);
 
   if (!model) return null;
 
   return (
     <div className="ptta-root h-[100dvh] flex flex-col overflow-hidden bg-page text-ink">
-      <Header showBack backHref="/" tag={model.title.toUpperCase()} />
+      <Header showBack onBack={goBack} tag={model.title.toUpperCase()} />
       <ProcessStepper artworkId={model.id} activeSlug={slug} />
 
-      <div className="flex-1 min-h-0 relative">
+      <div className="flex-1 min-h-0 relative overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div key={slug} {...FADE} className="h-full">
             <ProcessBody
@@ -295,15 +307,15 @@ function ArtistProcess({
   }
 
   return (
-    <main className="h-full flex flex-col px-5 pt-4 pb-3 w-full max-w-[560px] md:max-w-[780px] lg:max-w-[880px] mx-auto min-h-0">
-      <div className="shrink-0 mb-3">
+    <main className="h-full flex flex-col px-4 sm:px-5 pt-3 sm:pt-4 pb-3 w-full max-w-[560px] md:max-w-[780px] lg:max-w-[880px] mx-auto min-h-0">
+      <div className="shrink-0 mb-2 sm:mb-3">
         <h1
-          className="font-serif text-xl md:text-2xl leading-tight"
+          className="font-serif text-lg sm:text-xl md:text-2xl leading-tight"
           style={{ letterSpacing: "-0.01em" }}
         >
           Talk to {model.artist.split(" ").slice(-1)[0]}.
         </h1>
-        <p className="text-muted-fg text-xs md:text-sm mt-0.5">
+        <p className="hidden sm:block text-muted-fg text-xs md:text-sm mt-0.5">
           Ask about a brushstroke, a memory, a dream. AI-interpreted, not
           historical fact.
         </p>
@@ -330,11 +342,16 @@ function ContinueStrip({
       type="button"
       onClick={onClick}
       aria-label={label}
-      className="fixed left-1/2 -translate-x-1/2 z-50 px-7 py-4 rounded-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-bold text-base md:text-lg shadow-xl shadow-orange-500/30 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+      className="fixed left-1/2 -translate-x-1/2 z-50 px-5 sm:px-6 py-3 sm:py-3.5 rounded-full bg-accent text-[13.5px] sm:text-base shadow-xl transition-transform hover:scale-[1.03] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent whitespace-nowrap overflow-hidden text-ellipsis"
       style={{
         bottom: "max(1.25rem, env(safe-area-inset-bottom) + 0.75rem)",
-        minHeight: 56,
-        letterSpacing: "-0.01em",
+        minHeight: 48,
+        maxWidth: "70vw",
+        letterSpacing: "-0.005em",
+        fontWeight: 400,
+        color: "#241A0E",
+        boxShadow:
+          "0 12px 34px -8px color-mix(in srgb, var(--color-accent) 45%, transparent)",
       }}
     >
       {label} →

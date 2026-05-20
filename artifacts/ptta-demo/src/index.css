@@ -484,12 +484,15 @@
     font-family: var(--app-font-mono-display);
     font-size: 11pt;
     text-transform: uppercase;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.14em;
     font-weight: 400;
     font-feature-settings: "kern", "liga", "calt", "ss03";
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+  @media (min-width: 640px) {
+    .ptta-label { letter-spacing: 0.22em; }
   }
 
   /* Maison-mono eyebrow — IBM Plex Mono, generously tracked, ultra-light
@@ -632,8 +635,11 @@ body {
    when the gallery theme is active. */
 .ptta-label {
   font-family: var(--app-font-mono-display) !important;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.14em;
   font-weight: 400;
+}
+@media (min-width: 640px) {
+  .ptta-label { letter-spacing: 0.22em; }
 }
 
 /* Carry the Gallery gradient through the inner demo screens. The journey

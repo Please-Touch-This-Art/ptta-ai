@@ -25,7 +25,7 @@ export default function ArtworkPicker() {
 
   return (
     <div className="ptta-root min-h-[100dvh] bg-page text-ink">
-      <Header tag="PLEASE TOUCH THIS ART" />
+      <Header showBack backHref="/" tag="PLEASE TOUCH THIS ART" />
 
       <div className="mx-auto w-full max-w-[1100px] px-5 md:px-8 pt-8 md:pt-10 pb-12">
         <div className="text-center mb-8 md:mb-10 max-w-[640px] mx-auto">

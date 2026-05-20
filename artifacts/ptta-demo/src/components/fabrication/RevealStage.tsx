@@ -11,15 +11,15 @@ export function RevealStage({ model }: Props) {
   const src = fabricationImage(model.id);
 
   return (
-    <div className="fixed inset-0 bg-stone-950 text-cream overflow-hidden">
+    <div className="absolute inset-0 bg-stone-950 text-cream overflow-hidden">
       {/* Image area — padded so the full photo always fits between the
           top and bottom overlays, preserving aspect ratio on any screen. */}
       <div
         className="absolute inset-0 flex items-center justify-center px-4"
         style={{
-          paddingTop: "calc(max(5.5rem, env(safe-area-inset-top) + 4.5rem))",
+          paddingTop: "1rem",
           paddingBottom:
-            "calc(max(11rem, env(safe-area-inset-bottom) + 10rem))",
+            "calc(max(10rem, env(safe-area-inset-bottom) + 9rem))",
         }}
       >
         {src ? (
@@ -53,14 +53,18 @@ export function RevealStage({ model }: Props) {
       >
         <div className="mx-auto w-full max-w-[440px] text-center">
           <p
-            className="ptta-label text-accent mb-2"
-            style={{ fontSize: "10pt" }}
+            className="font-serif italic text-white/95 mb-2 leading-snug"
+            style={{
+              fontSize: "clamp(1.25rem, 5vw, 1.65rem)",
+              letterSpacing: "-0.01em",
+              fontWeight: 400,
+            }}
           >
             This is how it looks in your hands
           </p>
           {model.commissionedBy && (
             <p
-              className="ptta-label text-white/60 mb-3"
+              className="ptta-label text-white/55 mb-3"
               style={{ fontSize: "9pt" }}
             >
               {model.commissionedBy}

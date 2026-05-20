@@ -270,56 +270,59 @@ export function AudioPlayer({ model }: Props) {
       {/* LEFT — rotating 3D model */}
       <section
         aria-label="Rotating 3D model of the artwork"
-        className="relative h-[34%] w-full shrink-0 md:h-full md:w-[42%]"
+        className="relative h-[42%] w-full shrink-0 md:h-full md:w-[42%]"
       >
         <ModelStage model={model} />
       </section>
 
       {/* RIGHT — audio guide + languages */}
-      <section className="flex min-h-0 flex-1 flex-col justify-center gap-6 overflow-y-auto px-7 py-6 md:px-12">
+      <section
+        className="flex min-h-0 flex-1 flex-col justify-start md:justify-center gap-5 md:gap-6 overflow-y-auto px-4 sm:px-7 pt-5 pb-28 md:px-12 md:py-6"
+      >
         <div className="w-full max-w-[640px]">
           <h1
             className="font-serif text-ink leading-[0.98]"
-            style={{ ...titleStyle, fontSize: "clamp(2.1rem, 4.4vw, 3.7rem)" }}
+            style={{ ...titleStyle, fontSize: "clamp(1.7rem, 6vw, 3.7rem)" }}
           >
             {model.title}
           </h1>
           <p
-            className="ptta-label text-muted-fg mt-3"
-            style={{ fontSize: "9pt", letterSpacing: "0.16em" }}
+            className="ptta-label text-muted-fg mt-2 sm:mt-3"
+            style={{ fontSize: "9pt", letterSpacing: "0.14em" }}
           >
             {model.artist} · {model.year}
           </p>
 
           {/* Transport */}
-          <div className="mt-7 flex items-center gap-4">
+          <div className="mt-5 sm:mt-7 flex items-center gap-2.5 sm:gap-4">
             <button
               type="button"
               onClick={handleReplay}
               aria-label="Replay from the start"
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-hairline text-muted-fg transition-colors hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full border border-hairline text-muted-fg transition-colors hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
-              <RotateCcw size={17} />
+              <RotateCcw size={16} />
             </button>
             <button
               type="button"
               onClick={handleBack15}
               aria-label="Back 15 seconds"
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-hairline text-muted-fg transition-colors hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full border border-hairline text-muted-fg transition-colors hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
-              <Rewind size={17} />
+              <Rewind size={16} />
             </button>
             <button
               type="button"
               onClick={handlePlayPause}
               aria-label={isPlaying ? "Pause audio" : "Play audio"}
               aria-pressed={isPlaying}
-              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-accent text-cream shadow-xl shadow-accent/30 transition-transform hover:scale-[1.04] active:scale-[0.96] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+              className="flex h-14 w-14 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-full bg-accent shadow-xl transition-transform hover:scale-[1.04] active:scale-[0.96] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+              style={{ color: "#241A0E" }}
             >
               {isPlaying ? (
-                <Pause size={24} fill="currentColor" />
+                <Pause size={22} fill="currentColor" />
               ) : (
-                <Play size={24} fill="currentColor" className="ml-1" />
+                <Play size={22} fill="currentColor" className="ml-1" />
               )}
             </button>
 
@@ -402,14 +405,14 @@ function LanguageRail() {
   return (
     <aside
       aria-label="Available audio languages"
-      className="w-full max-w-[640px] rounded-2xl border border-hairline bg-surface p-5"
+      className="w-full max-w-[640px] rounded-2xl border border-hairline bg-surface p-3 sm:p-5"
     >
-      <header className="mb-3">
+      <header className="mb-2 sm:mb-3">
         <p className="ptta-label text-accent" style={{ fontSize: "8.5pt" }}>
           Coming soon
         </p>
         <h2
-          className="font-serif text-ink text-lg md:text-xl leading-tight mt-0.5"
+          className="font-serif text-ink text-base sm:text-lg md:text-xl leading-tight mt-0.5"
           style={titleStyle}
         >
           Available languages
@@ -420,7 +423,7 @@ function LanguageRail() {
         {LANGUAGES.map((lang) => (
           <li key={lang.code}>
             <div
-              className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg border ${
+              className={`flex items-center justify-between gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg border ${
                 lang.active
                   ? "border-accent/40 bg-accent/10 text-ink"
                   : "border-hairline bg-page text-body-fg"
@@ -429,7 +432,7 @@ function LanguageRail() {
               <span className="flex items-center gap-2 min-w-0">
                 <span
                   aria-hidden="true"
-                  className="text-base leading-none shrink-0"
+                  className="text-sm sm:text-base leading-none shrink-0"
                   style={{ fontFamily: "system-ui, sans-serif" }}
                 >
                   {lang.flag}

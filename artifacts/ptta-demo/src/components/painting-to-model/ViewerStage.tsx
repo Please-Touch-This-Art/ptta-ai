@@ -124,7 +124,7 @@ export function ViewerStage({ model }: Props) {
   const orientation = model.orientation ?? "0 0 0";
 
   return (
-    <div className="fixed inset-0 bg-stone-950 text-stone-100 overflow-hidden">
+    <div className="absolute inset-0 bg-stone-950 text-stone-100 overflow-hidden">
       <model-viewer
         ref={viewerRef}
         alt={`3D tactile model of ${model.title} by ${model.artist}`}
