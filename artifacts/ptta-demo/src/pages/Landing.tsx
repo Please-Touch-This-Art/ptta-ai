@@ -75,11 +75,135 @@ function DotGrid({
 function Eyebrow({ children }: { children: ReactNode }) {
   return (
     <p
-      className="ptta-mono-eyebrow text-accent mb-3"
-      style={{ fontSize: "clamp(12px, 3.4vw, 13px)" }}
+      className="ptta-mono-eyebrow mb-3 font-medium"
+      style={{
+        fontSize: "clamp(13px, 3.6vw, 15px)",
+        color: "hsl(38, 95%, 52%)",
+      }}
     >
       {children}
     </p>
+  );
+}
+
+function ExperienceGallery() {
+  const trackRef = useRef<HTMLUListElement>(null);
+
+  const stateRef = useRef({
+    x: 0,
+    half: 0,
+    lastPointerX: 0,
+    lastFrameTime: 0,
+    activePointer: -1,
+  });
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const measure = () => {
+      stateRef.current.half = track.scrollWidth / 2;
+    };
+    measure();
+
+    const ro = new ResizeObserver(measure);
+    ro.observe(track);
+
+    const SECONDS_PER_LOOP = 45;
+    let rafId = 0;
+
+    const tick = (t: number) => {
+      const s = stateRef.current;
+      const dt = s.lastFrameTime ? (t - s.lastFrameTime) / 1000 : 0;
+      s.lastFrameTime = t;
+
+      if (s.half > 0) {
+        s.x -= (s.half / SECONDS_PER_LOOP) * dt;
+
+        if (s.x <= -s.half) s.x += s.half;
+        else if (s.x > 0) s.x -= s.half;
+      }
+
+      track.style.transform = `translate3d(${s.x}px, 0, 0)`;
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      ro.disconnect();
+    };
+  }, []);
+
+  const onPointerDown = (e: React.PointerEvent<HTMLUListElement>) => {
+    const s = stateRef.current;
+    s.activePointer = e.pointerId;
+    s.lastPointerX = e.clientX;
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {}
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLUListElement>) => {
+    const s = stateRef.current;
+    if (s.activePointer !== e.pointerId) return;
+    const dx = e.clientX - s.lastPointerX;
+    s.lastPointerX = e.clientX;
+    s.x += dx;
+  };
+  const endDrag = (e: React.PointerEvent<HTMLUListElement>) => {
+    const s = stateRef.current;
+    if (s.activePointer !== e.pointerId) return;
+    s.activePointer = -1;
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {}
+  };
+
+  return (
+    <div
+      className="relative overflow-hidden"
+      aria-label="Gallery of visitors exploring PTTA tactile models in museums"
+      style={{
+        maskImage:
+          "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+        WebkitMaskImage:
+          "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+      }}
+    >
+      <ul
+        ref={trackRef}
+        className="flex gap-3 md:gap-5 py-2 select-none cursor-grab active:cursor-grabbing"
+        style={{
+          width: "fit-content",
+          touchAction: "pan-y",
+          willChange: "transform",
+        }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+      >
+        {[...PEOPLE_IMAGES, ...PEOPLE_IMAGES].map((src, i) => (
+          <li
+            key={`${src}-${i}`}
+            className="shrink-0 w-[200px] md:w-[280px] aspect-[3/4] overflow-hidden rounded-2xl"
+            style={{
+              border: "1px solid var(--color-hairline)",
+              boxShadow: "0 18px 40px -22px rgba(0,0,0,0.7)",
+            }}
+          >
+            <img
+              src={src}
+              alt=""
+              aria-hidden={i >= PEOPLE_IMAGES.length}
+              loading="lazy"
+              draggable={false}
+              className="h-full w-full object-cover pointer-events-none"
+            />
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -87,17 +211,17 @@ const STEPS = [
   {
     n: "01",
     t: "Capture the painting",
-    d: "We start from a high-resolution scan of the original museum artwork, capturing every brushstroke and layer of the composition.",
+    d: "A high-resolution scan captures every brushstroke.",
   },
   {
     n: "02",
     t: "AI sculpts the depth",
-    d: "Our AI reads that flat painting and converts it into a 3D depth model, turning colour, contrast and brushwork into touchable relief, designed for fingers rather than eyes.",
+    d: "Our AI turns the flat image into depth: brushwork becomes relief, made for fingers, not eyes.",
   },
   {
     n: "03",
     t: "Print & narrate",
-    d: "The model is 3D-printed as a durable tactile relief and paired with a custom audio guide that tells the artwork's story.",
+    d: "We 3D print a durable relief and add audio that tells its story.",
   },
 ];
 
@@ -392,14 +516,14 @@ export default function Landing() {
                 className="font-serif text-ink leading-[1.05] mb-6"
                 style={{ ...tight, fontSize: "clamp(2.2rem, 5.5vw, 3.75rem)" }}
               >
-                Art you can read with your hands.
+                Art, made tactile.
               </h2>
               <p className="text-body-fg text-lg leading-relaxed">
-                We turn museum artworks, from paintings to sculptures, into{" "}
-                <strong className="font-bold text-ink">3D printed tactile models</strong>{" "}
-                with a{" "}
-                <strong className="font-bold text-ink">custom audio guide</strong>,
-                made with blind collaborators for all visitors.
+                We turn paintings and sculptures into{" "}
+                <strong className="font-bold text-ink">3D printed tactile models</strong>,
+                each with its own{" "}
+                <strong className="font-bold text-ink">audio guide</strong>. Built
+                with blind collaborators, for everyone.
               </p>
             </div>
 
@@ -496,11 +620,8 @@ export default function Landing() {
               A better product, at a fraction of the cost and time.
             </h2>
             <p className="text-body-fg text-base md:text-lg leading-relaxed">
-              Wood-carved or clay-sculpted tactile reliefs with audio guides
-              run upwards of{" "}
-              <strong className="font-bold text-ink">€35,000</strong> and{" "}
-              <strong className="font-bold text-ink">5 months</strong> per
-              piece. PTTA closes this gap.
+              Hand-carved reliefs are slow and costly. We make them faster, for
+              less.
             </p>
           </div>
 
@@ -602,49 +723,15 @@ export default function Landing() {
               className="font-serif text-ink leading-[1.08] mb-5"
               style={{ ...tight, fontSize: "clamp(2rem, 5vw, 3.25rem)" }}
             >
-              Read with your hands. Hear the story.
+              Art you explore by hand.
             </h2>
             <p className="text-body-fg text-lg leading-relaxed max-w-2xl mx-auto">
-              Each piece is a tactile 3D model, shaped with blind
-              collaborators. A custom audio guide narrates the artwork as
-              your fingers explore it.
+              A visitor traces a starry sky or a stranger&rsquo;s face by hand,
+              while the story plays in their ears.
             </p>
           </div>
 
-          <div
-            className="relative overflow-hidden"
-            aria-label="Gallery of visitors exploring PTTA tactile models in museums"
-            style={{
-              maskImage:
-                "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
-              WebkitMaskImage:
-                "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
-            }}
-          >
-            <ul
-              className="ptta-marquee flex gap-3 md:gap-5 py-2"
-              style={{ width: "fit-content" }}
-            >
-              {[...PEOPLE_IMAGES, ...PEOPLE_IMAGES].map((src, i) => (
-                <li
-                  key={`${src}-${i}`}
-                  className="shrink-0 w-[200px] md:w-[280px] aspect-[3/4] overflow-hidden rounded-2xl"
-                  style={{
-                    border: "1px solid var(--color-hairline)",
-                    boxShadow: "0 18px 40px -22px rgba(0,0,0,0.7)",
-                  }}
-                >
-                  <img
-                    src={src}
-                    alt=""
-                    aria-hidden={i >= PEOPLE_IMAGES.length}
-                    loading="lazy"
-                    className="h-full w-full object-cover"
-                  />
-                </li>
-              ))}
-            </ul>
-          </div>
+          <ExperienceGallery />
         </section>
 
         {/* SEE IT (video) */}
@@ -677,9 +764,7 @@ export default function Landing() {
               />
             </div>
             <p className="text-muted-fg mt-3 text-sm text-center">
-              Footage from museum installations: blind and visually impaired
-              visitors exploring tactile models, sharing their testimonials
-              and reactions.
+              Real visitors. Real museums.
             </p>
           </div>
         </section>
@@ -698,45 +783,44 @@ export default function Landing() {
             </h2>
           </div>
 
-          <dl className="flex flex-col md:flex-row md:flex-wrap items-center md:justify-center gap-3 md:gap-6">
+          <dl className="flex flex-col md:flex-row md:flex-wrap items-center md:justify-center gap-3 md:gap-6 w-full">
             {/* Museums */}
-            <div className="flex flex-col items-center text-center">
+            <div className="flex flex-col items-center text-center w-full md:w-auto">
               <div
-                className="rounded-2xl bg-white inline-flex items-center justify-center gap-7 px-7 py-3"
+                className="rounded-2xl bg-white flex md:inline-flex items-center justify-center gap-4 md:gap-7 px-4 md:px-7 py-3 w-full md:w-auto max-w-full"
                 style={{
                   minHeight: 150,
-                  minWidth: 240,
                   boxShadow: "0 18px 40px -22px rgba(0,0,0,0.55)",
                 }}
               >
                 {/* Left: Lübecker on top, Overbeck below */}
-                <div className="flex flex-col items-center gap-5">
+                <div className="flex flex-col items-center gap-3 md:gap-5 min-w-0">
                   <img
                     src={`${BASE}/logos/luebecker-museum.svg`}
                     alt="Die Lübecker Museen"
                     loading="lazy"
-                    className="block w-auto h-12 object-contain"
+                    className="block max-w-full w-auto h-9 md:h-12 object-contain"
                   />
                   <img
                     src={`${BASE}/logos/overbeck-museum.png`}
                     alt="Overbeck Museum"
                     loading="lazy"
-                    className="block w-auto h-12 object-contain"
+                    className="block max-w-full w-auto h-9 md:h-12 object-contain"
                   />
                 </div>
                 {/* Right: St. Nikolai + Tvibit in a row */}
-                <div className="flex items-center gap-5">
+                <div className="flex items-center gap-3 md:gap-5 min-w-0">
                   <img
                     src={`${BASE}/logos/st-nikolai-church-museum.png`}
                     alt="St. Nikolai Church Museum"
                     loading="lazy"
-                    className="block w-auto h-20 object-contain"
+                    className="block max-w-full w-auto h-14 md:h-20 object-contain"
                   />
                   <img
                     src={`${BASE}/logos/tvibit.webp`}
                     alt="Tvibit"
                     loading="lazy"
-                    className="block w-auto h-14 object-contain"
+                    className="block max-w-full w-auto h-10 md:h-14 object-contain"
                   />
                 </div>
               </div>
@@ -757,12 +841,11 @@ export default function Landing() {
             </div>
 
             {/* Accessibility partners */}
-            <div className="flex flex-col items-center text-center">
+            <div className="flex flex-col items-center text-center w-full md:w-auto">
               <div
-                className="rounded-2xl bg-white inline-flex items-center justify-center gap-8 px-7 py-3"
+                className="rounded-2xl bg-white flex md:inline-flex items-center justify-center gap-5 md:gap-8 px-4 md:px-7 py-3 w-full md:w-auto max-w-full"
                 style={{
                   minHeight: 150,
-                  minWidth: 240,
                   boxShadow: "0 18px 40px -22px rgba(0,0,0,0.55)",
                 }}
               >
@@ -770,13 +853,13 @@ export default function Landing() {
                   src={`${BASE}/logos/bsvh.png`}
                   alt="BSVH, Blinden- und Sehbehindertenverein Hamburg"
                   loading="lazy"
-                  className="block w-auto h-16 object-contain"
+                  className="block max-w-full w-auto h-12 md:h-16 object-contain"
                 />
                 <img
                   src={`${BASE}/logos/bsvb.png`}
                   alt="BSVB, Blinden- und Sehbehindertenverein Bremen"
                   loading="lazy"
-                  className="block w-auto h-16 object-contain"
+                  className="block max-w-full w-auto h-12 md:h-16 object-contain"
                 />
               </div>
               <dd className="mt-5">

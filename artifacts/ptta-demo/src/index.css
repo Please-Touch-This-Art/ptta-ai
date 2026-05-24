@@ -92,6 +92,30 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Test Untitled Sans";
+  src: url("/fonts/TestUntitledSans-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Test Untitled Sans";
+  src: url("/fonts/TestUntitledSans-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Test Untitled Sans";
+  src: url("/fonts/TestUntitledSans-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -149,7 +173,9 @@
   --font-mono: var(--app-font-mono);
 
   --color-cream: #FFFAEE;
-  --color-accent: #D64324;
+  /* Reference: previous terracotta accent was #D64324 (hsl(11, 70%, 49%)). */
+  --ptta-accent-orange-legacy: #D64324;
+  --color-accent: hsl(20, 95%, 57%);
   --color-accent-foreground: #FFFAEE;
 
   /* Theme-aware semantic tokens — flip via .dark on <html> */
@@ -254,6 +280,26 @@
   --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
   --destructive-border: hsl(var(--destructive));
   --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+}
+
+/* Editorial font theme — toggled via the header dropdown.
+   Swaps the body sans (Aeonik) for Test Untitled Sans and the display
+   serif (Instrument Serif) for Fraunces. The mono / wordmark stacks
+   (used by the "PLEASE TOUCH THIS ART" label and section eyebrows) are
+   deliberately untouched. */
+html.font-editorial {
+  --app-font-sans: 'Test Untitled Sans', 'Aeonik', 'Helvetica', 'Arial', system-ui, sans-serif;
+  --app-font-serif: 'Fraunces', 'GT Sectra', 'EB Garamond', 'Cormorant Garamond', 'Georgia', serif;
+}
+html.font-editorial .font-serif {
+  font-variation-settings: "opsz" 96;
+  letter-spacing: -0.005em;
+  font-feature-settings: "ss01" on, "ss02" on;
+}
+html.font-editorial .font-serif em,
+html.font-editorial .font-serif i,
+html.font-editorial em.italic {
+  font-variation-settings: normal;
 }
 
 .dark {
@@ -416,10 +462,10 @@
      Holds opacity while the ring grows, then fades — so it's visible instead
      of lost in a spread/opacity inverse trade-off. */
   @keyframes ptta-cta-halo {
-    0%   { box-shadow: 0 0 0 0    rgba(214, 67, 36, 0.75); }
-    25%  { box-shadow: 0 0 0 8px  rgba(214, 67, 36, 0.60); }
-    55%  { box-shadow: 0 0 0 20px rgba(214, 67, 36, 0);    }
-    100% { box-shadow: 0 0 0 20px rgba(214, 67, 36, 0);    }
+    0%   { box-shadow: 0 0 0 0    rgba(250, 111, 41, 0.75); }
+    25%  { box-shadow: 0 0 0 8px  rgba(250, 111, 41, 0.60); }
+    55%  { box-shadow: 0 0 0 20px rgba(250, 111, 41, 0);    }
+    100% { box-shadow: 0 0 0 20px rgba(250, 111, 41, 0);    }
   }
   .ptta-cta-halo {
     animation: ptta-cta-halo 2s ease-out infinite;
@@ -691,14 +737,3 @@ body {
   .ptta-cta-attn { animation: none; }
 }
 
-/* Continuous horizontal marquee for the Experience gallery. The list is
-   rendered twice so a 50% translate creates a seamless loop. */
-@keyframes ptta-marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-.ptta-marquee {
-  animation: ptta-marquee 45s linear infinite;
-  will-change: transform;
-}
-.ptta-marquee:hover { animation-play-state: paused; }

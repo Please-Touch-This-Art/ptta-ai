@@ -61,9 +61,9 @@ const FILTER_TRANSITION_BASE = 1.1; // seconds
 const FADE_TRANSITION_BASE = 0.85; // seconds
 const SCAN_SWEEP_BASE = 2.8; // seconds
 
-// Accent red used throughout the rest of the app.
-const ACCENT = "#D64324";
-const ACCENT_RGB = "214,67,36";
+// Accent orange used throughout the rest of the app.
+const ACCENT = "hsl(20, 95%, 57%)";
+const ACCENT_RGB = "250,111,41";
 
 export function ProcessingStage({
   model,
@@ -132,7 +132,7 @@ export function ProcessingStage({
               durationSeconds={fadeDur}
               style={{
                 background:
-                  "radial-gradient(ellipse 58% 52% at 50% 42%, rgba(254,240,138,0.85) 0%, rgba(214,67,36,0.75) 30%, rgba(120,18,6,0.55) 65%, rgba(12,10,9,0.5) 100%)",
+                  "radial-gradient(ellipse 58% 52% at 50% 42%, rgba(254,240,138,0.85) 0%, rgba(250,111,41,0.75) 30%, rgba(120,18,6,0.55) 65%, rgba(12,10,9,0.5) 100%)",
                 mixBlendMode: "color",
               }}
             />

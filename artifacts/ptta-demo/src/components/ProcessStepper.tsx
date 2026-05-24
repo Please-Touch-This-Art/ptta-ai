@@ -17,14 +17,29 @@ export const PROCESSES: readonly ProcessMeta[] = [
   { slug: "artist", label: "Artist Persona", shortLabel: "Artist" },
 ] as const;
 
+// Monuments are buildings, not paintings, so there is no artist to converse
+// with — their journey ends at the audio guide.
+export function processesForType(
+  type: "painting" | "monument",
+): readonly ProcessMeta[] {
+  return type === "monument"
+    ? PROCESSES.filter((p) => p.slug !== "artist")
+    : PROCESSES;
+}
+
 interface Props {
   artworkId: ModelId;
   activeSlug: ProcessSlug;
+  processes?: readonly ProcessMeta[];
 }
 
-export function ProcessStepper({ artworkId, activeSlug }: Props) {
+export function ProcessStepper({
+  artworkId,
+  activeSlug,
+  processes = PROCESSES,
+}: Props) {
   const [, navigate] = useLocation();
-  const activeIdx = PROCESSES.findIndex((p) => p.slug === activeSlug);
+  const activeIdx = processes.findIndex((p) => p.slug === activeSlug);
 
   return (
     <nav
@@ -33,7 +48,7 @@ export function ProcessStepper({ artworkId, activeSlug }: Props) {
     >
       <div className="mx-auto w-full max-w-[640px] px-2 sm:px-4 py-2 sm:py-2.5 flex justify-center overflow-x-auto">
         <ol className="flex items-center justify-center flex-nowrap">
-          {PROCESSES.map((p, i) => {
+          {processes.map((p, i) => {
             const isActive = p.slug === activeSlug;
             const isDone = i < activeIdx;
             return (
@@ -42,7 +57,7 @@ export function ProcessStepper({ artworkId, activeSlug }: Props) {
                   type="button"
                   onClick={() => navigate(`/journey/${artworkId}/${p.slug}`)}
                   aria-current={isActive ? "step" : undefined}
-                  aria-label={`Step ${i + 1} of ${PROCESSES.length}: ${p.label}`}
+                  aria-label={`Step ${i + 1} of ${processes.length}: ${p.label}`}
                   className={cn(
                     "inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full transition-colors whitespace-nowrap",
                     "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
@@ -80,7 +95,7 @@ export function ProcessStepper({ artworkId, activeSlug }: Props) {
                     {p.shortLabel}
                   </span>
                 </button>
-                {i < PROCESSES.length - 1 && (
+                {i < processes.length - 1 && (
                   <span
                     aria-hidden
                     className={cn(

@@ -61,8 +61,8 @@ const STEP_MS_BASE = 2500;
 const FILTER_TRANSITION_BASE = 1.1; // seconds
 const FADE_TRANSITION_BASE = 0.85; // seconds
 const SCAN_SWEEP_BASE = 2.8; // seconds
-const ACCENT = "#D64324";
-const ACCENT_RGB = "214,67,36";
+const ACCENT = "hsl(20, 95%, 57%)";
+const ACCENT_RGB = "250,111,41";
 
 export function AudioProcessingStage({
   model,

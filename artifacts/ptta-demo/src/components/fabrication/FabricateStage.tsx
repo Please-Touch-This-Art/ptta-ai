@@ -160,7 +160,7 @@ export function FabricateStage({
               top: `${hiddenPct}%`,
               height: 18,
               background:
-                "linear-gradient(to bottom, rgba(214,67,36,0.4), transparent)",
+                "linear-gradient(to bottom, rgba(250,111,41,0.4), transparent)",
               transform: "translateY(-18px)",
               transition: "top 0.08s linear",
               mixBlendMode: "screen",
@@ -173,8 +173,8 @@ export function FabricateStage({
               top: `${hiddenPct}%`,
               height: 2,
               background:
-                "linear-gradient(90deg, transparent, #D64324, transparent)",
-              boxShadow: "0 0 10px #D64324, 0 0 20px rgba(214,67,36,0.5)",
+                "linear-gradient(90deg, transparent, hsl(20, 95%, 57%), transparent)",
+              boxShadow: "0 0 10px hsl(20, 95%, 57%), 0 0 20px hsl(20, 95%, 57% / 0.5)",
               transform: "translateY(-1px)",
               transition: "top 0.08s linear",
             }}
@@ -215,7 +215,7 @@ export function FabricateStage({
                 bottom: -4,
                 width: 3,
                 height: 5,
-                boxShadow: "0 0 6px #D64324, 0 0 12px #D64324",
+                boxShadow: "0 0 6px hsl(20, 95%, 57%), 0 0 12px hsl(20, 95%, 57%)",
               }}
             />
             <span
@@ -231,7 +231,7 @@ export function FabricateStage({
                 width: 16,
                 height: 6,
                 background:
-                  "radial-gradient(ellipse, rgba(214,67,36,0.55), transparent 70%)",
+                  "radial-gradient(ellipse, rgba(250,111,41,0.55), transparent 70%)",
               }}
             />
           </motion.div>

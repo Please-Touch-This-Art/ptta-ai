@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useRoute } from "wouter";
 import { AnimatePresence, motion } from "framer-motion";
 import { MODELS, type ModelEntry, type ModelId } from "@/content/models";
@@ -7,8 +7,10 @@ import { Header } from "@/components/Header";
 import {
   ProcessStepper,
   PROCESSES,
+  processesForType,
   type ProcessSlug,
 } from "@/components/ProcessStepper";
+import { JourneyArtworkBar } from "@/components/JourneyArtworkBar";
 
 // Process stage components — same building blocks the standalone pages used.
 import { ProcessingStage } from "@/components/painting-to-model/ProcessingStage";
@@ -20,6 +22,8 @@ import { AudioProcessingStage } from "@/components/audio-guide/AudioProcessingSt
 import { AudioPlayer } from "@/components/audio-guide/AudioPlayer";
 import { ArtistPersona } from "@/components/future/artist-persona/ArtistPersona";
 import { hasCompleted, markCompleted } from "@/lib/journeyMemory";
+import { fabricationAssetUrls } from "@/content/fabrication-images";
+import { preloadImages } from "@/lib/preloadImages";
 
 const PROCESS_SLUGS = new Set<ProcessSlug>(PROCESSES.map((p) => p.slug));
 
@@ -67,41 +71,78 @@ export default function JourneyShell() {
   const model = params
     ? MODELS.find((m) => m.id === params.artworkId)
     : undefined;
-  const slug: ProcessSlug = isProcessSlug(params?.processSlug)
+
+  // Steps available for this artwork (monuments have no artist step).
+  const processes = useMemo(
+    () => (model ? processesForType(model.type) : PROCESSES),
+    [model],
+  );
+
+  const requestedSlug: ProcessSlug = isProcessSlug(params?.processSlug)
     ? (params!.processSlug as ProcessSlug)
+    : "model";
+  // Clamp to a step this artwork actually has.
+  const slug: ProcessSlug = processes.some((p) => p.slug === requestedSlug)
+    ? requestedSlug
     : "model";
 
   useEffect(() => {
     if (params && !model) navigate("/");
   }, [params, model, navigate]);
 
+  // Warm the heavy Fabrication renders in the background while the user is on
+  // the earlier model step, so that stage paints instantly instead of popping
+  // in mid-animation. Deferred briefly so the model step's own assets load
+  // first.
+  useEffect(() => {
+    if (!model || slug !== "model") return;
+    const urls = fabricationAssetUrls(model.id);
+    const t = window.setTimeout(() => preloadImages(urls), 600);
+    return () => window.clearTimeout(t);
+  }, [model, slug]);
+
+  // If the URL asks for a step this artwork doesn't have (e.g. a monument
+  // routed to /artist), correct the URL instead of rendering a mismatch.
+  useEffect(() => {
+    if (model && requestedSlug !== slug) {
+      navigate(`/journey/${model.id}/${slug}`, { replace: true });
+    }
+  }, [model, requestedSlug, slug, navigate]);
+
   const advanceToNext = useCallback(() => {
     if (!model) return;
-    const idx = PROCESSES.findIndex((p) => p.slug === slug);
-    const next = PROCESSES[idx + 1];
+    const idx = processes.findIndex((p) => p.slug === slug);
+    const next = processes[idx + 1];
     if (next) navigate(`/journey/${model.id}/${next.slug}`);
-  }, [model, slug, navigate]);
+  }, [model, processes, slug, navigate]);
 
   // Back goes one step up the journey: previous process, or to the
   // picker when on the first process.
   const goBack = useCallback(() => {
     if (!model) return;
-    const idx = PROCESSES.findIndex((p) => p.slug === slug);
+    const idx = processes.findIndex((p) => p.slug === slug);
     if (idx <= 0) {
       navigate("/demo");
     } else {
-      navigate(`/journey/${model.id}/${PROCESSES[idx - 1].slug}`);
+      navigate(`/journey/${model.id}/${processes[idx - 1].slug}`);
     }
-  }, [model, slug, navigate]);
+  }, [model, processes, slug, navigate]);
 
   const backToPicker = useCallback(() => navigate("/demo"), [navigate]);
 
   if (!model) return null;
 
+  const isLastProcess = processes[processes.length - 1].slug === slug;
+
   return (
     <div className="ptta-root h-[100dvh] flex flex-col overflow-hidden bg-page text-ink">
       <Header showBack onBack={goBack} tag={model.title.toUpperCase()} />
-      <ProcessStepper artworkId={model.id} activeSlug={slug} />
+      <JourneyArtworkBar currentId={model.id} />
+      <ProcessStepper
+        artworkId={model.id}
+        activeSlug={slug}
+        processes={processes}
+      />
 
       <div className="flex-1 min-h-0 relative overflow-hidden">
         <AnimatePresence mode="wait">
@@ -111,6 +152,7 @@ export default function JourneyShell() {
               model={model}
               onComplete={advanceToNext}
               onBackToPicker={backToPicker}
+              isLastProcess={isLastProcess}
             />
           </motion.div>
         </AnimatePresence>
@@ -124,11 +166,13 @@ function ProcessBody({
   model,
   onComplete,
   onBackToPicker,
+  isLastProcess,
 }: {
   slug: ProcessSlug;
   model: ModelEntry;
   onComplete: () => void;
   onBackToPicker: () => void;
+  isLastProcess: boolean;
 }) {
   switch (slug) {
     case "model":
@@ -153,6 +197,7 @@ function ProcessBody({
           model={model}
           onComplete={onComplete}
           onBackToPicker={onBackToPicker}
+          isLastProcess={isLastProcess}
         />
       );
     case "artist":
@@ -240,7 +285,12 @@ function FabricationProcess({
 }
 
 // ─── Process 3: Audio Guide ───────────────────────────────────────────────────
-function AudioProcess({ model, onComplete, onBackToPicker }: ProcessProps) {
+function AudioProcess({
+  model,
+  onComplete,
+  onBackToPicker,
+  isLastProcess,
+}: ProcessProps & { isLastProcess: boolean }) {
   const [stage, setStage] = useState<"processing" | "player">(() =>
     hasCompleted(model.id, "audio") ? "player" : "processing",
   );
@@ -263,62 +313,49 @@ function AudioProcess({ model, onComplete, onBackToPicker }: ProcessProps) {
   return (
     <>
       <AudioPlayer model={model} onBack={onBackToPicker} />
-      <ContinueStrip label="Next: Artist Persona" onClick={onComplete} />
+      {isLastProcess ? (
+        <ContinueStrip label="Explore another artwork" onClick={onBackToPicker} />
+      ) : (
+        <ContinueStrip label="Next: Artist Persona" onClick={onComplete} />
+      )}
     </>
   );
 }
 
-// ─── Process 4: Artist Persona ────────────────────────────────────────────────
+// ─── Process 4: Artist Persona (paintings only) ───────────────────────────────
 function ArtistProcess({
   model,
+  onBackToPicker,
 }: {
   model: ModelEntry;
   onBackToPicker: () => void;
 }) {
-  const matchedArtist = ARTWORK_TO_ARTIST[model.id];
-
-  if (!matchedArtist) {
-    const isMonument = model.type === "monument";
-    return (
-      <main className="flex-1 px-5 py-12 w-full max-w-[640px] mx-auto text-center">
-        <h1
-          className="font-serif text-2xl md:text-3xl leading-tight mb-3"
-          style={{ letterSpacing: "-0.01em" }}
-        >
-          No painter to talk to.
-        </h1>
-        <p className="text-body-fg text-sm md:text-base">
-          {isMonument ? (
-            <>
-              {model.title} is a monument, not a painting, so there&apos;s no
-              single artist persona to converse with. Pick a painting from
-              the gallery to chat with its creator.
-            </>
-          ) : (
-            <>
-              An AI persona for {model.artist} isn&apos;t available yet.
-              We&apos;re still training {model.artist.split(" ").slice(-1)[0]}
-              &apos;s voice. Check back soon.
-            </>
-          )}
-        </p>
-      </main>
-    );
-  }
+  // Every painting maps to an artist; the default is a defensive fallback.
+  const matchedArtist = ARTWORK_TO_ARTIST[model.id] ?? "van-gogh";
+  const lastName = model.artist.split(" ").slice(-1)[0];
 
   return (
     <main className="h-full flex flex-col px-4 sm:px-5 pt-3 sm:pt-4 pb-3 w-full max-w-[560px] md:max-w-[780px] lg:max-w-[880px] mx-auto min-h-0">
-      <div className="shrink-0 mb-2 sm:mb-3">
-        <h1
-          className="font-serif text-lg sm:text-xl md:text-2xl leading-tight"
-          style={{ letterSpacing: "-0.01em" }}
+      <div className="shrink-0 mb-2 sm:mb-3 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h1
+            className="font-serif text-lg sm:text-xl md:text-2xl leading-tight"
+            style={{ letterSpacing: "-0.01em" }}
+          >
+            Talk to {lastName}.
+          </h1>
+          <p className="hidden sm:block text-muted-fg text-xs md:text-sm mt-0.5">
+            Ask about a brushstroke, a memory, a dream. AI-interpreted, not
+            historical fact.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={onBackToPicker}
+          className="shrink-0 rounded-full border border-hairline px-3 py-1.5 text-xs font-medium text-muted-fg transition-colors hover:text-ink hover:border-ink/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent whitespace-nowrap"
         >
-          Talk to {model.artist.split(" ").slice(-1)[0]}.
-        </h1>
-        <p className="hidden sm:block text-muted-fg text-xs md:text-sm mt-0.5">
-          Ask about a brushstroke, a memory, a dream. AI-interpreted, not
-          historical fact.
-        </p>
+          Explore another artwork →
+        </button>
       </div>
 
       <ArtistPersona

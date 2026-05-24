@@ -401,54 +401,67 @@ export function AudioPlayer({ model }: Props) {
   );
 }
 
+function LanguageChip({ lang }: { lang: Language }) {
+  return (
+    <li>
+      <div
+        className={`flex items-center justify-between gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg border ${
+          lang.active
+            ? "border-accent/40 bg-accent/10 text-ink"
+            : "border-hairline bg-page text-body-fg"
+        }`}
+      >
+        <span className="flex items-center gap-2 min-w-0">
+          <span
+            aria-hidden="true"
+            className="text-sm sm:text-base leading-none shrink-0"
+            style={{ fontFamily: "system-ui, sans-serif" }}
+          >
+            {lang.flag}
+          </span>
+          <span className="text-xs font-medium truncate">{lang.name}</span>
+        </span>
+        {lang.active && (
+          <span
+            aria-hidden
+            className="w-1.5 h-1.5 rounded-full bg-accent shrink-0"
+          />
+        )}
+      </div>
+    </li>
+  );
+}
+
 function LanguageRail() {
+  const available = LANGUAGES.filter((lang) => lang.active);
+  const comingSoon = LANGUAGES.filter((lang) => !lang.active);
+
   return (
     <aside
-      aria-label="Available audio languages"
+      aria-label="Audio guide languages"
       className="w-full max-w-[640px] rounded-2xl border border-hairline bg-surface p-3 sm:p-5"
     >
-      <header className="mb-2 sm:mb-3">
-        <p className="ptta-label text-accent" style={{ fontSize: "8.5pt" }}>
-          Coming soon
-        </p>
-        <h2
-          className="font-serif text-ink text-base sm:text-lg md:text-xl leading-tight mt-0.5"
-          style={titleStyle}
-        >
-          Available languages
-        </h2>
-      </header>
+      <h2
+        className="font-serif text-ink text-base sm:text-lg md:text-xl leading-tight"
+        style={titleStyle}
+      >
+        Available languages
+      </h2>
+      <ul className="mt-2 sm:mt-3 grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+        {available.map((lang) => (
+          <LanguageChip key={lang.code} lang={lang} />
+        ))}
+      </ul>
 
-      <ul className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
-        {LANGUAGES.map((lang) => (
-          <li key={lang.code}>
-            <div
-              className={`flex items-center justify-between gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg border ${
-                lang.active
-                  ? "border-accent/40 bg-accent/10 text-ink"
-                  : "border-hairline bg-page text-body-fg"
-              }`}
-            >
-              <span className="flex items-center gap-2 min-w-0">
-                <span
-                  aria-hidden="true"
-                  className="text-sm sm:text-base leading-none shrink-0"
-                  style={{ fontFamily: "system-ui, sans-serif" }}
-                >
-                  {lang.flag}
-                </span>
-                <span className="text-xs font-medium truncate">
-                  {lang.name}
-                </span>
-              </span>
-              {lang.active && (
-                <span
-                  aria-hidden
-                  className="w-1.5 h-1.5 rounded-full bg-accent shrink-0"
-                />
-              )}
-            </div>
-          </li>
+      <h2
+        className="font-serif text-ink text-base sm:text-lg md:text-xl leading-tight mt-4 sm:mt-5"
+        style={titleStyle}
+      >
+        Coming soon
+      </h2>
+      <ul className="mt-2 sm:mt-3 grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+        {comingSoon.map((lang) => (
+          <LanguageChip key={lang.code} lang={lang} />
         ))}
       </ul>
     </aside>

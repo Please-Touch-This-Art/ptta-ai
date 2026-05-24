@@ -6,7 +6,7 @@ import { AudioDescriberCard } from "@/components/future/concept-cards/AudioDescr
 export default function FutureFeatures() {
   return (
     <div className="ptta-root min-h-screen bg-page text-ink flex flex-col">
-      <Header showBack backHref="/demo-hub" />
+      <Header showBack backHref="/demo" />
       <main className="flex-1 px-5 py-8 w-full max-w-[560px] md:max-w-[780px] lg:max-w-[960px] mx-auto">
         <SectionLabel label="Future" tag="Module" />
         <h1

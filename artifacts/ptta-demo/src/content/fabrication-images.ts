@@ -87,6 +87,22 @@ export function polishRender(id: ModelId): string | undefined {
 }
 
 /**
+ * Every image used across the Fabricate → Polish → Reveal flow for a model.
+ * Used to warm these (heavy) renders in the background before the user
+ * reaches the Fabrication stage.
+ */
+export function fabricationAssetUrls(id: ModelId): string[] {
+  const urls: string[] = [];
+  const renders = fabricateRenders(id);
+  if (renders) urls.push(...renders);
+  const polish = polishRender(id);
+  if (polish) urls.push(polish);
+  const reveal = fabricationImage(id);
+  if (reveal) urls.push(reveal);
+  return urls;
+}
+
+/**
  * Deterministic job-docket fields. Kept so FabricateStage / other bits
  * can display a stable "layer N of 240" / "Bay 02" without persisting
  * any state between visits.
