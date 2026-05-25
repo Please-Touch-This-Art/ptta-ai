@@ -37,15 +37,13 @@ const PEOPLE_IMAGES = [
 
 const tight = { letterSpacing: "-0.02em" } as const;
 
-function DotGrid({
+function DotLine({
   total,
   filled,
-  cols,
   accent = false,
 }: {
   total: number;
   filled: number;
-  cols: number;
   accent?: boolean;
 }) {
   const filledColor = accent
@@ -54,17 +52,13 @@ function DotGrid({
   const emptyColor = "rgba(242,233,214,0.10)";
   return (
     <div
-      className="grid w-fit"
-      style={{
-        gridTemplateColumns: `repeat(${cols}, 7px)`,
-        gap: "5px",
-      }}
+      className="flex flex-nowrap gap-[2px] md:gap-[5px]"
       aria-hidden
     >
       {Array.from({ length: total }).map((_, i) => (
         <span
           key={i}
-          className="block w-[7px] h-[7px] rounded-full"
+          className="block w-[6px] h-[6px] md:w-[10px] md:h-[10px] rounded-full shrink-0"
           style={{ background: i < filled ? filledColor : emptyColor }}
         />
       ))}
@@ -72,13 +66,19 @@ function DotGrid({
   );
 }
 
-function Eyebrow({ children }: { children: ReactNode }) {
+function Eyebrow({
+  children,
+  color,
+}: {
+  children: ReactNode;
+  color?: string;
+}) {
   return (
     <p
       className="ptta-mono-eyebrow mb-3 font-medium"
       style={{
         fontSize: "clamp(13px, 3.6vw, 15px)",
-        color: "hsl(38, 95%, 52%)",
+        color: color ?? "hsl(38, 95%, 52%)",
       }}
     >
       {children}
@@ -612,103 +612,64 @@ export default function Landing() {
           className="mx-auto w-full max-w-[480px] md:max-w-4xl px-5 md:px-8 py-12 md:py-16"
         >
           <div className="text-center max-w-2xl mx-auto mb-9 md:mb-10">
-            <Eyebrow>The difference</Eyebrow>
+            <Eyebrow color="var(--color-accent)">The difference</Eyebrow>
             <h2
               className="font-serif text-ink leading-[1.06] mb-4"
               style={{ ...tight, fontSize: "clamp(2rem, 5vw, 3.25rem)" }}
             >
-              A better product, at a fraction of the cost and time.
+              A better product, faster.
             </h2>
             <p className="text-body-fg text-base md:text-lg leading-relaxed">
-              Hand-carved reliefs are slow and costly. We make them faster, for
-              less.
+              Hand-carved reliefs are slow and costly. We do it better.
             </p>
           </div>
 
-          <div className="space-y-7 md:space-y-9 max-w-3xl mx-auto">
-            {/* COST */}
-            <div>
-              <p
-                className="ptta-mono-eyebrow text-muted-fg mb-4 text-center"
-                style={{ fontSize: "11px" }}
-              >
-                Cost per piece &nbsp;·&nbsp; one dot = €1,000
-              </p>
-              <div className="grid grid-cols-2 gap-6 md:gap-10">
-                <div className="flex flex-col gap-3 items-center text-center">
-                  <DotGrid total={35} filled={35} cols={7} />
-                  <div>
-                    <p
-                      className="font-serif italic text-ink leading-none"
-                      style={{
-                        fontSize: "clamp(1.75rem, 4.5vw, 2.5rem)",
-                        letterSpacing: "-0.03em",
-                      }}
-                    >
-                      €35,000+
-                    </p>
-                    <p className="text-muted-fg text-sm mt-1">Conventional</p>
-                  </div>
+          <div className="max-w-xl mx-auto">
+            {/* TIME */}
+            <div className="w-fit mx-auto flex flex-col gap-5 md:gap-6">
+              <div className="flex items-center gap-4 md:gap-6">
+                <div className="w-[120px] md:w-[200px] text-right shrink-0">
+                  <p
+                    className="font-serif italic text-ink leading-none"
+                    style={{
+                      fontSize: "clamp(1.5rem, 5vw, 2.6rem)",
+                      letterSpacing: "-0.03em",
+                    }}
+                  >
+                    5 months
+                  </p>
+                  <p className="text-muted-fg text-sm md:text-base mt-2">
+                    Conventional
+                  </p>
                 </div>
-                <div className="flex flex-col gap-3 items-center text-center">
-                  <DotGrid total={35} filled={3} cols={7} accent />
-                  <div>
-                    <p
-                      className="font-serif italic text-accent leading-none"
-                      style={{
-                        fontSize: "clamp(1.75rem, 4.5vw, 2.5rem)",
-                        letterSpacing: "-0.03em",
-                      }}
-                    >
-                      A fraction
-                    </p>
-                    <p className="text-muted-fg text-sm mt-1">With PTTA</p>
-                  </div>
+                <DotLine total={22} filled={22} />
+              </div>
+              <div className="flex items-center gap-4 md:gap-6">
+                <div className="w-[120px] md:w-[200px] text-right shrink-0">
+                  <p
+                    className="font-serif italic leading-none"
+                    style={{
+                      fontSize: "clamp(1.5rem, 5vw, 2.6rem)",
+                      letterSpacing: "-0.03em",
+                      color: "var(--color-accent)",
+                    }}
+                  >
+                    1 week
+                  </p>
+                  <p className="text-muted-fg text-sm md:text-base mt-2">
+                    With PTTA
+                  </p>
                 </div>
+                <DotLine total={22} filled={1} accent />
               </div>
             </div>
 
-            {/* TIME */}
-            <div>
-              <p
-                className="ptta-mono-eyebrow text-muted-fg mb-4 text-center"
-                style={{ fontSize: "11px" }}
-              >
-                Time per piece &nbsp;·&nbsp; one dot = 1 week
-              </p>
-              <div className="grid grid-cols-2 gap-6 md:gap-10">
-                <div className="flex flex-col gap-3 items-center text-center">
-                  <DotGrid total={20} filled={20} cols={5} />
-                  <div>
-                    <p
-                      className="font-serif italic text-ink leading-none"
-                      style={{
-                        fontSize: "clamp(1.75rem, 4.5vw, 2.5rem)",
-                        letterSpacing: "-0.03em",
-                      }}
-                    >
-                      5 months
-                    </p>
-                    <p className="text-muted-fg text-sm mt-1">Conventional</p>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-3 items-center text-center">
-                  <DotGrid total={20} filled={1} cols={5} accent />
-                  <div>
-                    <p
-                      className="font-serif italic text-accent leading-none"
-                      style={{
-                        fontSize: "clamp(1.75rem, 4.5vw, 2.5rem)",
-                        letterSpacing: "-0.03em",
-                      }}
-                    >
-                      1 week
-                    </p>
-                    <p className="text-muted-fg text-sm mt-1">With PTTA</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <p
+              className="ptta-mono-eyebrow text-accent mt-7 md:mt-8 text-center"
+              style={{ fontSize: "14px" }}
+            >
+              Time per piece &nbsp;·&nbsp; one dot = 1 week
+            </p>
           </div>
         </section>
 

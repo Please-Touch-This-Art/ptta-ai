@@ -101,7 +101,17 @@
       "Bash(xargs -0 du -k)",
       "Bash(awk '{printf \"%.1f MB\\\\t%s\\\\n\", $1/1024, $2}')",
       "Bash(git lfs *)",
-      "Bash(git count-objects *)"
+      "Bash(git count-objects *)",
+      "Bash(PORT=5173 BASE_PATH=/ pnpm run dev)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173/)",
+      "Bash(lsof -iTCP:5173 -sTCP:LISTEN)",
+      "Bash(ps -p 3463 -o pid,stat,etime,command)",
+      "Bash(lsof -iTCP -sTCP:LISTEN -P)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://127.0.0.1:5173/)",
+      "Bash(curl -s http://127.0.0.1:5173/)",
+      "Bash(curl -s http://127.0.0.1:5173/ -o /tmp/ptta_index.html)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}  type=%{content_type}  size=%{size_download} bytes\\\\n\" http://127.0.0.1:5173/audio/mona-lisa.mp3)",
+      "Bash([ -f \"$f\" ])"
     ]
   }
 }
