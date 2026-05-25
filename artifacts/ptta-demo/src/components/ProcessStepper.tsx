@@ -46,64 +46,79 @@ export function ProcessStepper({
       aria-label="Demo journey progress"
       className="z-40 bg-page/95 backdrop-blur border-b border-hairline"
     >
-      <div className="mx-auto w-full max-w-[640px] px-2 sm:px-4 py-2 sm:py-2.5 flex justify-center overflow-x-auto">
-        <ol className="flex items-center justify-center flex-nowrap">
+      <div className="mx-auto w-full max-w-[560px] px-4 sm:px-6 py-2.5 sm:py-3.5">
+        <ol className="flex items-start">
           {processes.map((p, i) => {
             const isActive = p.slug === activeSlug;
             const isDone = i < activeIdx;
+            const leftFilled = i <= activeIdx;
+            const rightFilled = i < activeIdx;
+            const isFirst = i === 0;
+            const isLast = i === processes.length - 1;
             return (
-              <li key={p.slug} className="flex items-center">
+              <li key={p.slug} className="flex-1 min-w-0">
                 <button
                   type="button"
                   onClick={() => navigate(`/journey/${artworkId}/${p.slug}`)}
                   aria-current={isActive ? "step" : undefined}
                   aria-label={`Step ${i + 1} of ${processes.length}: ${p.label}`}
-                  className={cn(
-                    "inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full transition-colors whitespace-nowrap",
-                    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-                    isActive && "bg-accent",
-                    !isActive && isDone && "text-accent hover:bg-accent/10",
-                    !isActive &&
-                      !isDone &&
-                      "text-muted-fg hover:text-ink hover:bg-surface-muted",
-                  )}
-                  style={{
-                    letterSpacing: "0",
-                    fontWeight: 400,
-                    ...(isActive ? { color: "#241A0E" } : {}),
-                  }}
+                  className="group flex w-full flex-col items-center gap-1.5 focus:outline-none"
                 >
+                  <div className="flex w-full items-center">
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "h-[2px] flex-1 rounded-full transition-colors",
+                        isFirst
+                          ? "opacity-0"
+                          : leftFilled
+                            ? "bg-accent"
+                            : "bg-hairline",
+                      )}
+                    />
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full border text-[11px] sm:text-[13px] font-semibold leading-none transition-all",
+                        "ring-offset-2 ring-offset-page group-focus-visible:ring-2 group-focus-visible:ring-accent",
+                        isActive &&
+                          "border-transparent bg-accent scale-110 shadow-[0_4px_16px_-4px_var(--color-accent)]",
+                        !isActive && isDone && "border-transparent bg-accent",
+                        !isActive &&
+                          !isDone &&
+                          "border-hairline bg-transparent text-muted-fg group-hover:border-ink/40 group-hover:text-ink",
+                      )}
+                      style={
+                        isActive || isDone ? { color: "#241A0E" } : undefined
+                      }
+                    >
+                      {isDone && !isActive ? "✓" : i + 1}
+                    </span>
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "h-[2px] flex-1 rounded-full transition-colors",
+                        isLast
+                          ? "opacity-0"
+                          : rightFilled
+                            ? "bg-accent"
+                            : "bg-hairline",
+                      )}
+                    />
+                  </div>
                   <span
                     className={cn(
-                      "inline-flex items-center justify-center rounded-full text-[7.5pt] sm:text-[9pt] leading-none",
-                      "w-3.5 h-3.5 sm:w-[18px] sm:h-[18px]",
-                      isActive && "bg-black/15",
-                      !isActive && isDone && "bg-accent text-page",
-                      !isActive && !isDone && "bg-surface-muted text-muted-fg",
-                    )}
-                    style={{ fontWeight: 500 }}
-                    aria-hidden
-                  >
-                    {isDone && !isActive ? "✓" : i + 1}
-                  </span>
-                  <span
-                    className={cn(
-                      "leading-none",
-                      "text-[8.5pt] sm:text-[10pt]",
+                      "block w-full truncate px-0.5 text-center leading-tight transition-colors text-[9pt] sm:text-[10.5pt]",
+                      isActive
+                        ? "font-medium text-ink"
+                        : isDone
+                          ? "text-accent"
+                          : "text-muted-fg group-hover:text-ink",
                     )}
                   >
                     {p.shortLabel}
                   </span>
                 </button>
-                {i < processes.length - 1 && (
-                  <span
-                    aria-hidden
-                    className={cn(
-                      "h-[2px] w-3 sm:w-5 shrink-0 rounded-full",
-                      i < activeIdx ? "bg-accent" : "bg-hairline",
-                    )}
-                  />
-                )}
               </li>
             );
           })}

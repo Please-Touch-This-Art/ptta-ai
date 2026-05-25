@@ -36,9 +36,7 @@ export default function ArtworkPicker() {
             Pick a piece to touch.
           </h1>
           <p className="text-body-fg text-sm md:text-base leading-snug">
-            Choose any artwork to begin. You&apos;ll travel through every
-            process (modeling, fabrication, audio, and the artist&apos;s
-            voice) for the piece you picked.
+            Choose any artwork to begin its full journey, step by step.
           </p>
         </div>
 

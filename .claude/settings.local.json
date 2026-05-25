@@ -97,7 +97,11 @@
       "Bash(node --enable-source-maps ./dist/index.mjs)",
       "Bash(curl -sS -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:4000/)",
       "Bash(curl -sS -N -o /tmp/chat-response.txt -w 'HTTP %{http_code}\\\\n' -X POST http://localhost:5173/api/artist-chat -H 'Content-Type: application/json' --max-time 10 -d '{\"artistId\":\"leonardo\",\"messages\":[{\"role\":\"user\",\"content\":\"Say hi in 5 words.\"}]}')",
-      "Bash(PORT=22558 BASE_PATH=/ ./node_modules/.bin/vite --config vite.config.ts --host 0.0.0.0)"
+      "Bash(PORT=22558 BASE_PATH=/ ./node_modules/.bin/vite --config vite.config.ts --host 0.0.0.0)",
+      "Bash(xargs -0 du -k)",
+      "Bash(awk '{printf \"%.1f MB\\\\t%s\\\\n\", $1/1024, $2}')",
+      "Bash(git lfs *)",
+      "Bash(git count-objects *)"
     ]
   }
 }

@@ -97,8 +97,8 @@ export function ChatTranscript({
             transition={{ duration: 0.25, ease: "easeOut" }}
             className={`max-w-[82%] px-3.5 py-2.5 rounded-2xl text-sm md:text-base leading-snug whitespace-pre-wrap ${
               m.role === "user"
-                ? "self-end bg-ink text-page rounded-br-md"
-                : "self-start bg-page text-ink border border-hairline rounded-bl-md"
+                ? "self-end bg-accent text-accent-foreground rounded-br-md"
+                : "self-start bg-surface text-ink border border-hairline rounded-bl-md"
             }`}
           >
             {showThinkingDots && i === messages.length - 1 ? (
