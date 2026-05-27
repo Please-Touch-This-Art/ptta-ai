@@ -10,14 +10,21 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Pause, Play } from "lucide-react";
 import { Header } from "@/components/Header";
 import { CyclingText } from "@/components/CyclingText";
+import { useTheme } from "@/context/ThemeContext";
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 const HERO_VIDEO = `${BASE}/videos/people-using-tactile.mp4`;
 const HERO_POSTER = `${BASE}/posters/people-using-tactile.jpg`;
 const TESTIMONIALS_VIDEO = `${BASE}/videos/testimonials.mp4`;
+const HELA_IMG = `${BASE}/images/testimonials/Hela.jpg`;
+const KATJA_IMG = `${BASE}/images/testimonials/Katja.jpg`;
 const PAINTING_IMG = `${BASE}/paintings/starry-night.webp`;
 const RELIEF_IMG = `${BASE}/printed/starry-night.png`;
 const EXPERIENCE_IMG = `${BASE}/images/hands-exploring-model.jpeg`;
+// Content v2 preview: emotional stand-in for the problem section. NOTE: this is a
+// placeholder from existing assets — replace with a sourced portrait of a blind /
+// low-vision visitor that conveys the feeling of being shut out from the art.
+const PROBLEM_EMOTION_IMG = `${BASE}/images/people-using-models/people-01.jpg`;
 const CONTACT_EMAIL = "contact@ptta.art";
 
 const PEOPLE_IMAGES = [
@@ -73,11 +80,17 @@ function Eyebrow({
   children: ReactNode;
   color?: string;
 }) {
+  // Content v2 nudges the section kicker labels slightly larger; default is
+  // left byte-for-byte unchanged.
+  const { fontTheme } = useTheme();
+  const contentV2 = fontTheme === "content";
   return (
     <p
       className="ptta-mono-eyebrow mb-3 font-medium"
       style={{
-        fontSize: "clamp(13px, 3.6vw, 15px)",
+        fontSize: contentV2
+          ? "clamp(11.5px, 3.2vw, 16px)"
+          : "clamp(13px, 3.6vw, 15px)",
         color: color ?? "hsl(38, 95%, 52%)",
       }}
     >
@@ -86,7 +99,7 @@ function Eyebrow({
   );
 }
 
-function ExperienceGallery() {
+function ExperienceGallery({ fade = true }: { fade?: boolean }) {
   const trackRef = useRef<HTMLUListElement>(null);
 
   const stateRef = useRef({
@@ -163,12 +176,16 @@ function ExperienceGallery() {
     <div
       className="relative overflow-hidden"
       aria-label="Gallery of visitors exploring PTTA tactile models in museums"
-      style={{
-        maskImage:
-          "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
-        WebkitMaskImage:
-          "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
-      }}
+      style={
+        fade
+          ? {
+              maskImage:
+                "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+            }
+          : undefined
+      }
     >
       <ul
         ref={trackRef}
@@ -207,7 +224,7 @@ function ExperienceGallery() {
   );
 }
 
-const STEPS = [
+const STEPS: { n: string; t: string; d: string; dV2?: string }[] = [
   {
     n: "01",
     t: "Capture the painting",
@@ -217,6 +234,8 @@ const STEPS = [
     n: "02",
     t: "AI sculpts the depth",
     d: "Our AI turns the flat image into depth: brushwork becomes relief, made for fingers, not eyes.",
+    // Content v2 (shorter, ~two lines): default copy stays untouched above.
+    dV2: "Our AI turns the flat image into relief you can feel.",
   },
   {
     n: "03",
@@ -233,9 +252,445 @@ const LOGOS = [
   { src: "logos/tvibit.webp", alt: "Tvibit" },
 ];
 
+/**
+ * Content v2 preview of THE PROBLEM section.
+ * Keeps museums framed positively, makes the 300M people shut out of art the
+ * emotional centre, and pairs it with an evocative photo. Rendered only when the
+ * "Content v2" version is selected from the header menu — the default is untouched.
+ */
+function ProblemSectionContentV2() {
+  return (
+    <section
+      aria-label="The problem"
+      className="mx-auto w-full max-w-[480px] md:max-w-4xl px-5 md:px-8 py-16 md:py-24"
+    >
+      <Eyebrow>The problem</Eyebrow>
+
+      <div className="mt-2 md:grid md:grid-cols-[1.05fr_1fr] md:gap-12 md:items-center">
+        {/* Emotional photo */}
+        <figure className="order-2 md:order-1 mt-8 md:mt-0">
+          <div
+            className="relative aspect-[4/5] overflow-hidden rounded-2xl"
+            style={{ border: "1px solid var(--color-hairline)" }}
+          >
+            <img
+              src={PROBLEM_EMOTION_IMG}
+              alt="A blind visitor rests a hand on a tactile relief by a window — exploring art the only way a gallery allows"
+              loading="lazy"
+              className="h-full w-full object-cover"
+              style={{ filter: "grayscale(0.45) brightness(0.92) contrast(1.03)" }}
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(3,5,8,0) 40%, rgba(3,5,8,0.55) 100%)",
+              }}
+            />
+          </div>
+          <figcaption className="text-muted-fg mt-2 text-sm">
+            For most, art is something you can only stand near.
+          </figcaption>
+        </figure>
+
+        {/* Copy */}
+        <div className="order-1 md:order-2">
+          <h2
+            className="font-serif text-ink leading-[1.06] mb-5"
+            style={{ ...tight, fontSize: "clamp(2rem, 5vw, 3.25rem)" }}
+          >
+            <span className="block">Museums move us.</span>
+            <span className="block text-accent">
+              300&nbsp;million can&rsquo;t reach the art.
+            </span>
+          </h2>
+          <p className="text-body-fg text-lg leading-relaxed max-w-xl">
+            Blind and low-vision visitors are welcome through the doors &mdash;
+            but the art itself has always lived behind glass. Present,
+            celebrated, and just out of reach.
+          </p>
+          <p className="text-muted-fg mt-5 text-base">
+            <strong className="text-ink font-medium">
+              300&nbsp;million people
+            </strong>{" "}
+            live with vision impairment, 43&nbsp;million of them fully blind.
+          </p>
+          <p className="text-muted-fg mt-3" style={{ fontSize: "12px" }}>
+            Source: World Health Organization, 2023
+          </p>
+        </div>
+      </div>
+
+      {/* Voice of the community: demand callout. The stat, then the voice
+          behind it. The label spells out what 86% measures so the whole card
+          reads as one sentence leading into the quote. */}
+      <figure
+        className="mt-14 md:mt-16 rounded-2xl px-6 md:px-12 py-9 md:py-11 md:grid md:grid-cols-[minmax(0,16rem)_1fr] md:gap-10 md:items-center"
+        style={{
+          background: "rgba(242,233,214,0.05)",
+          border: "1px solid var(--color-hairline)",
+        }}
+      >
+        {/* Stat anchor: the number + a plain-language label of what it measures */}
+        <div className="text-center md:text-left mb-7 md:mb-0 shrink-0">
+          <p
+            className="font-serif italic leading-none"
+            style={{
+              color: "var(--color-accent)",
+              fontSize: "clamp(3.75rem, 10vw, 5.5rem)",
+              letterSpacing: "-0.03em",
+            }}
+          >
+            86%
+          </p>
+          <p className="text-body-fg mt-3 text-base md:text-lg leading-snug">
+            of blind and visually impaired visitors say:
+          </p>
+        </div>
+        {/* The voice: their own words, set off with a divider + quote mark */}
+        <figcaption
+          className="text-center md:text-left md:border-l md:pl-10"
+          style={{ borderColor: "var(--color-hairline)" }}
+        >
+          <span
+            aria-hidden
+            className="block font-serif leading-none select-none"
+            style={{ color: "var(--color-hairline)", fontSize: "2.75rem" }}
+          >
+            &ldquo;
+          </span>
+          <blockquote
+            className="font-sans text-ink leading-snug -mt-4"
+            style={{
+              fontSize: "clamp(1.2rem, 2.8vw, 1.6rem)",
+              fontWeight: 400,
+              letterSpacing: "-0.005em",
+            }}
+          >
+            We would visit museums far more often if they were more inclusive
+            and accessible.
+          </blockquote>
+          <p className="text-muted-fg mt-4 text-sm">Source: visitor survey</p>
+        </figcaption>
+      </figure>
+    </section>
+  );
+}
+
+/**
+ * Content v2: the "Our solution" process shown as a line-based pathway (the same
+ * line-and-dots theme the "Built with the community" section used) instead of
+ * numbered step cards.
+ */
+function SolutionPathwayV2() {
+  return (
+    <ol className="relative mx-auto flex max-w-5xl items-start justify-between gap-4 md:gap-10">
+      <span
+        aria-hidden
+        className="absolute left-0 right-0 top-[7px] h-px"
+        style={{ background: "var(--color-hairline)" }}
+      />
+      {STEPS.map((s, i) => (
+        <li
+          key={s.n}
+          className="relative flex flex-1 flex-col items-center px-1 text-center"
+        >
+          <span
+            className="block h-[15px] w-[15px] rounded-full"
+            style={{ background: "var(--color-accent)" }}
+          />
+          <span
+            className="ptta-mono-eyebrow text-accent mt-3 md:mt-4"
+            style={{ fontSize: "11px" }}
+          >
+            Step {i + 1}
+          </span>
+          <h3
+            className="font-serif text-ink mt-2 text-base md:text-xl lg:text-2xl leading-tight"
+            style={tight}
+          >
+            {s.t}
+          </h3>
+          <p className="hidden md:block text-muted-fg text-base lg:text-lg mt-2 leading-snug max-w-[20rem] mx-auto">
+            {s.dV2 ?? s.d}
+          </p>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/**
+ * Content v2 (items 3 & 4): "Tested with blind collaborators". A concise section:
+ * heading, description, and the experience gallery. (The earlier progression-line
+ * graphic was removed.)
+ */
+function TestedWithBlindSectionV2() {
+  return (
+    <section aria-label="Tested with blind collaborators" className="w-full py-12 md:py-16">
+      <div className="mx-auto w-full max-w-[480px] md:max-w-4xl px-5 md:px-8">
+        <div className="text-center max-w-2xl mx-auto mb-10 md:mb-12">
+          <Eyebrow>Built with the community</Eyebrow>
+          <h2
+            className="font-serif text-ink leading-[1.06] mb-4"
+            style={{ ...tight, fontSize: "clamp(2.3rem, 5vw, 3.25rem)" }}
+          >
+            Tested with blind collaborators.
+          </h2>
+          <p className="text-body-fg text-base md:text-lg leading-relaxed">
+            Every model is shaped by the people it&rsquo;s made for. Blind and
+            low-vision testers guide each round, from first relief to final print.
+          </p>
+        </div>
+      </div>
+
+      {/* Content v2: the experience gallery, moved here from its own section so
+          the proof of real, hands-on testing closes out this section. Full-bleed
+          and without the edge fade. */}
+      <div id="experience-gallery" className="mt-12 md:mt-16">
+        <ExperienceGallery fade={false} />
+        <p className="mt-6 text-center leading-relaxed mx-auto max-w-2xl px-5 text-sm md:text-base">
+          <span className="text-accent">Not AI-generated or enhanced.</span>{" "}
+          <span className="text-muted-fg">
+            Real photographs of people testing our models at the
+            Overbeck-Museum, Bremen, Germany and BSVH, Hamburg.
+          </span>
+        </p>
+      </div>
+
+      {/* Content v2: accessibility partners, moved here from "Installations at
+          museums". Labelled like the section kicker titles. */}
+      <div className="mx-auto w-full max-w-[480px] md:max-w-4xl px-5 md:px-8 mt-14 md:mt-20 text-center">
+        <Eyebrow>Our accessibility partners</Eyebrow>
+        <div
+          className="rounded-2xl bg-white flex md:inline-flex items-center justify-center gap-5 md:gap-8 px-4 md:px-7 py-3 w-full md:w-auto max-w-full mt-5"
+          style={{ minHeight: 150, boxShadow: "0 18px 40px -22px rgba(0,0,0,0.55)" }}
+        >
+          <img
+            src={`${BASE}/logos/bsvh.png`}
+            alt="BSVH, Blinden- und Sehbehindertenverein Hamburg"
+            loading="lazy"
+            className="block max-w-full w-auto h-12 md:h-16 object-contain"
+          />
+          <img
+            src={`${BASE}/logos/bsvb.png`}
+            alt="BSVB, Blinden- und Sehbehindertenverein Bremen"
+            loading="lazy"
+            className="block max-w-full w-auto h-12 md:h-16 object-contain"
+          />
+          <img
+            src={`${BASE}/logos/dbsv.svg`}
+            alt="DBSV, Deutscher Blinden- und Sehbehindertenverband"
+            loading="lazy"
+            className="block max-w-full w-auto h-12 md:h-16 object-contain"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Content v2 (item 5, for Zain): "The difference" with a cost comparison added
+ * alongside time, and clearer messaging.
+ * NOTE: the $35,000 / $300 cost figures are ILLUSTRATIVE placeholders; confirm
+ * real numbers with Zain before this is promoted to the default.
+ */
+function DifferenceSectionV2() {
+  return (
+    <section
+      aria-label="The difference"
+      className="mx-auto w-full max-w-[480px] md:max-w-4xl px-5 md:px-8 py-12 md:py-16"
+    >
+      <div className="text-center max-w-2xl mx-auto mb-9 md:mb-10">
+        <Eyebrow color="var(--color-accent)">The difference</Eyebrow>
+        <h2
+          className="font-serif text-ink leading-[1.06] mb-4"
+          style={{ ...tight, fontSize: "clamp(2rem, 5vw, 3.25rem)" }}
+        >
+          Faster, affordable, made to last.
+        </h2>
+        <p className="text-body-fg text-base md:text-lg leading-relaxed">
+          Traditional reliefs take months and cost upwards of $35,000. Ours take
+          days, at a fraction of the price.
+        </p>
+      </div>
+
+      <div className="max-w-xl mx-auto flex flex-col gap-12 md:gap-14">
+        {/* TIME */}
+        <div>
+          <div className="w-fit mx-auto flex flex-col gap-5 md:gap-6">
+            <div className="flex items-center gap-4 md:gap-6">
+              <div className="w-[120px] md:w-[200px] text-right shrink-0">
+                <p
+                  className="font-serif italic text-ink leading-none"
+                  style={{ fontSize: "clamp(1.5rem, 5vw, 2.6rem)", letterSpacing: "-0.03em" }}
+                >
+                  5 months
+                </p>
+                <p className="text-muted-fg text-sm md:text-base mt-2">
+                  Conventional
+                </p>
+              </div>
+              <DotLine total={22} filled={22} />
+            </div>
+            <div className="flex items-center gap-4 md:gap-6">
+              <div className="w-[120px] md:w-[200px] text-right shrink-0">
+                <p
+                  className="font-serif italic leading-none"
+                  style={{
+                    fontSize: "clamp(1.5rem, 5vw, 2.6rem)",
+                    letterSpacing: "-0.03em",
+                    color: "var(--color-accent)",
+                  }}
+                >
+                  1 week
+                </p>
+                <p className="text-muted-fg text-sm md:text-base mt-2">
+                  With PTTA
+                </p>
+              </div>
+              <DotLine total={22} filled={1} accent />
+            </div>
+          </div>
+          <p
+            className="ptta-mono-eyebrow text-accent mt-7 md:mt-8 text-center"
+            style={{ fontSize: "14px" }}
+          >
+            Time per piece &nbsp;·&nbsp; one dot = 1 week
+          </p>
+        </div>
+
+        {/* COST — dollars; a direct figure comparison rather than the dot scale,
+            which doesn't read at this ratio. Illustrative; confirm with Zain. */}
+        <div>
+          <div className="flex items-center justify-center gap-5 md:gap-10 text-center">
+            <div>
+              <p
+                className="font-serif italic text-ink leading-none whitespace-nowrap"
+                style={{ fontSize: "clamp(1.5rem, 5.5vw, 2.75rem)", letterSpacing: "-0.03em" }}
+              >
+                $35,000
+              </p>
+              <p className="text-muted-fg text-sm md:text-base mt-2">
+                Conventional
+              </p>
+            </div>
+            <span
+              aria-hidden
+              className="shrink-0 text-muted-fg"
+              style={{ fontSize: "clamp(1.25rem, 3vw, 1.75rem)" }}
+            >
+              &rarr;
+            </span>
+            <div>
+              <p
+                className="font-serif italic leading-none whitespace-nowrap"
+                style={{
+                  fontSize: "clamp(1.5rem, 5.5vw, 2.75rem)",
+                  letterSpacing: "-0.03em",
+                  color: "var(--color-accent)",
+                }}
+              >
+                A fraction
+              </p>
+              <p className="text-muted-fg text-sm md:text-base mt-2">
+                With PTTA
+              </p>
+            </div>
+          </div>
+          <p
+            className="ptta-mono-eyebrow text-accent mt-7 md:mt-8 text-center"
+            style={{ fontSize: "14px" }}
+          >
+            Cost per piece
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Content v2 (item 7): community quotes shown below "Hear what they have to say".
+ * Katja's quote is a minimized English translation of her German testimonial for
+ * the Overbeck-Museum. NOTE: Hela's quote is still a PLACEHOLDER; replace with her
+ * real words before promoting to default.
+ */
+const COMMUNITY_QUOTES = [
+  {
+    name: "Dr. Katja Pourshirazi",
+    role: "Museum Director",
+    org: "Overbeck-Museum",
+    image: KATJA_IMG,
+    quote:
+      "The tactile models are a wonderful enrichment for our exhibition: an invitation for blind and visually impaired people to experience art, and a chance for everyone to discover it with all their senses.",
+  },
+  {
+    name: "Hela Michalski",
+    role: "Germany’s accessibility expert",
+    org: null,
+    image: HELA_IMG,
+    quote:
+      "The first time I could feel the brushstrokes, I finally understood what everyone had been describing to me for years.",
+  },
+];
+
+function CommunityQuotesV2() {
+  return (
+    <div className="mt-10 md:mt-16 flex flex-col gap-14 md:gap-20">
+      {COMMUNITY_QUOTES.map((q) => (
+        <figure key={q.name} className="text-center">
+          <span
+            aria-hidden="true"
+            className="block font-serif leading-none select-none"
+            style={{ color: "var(--color-hairline)", fontSize: "3.75rem" }}
+          >
+            &ldquo;
+          </span>
+          <blockquote
+            className="font-serif text-ink leading-snug -mt-5 mx-auto max-w-4xl"
+            style={{ ...tight, fontSize: "clamp(1.3rem, 2.8vw, 1.85rem)" }}
+          >
+            {q.quote}
+          </blockquote>
+          <figcaption className="mt-8 flex items-center justify-center gap-4 text-left">
+            <img
+              src={q.image}
+              alt={q.name}
+              loading="lazy"
+              className="h-20 w-20 md:h-24 md:w-24 shrink-0 rounded-full object-cover"
+              style={{ border: "1px solid var(--color-hairline)" }}
+            />
+            <span className="leading-tight">
+              <span
+                className="block font-serif text-xl md:text-2xl"
+                style={{ color: "var(--color-accent)" }}
+              >
+                {q.name}
+              </span>
+              <span className="block text-muted-fg text-sm md:text-base mt-0.5">
+                {q.role}
+                {q.org && (
+                  <>
+                    , <span className="font-medium text-body-fg">{q.org}</span>
+                  </>
+                )}
+              </span>
+            </span>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  );
+}
+
 export default function Landing() {
   const heroRef = useRef<HTMLVideoElement>(null);
   const [, navigate] = useLocation();
+  const { fontTheme } = useTheme();
+  const contentV2 = fontTheme === "content";
   const reduce = useReducedMotion() ?? false;
   const [heroPlaying, setHeroPlaying] = useState(true);
   const [showFloatCta, setShowFloatCta] = useState(false);
@@ -333,6 +788,19 @@ export default function Landing() {
                   <Play size={15} className="ml-0.5" />
                 )}
               </button>
+              {/* Content v2: authenticity tag, in the same mono styling as the
+                  section eyebrow titles (e.g. "The problem", "Our solution"). */}
+              {contentV2 && (
+                <span
+                  className="ptta-mono-eyebrow absolute bottom-3 right-3 z-10 font-medium"
+                  style={{
+                    fontSize: "10px",
+                    color: "#fff",
+                  }}
+                >
+                  Not AI generated
+                </span>
+              )}
             </div>
           </motion.div>
 
@@ -369,7 +837,10 @@ export default function Landing() {
               <strong className="font-bold text-ink">tactile 3D models</strong>,
               for blind visitors and for all.
             </motion.p>
-            <motion.div {...fade(0.25)} className="mt-7">
+            <motion.div
+              {...fade(0.25)}
+              className="mt-7"
+            >
               <button
                 type="button"
                 onClick={tryDemo}
@@ -418,6 +889,9 @@ export default function Landing() {
         </section>
 
         {/* ── THE PROBLEM ──────────────────────────────────────────────────── */}
+        {contentV2 ? (
+          <ProblemSectionContentV2 />
+        ) : (
         <section
           aria-label="The problem"
           className="mx-auto w-full max-w-[480px] md:max-w-4xl px-5 md:px-8 py-16 md:py-24"
@@ -502,6 +976,7 @@ export default function Landing() {
             </div>
           </div>
         </section>
+        )}
 
         {/* ── OUR SOLUTION ─────────────────────────────────────────────────── */}
         <section
@@ -514,7 +989,12 @@ export default function Landing() {
               <Eyebrow>Our solution</Eyebrow>
               <h2
                 className="font-serif text-ink leading-[1.05] mb-6"
-                style={{ ...tight, fontSize: "clamp(2.2rem, 5.5vw, 3.75rem)" }}
+                style={{
+                  ...tight,
+                  fontSize: contentV2
+                    ? "clamp(2.5rem, 5.5vw, 3.75rem)"
+                    : "clamp(2.2rem, 5.5vw, 3.75rem)",
+                }}
               >
                 Art, made tactile.
               </h2>
@@ -522,8 +1002,8 @@ export default function Landing() {
                 We turn paintings and sculptures into{" "}
                 <strong className="font-bold text-ink">3D printed tactile models</strong>,
                 each with its own{" "}
-                <strong className="font-bold text-ink">audio guide</strong>. Built
-                with blind collaborators, for everyone.
+                <strong className="font-bold text-ink">audio guide</strong>.
+                {!contentV2 && " Built with blind collaborators, for everyone."}
               </p>
             </div>
 
@@ -582,31 +1062,41 @@ export default function Landing() {
               </figure>
             </div>
 
-            <ol className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-              {STEPS.map((s) => (
-                <li key={s.n}>
-                  <p
-                    className="font-serif italic text-accent leading-none mb-4"
-                    style={{ fontSize: "2rem", letterSpacing: "-0.02em" }}
-                  >
-                    {s.n}
-                  </p>
-                  <h3
-                    className="font-serif text-ink text-xl md:text-2xl mb-2"
-                    style={tight}
-                  >
-                    {s.t}
-                  </h3>
-                  <p className="text-body-fg text-base leading-relaxed">
-                    {s.d}
-                  </p>
-                </li>
-              ))}
-            </ol>
+            {contentV2 ? (
+              <SolutionPathwayV2 />
+            ) : (
+              <ol className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                {STEPS.map((s) => (
+                  <li key={s.n}>
+                    <p
+                      className="font-serif italic text-accent leading-none mb-4"
+                      style={{ fontSize: "2rem", letterSpacing: "-0.02em" }}
+                    >
+                      {s.n}
+                    </p>
+                    <h3
+                      className="font-serif text-ink text-xl md:text-2xl mb-2"
+                      style={tight}
+                    >
+                      {s.t}
+                    </h3>
+                    <p className="text-body-fg text-base leading-relaxed">
+                      {s.d}
+                    </p>
+                  </li>
+                ))}
+              </ol>
+            )}
           </div>
         </section>
 
+        {/* ── TESTED WITH BLIND COLLABORATORS (Content v2, items 3 & 4) ─────── */}
+        {contentV2 && <TestedWithBlindSectionV2 />}
+
         {/* ── THE DIFFERENCE ───────────────────────────────────────────────── */}
+        {contentV2 ? (
+          <DifferenceSectionV2 />
+        ) : (
         <section
           aria-label="The difference"
           className="mx-auto w-full max-w-[480px] md:max-w-4xl px-5 md:px-8 py-12 md:py-16"
@@ -672,8 +1162,11 @@ export default function Landing() {
             </p>
           </div>
         </section>
+        )}
 
-        {/* ── THE EXPERIENCE ───────────────────────────────────────────────── */}
+        {/* ── THE EXPERIENCE (default only; in Content v2 the gallery moves to
+            the end of "Built with the community") ──────────────────────────── */}
+        {!contentV2 && (
         <section
           aria-label="The experience"
           className="w-full px-0 md:px-0 py-16 md:py-24"
@@ -694,6 +1187,7 @@ export default function Landing() {
 
           <ExperienceGallery />
         </section>
+        )}
 
         {/* SEE IT (video) */}
         <section
@@ -727,6 +1221,7 @@ export default function Landing() {
             <p className="text-muted-fg mt-3 text-sm text-center">
               Real visitors. Real museums.
             </p>
+            {contentV2 && <CommunityQuotesV2 />}
           </div>
         </section>
 
@@ -738,9 +1233,14 @@ export default function Landing() {
           <div className="text-center mb-9 md:mb-10 max-w-2xl mx-auto">
             <h2
               className="font-serif text-ink leading-[1.08]"
-              style={{ ...tight, fontSize: "clamp(2rem, 5vw, 3.25rem)" }}
+              style={{
+                ...tight,
+                fontSize: contentV2
+                  ? "clamp(2.3rem, 5vw, 3.25rem)"
+                  : "clamp(2rem, 5vw, 3.25rem)",
+              }}
             >
-              Already in museums
+              {contentV2 ? "Installations at museums" : "Already in museums"}
             </h2>
           </div>
 
@@ -785,23 +1285,27 @@ export default function Landing() {
                   />
                 </div>
               </div>
-              <dd className="mt-5">
-                <span
-                  className="font-serif italic text-accent block leading-none"
-                  style={{
-                    fontSize: "clamp(1.65rem, 4vw, 2rem)",
-                    letterSpacing: "-0.02em",
-                  }}
-                >
-                  27+
-                </span>
-                <span className="text-body-fg block mt-1.5 text-base">
-                  museum installations
-                </span>
-              </dd>
+              {!contentV2 && (
+                <dd className="mt-5">
+                  <span
+                    className="font-serif italic text-accent block leading-none"
+                    style={{
+                      fontSize: "clamp(1.65rem, 4vw, 2rem)",
+                      letterSpacing: "-0.02em",
+                    }}
+                  >
+                    27+
+                  </span>
+                  <span className="text-body-fg block mt-1.5 text-base">
+                    museum installations
+                  </span>
+                </dd>
+              )}
             </div>
 
-            {/* Accessibility partners */}
+            {/* Accessibility partners (default only; in Content v2 these move to
+                the end of "Built with the community"). */}
+            {!contentV2 && (
             <div className="flex flex-col items-center text-center w-full md:w-auto">
               <div
                 className="rounded-2xl bg-white flex md:inline-flex items-center justify-center gap-5 md:gap-8 px-4 md:px-7 py-3 w-full md:w-auto max-w-full"
@@ -822,6 +1326,15 @@ export default function Landing() {
                   loading="lazy"
                   className="block max-w-full w-auto h-12 md:h-16 object-contain"
                 />
+                {/* item 8: DBSV, Deutscher Blinden- und Sehbehindertenverband */}
+                {contentV2 && (
+                  <img
+                    src={`${BASE}/logos/dbsv.svg`}
+                    alt="DBSV, Deutscher Blinden- und Sehbehindertenverband"
+                    loading="lazy"
+                    className="block max-w-full w-auto h-12 md:h-16 object-contain"
+                  />
+                )}
               </div>
               <dd className="mt-5">
                 <span
@@ -839,6 +1352,7 @@ export default function Landing() {
                 </span>
               </dd>
             </div>
+            )}
           </dl>
         </section>
 

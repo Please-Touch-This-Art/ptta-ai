@@ -1,7 +1,10 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 export type Theme = "light" | "dark";
-export type FontTheme = "default" | "editorial";
+// "default" / "editorial" are font themes; "content" is a content-variant preview
+// (default fonts, but alternate copy/imagery) used to review proposed changes
+// before they replace the default.
+export type FontTheme = "default" | "editorial" | "content";
 
 interface ThemeContextValue {
   theme: Theme;
@@ -26,7 +29,8 @@ function readInitial(): Theme {
 function readInitialFont(): FontTheme {
   if (typeof window === "undefined") return "default";
   const stored = window.localStorage.getItem(FONT_STORAGE_KEY);
-  if (stored === "editorial" || stored === "default") return stored;
+  if (stored === "editorial" || stored === "default" || stored === "content")
+    return stored;
   return "default";
 }
 

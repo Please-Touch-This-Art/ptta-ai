@@ -62,6 +62,108 @@ const ARTWORK_TO_ARTIST: Partial<Record<ModelId, ArtistId>> = {
   "persistence-of-memory": "dali",
 };
 
+// ─── "See it in action" gallery — appears below the 3D model / reveal / player ─
+const MEDIA_BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+const PEOPLE_PHOTOS = [
+  "people-01.jpg",
+  "people-02.png",
+  "people-03.png",
+  "people-04.png",
+  "people-05.png",
+  "people-06.png",
+  "people-07.png",
+  "people-08.png",
+  "people-09.jpeg",
+  "people-10.jpeg",
+  "people-11.jpeg",
+  "people-12.jpeg",
+].map((f) => `${MEDIA_BASE}/images/people-using-models/${f}`);
+const PEOPLE_VIDEO = `${MEDIA_BASE}/videos/people-using-tactile.mp4`;
+const PEOPLE_VIDEO_POSTER = `${MEDIA_BASE}/posters/people-using-tactile.jpg`;
+
+const SEE_IT_ID = "see-it-in-action";
+
+function scrollToSeeItInAction() {
+  document
+    .getElementById(SEE_IT_ID)
+    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function SeeItInActionSection() {
+  return (
+    <section
+      id={SEE_IT_ID}
+      aria-label="See it in action"
+      className="bg-page px-5 md:px-8 pt-14 md:pt-16 pb-40"
+      style={{ borderTop: "1px solid var(--color-hairline)" }}
+    >
+      <div className="mx-auto w-full max-w-[1000px]">
+        <div className="text-center mb-8 md:mb-10 max-w-2xl mx-auto">
+          <p
+            className="ptta-mono-eyebrow mb-3 font-medium"
+            style={{
+              fontSize: "clamp(13px, 3.6vw, 15px)",
+              color: "hsl(38, 95%, 52%)",
+            }}
+          >
+            See it in action
+          </p>
+          <h2
+            className="font-serif text-ink leading-[1.08]"
+            style={{ letterSpacing: "-0.02em", fontSize: "clamp(1.8rem, 5vw, 3rem)" }}
+          >
+            How people experience it.
+          </h2>
+          <p className="text-muted-fg mt-3 text-sm md:text-base">
+            Real visitors exploring our tactile models, by hand.
+          </p>
+        </div>
+
+        <div
+          className="relative w-full aspect-video overflow-hidden rounded-[20px] md:rounded-[26px] mb-3 md:mb-4"
+          style={{ border: "1px solid var(--color-hairline)" }}
+        >
+          <video
+            className="absolute inset-0 h-full w-full object-cover"
+            src={PEOPLE_VIDEO}
+            poster={PEOPLE_VIDEO_POSTER}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            aria-label="Visitors exploring tactile art models in museums"
+          />
+        </div>
+
+        {/* Organic masonry of real interaction photos (not a slideshow). */}
+        <div className="columns-2 md:columns-3 gap-3 md:gap-4">
+          {PEOPLE_PHOTOS.map((src, i) => (
+            <div
+              key={i}
+              className="mb-3 md:mb-4 break-inside-avoid overflow-hidden rounded-xl"
+              style={{ border: "1px solid var(--color-hairline)" }}
+            >
+              <img
+                src={src}
+                alt=""
+                aria-hidden
+                loading="lazy"
+                className="block w-full h-auto"
+              />
+            </div>
+          ))}
+        </div>
+
+        <p className="text-muted-fg mt-7 text-center text-xs md:text-sm">
+          <span className="text-accent">Not AI generated.</span> Real
+          photographs of people testing our models at partner museums.
+        </p>
+      </div>
+    </section>
+  );
+}
+
 export default function JourneyShell() {
   const [, params] = useRoute<{ artworkId: string; processSlug?: string }>(
     "/journey/:artworkId/:processSlug?",
@@ -146,7 +248,11 @@ export default function JourneyShell() {
 
       <div className="flex-1 min-h-0 relative overflow-hidden">
         <AnimatePresence mode="wait">
-          <motion.div key={slug} {...FADE} className="h-full">
+          <motion.div
+            key={slug}
+            {...FADE}
+            className="h-full overflow-y-auto overscroll-contain"
+          >
             <ProcessBody
               slug={slug}
               model={model}
@@ -235,8 +341,15 @@ function ModelProcess({ model, onComplete, onBackToPicker }: ProcessProps) {
 
   return (
     <>
-      <ViewerStage model={model} onBack={onBackToPicker} />
-      <ContinueStrip label="Next: Fabrication" onClick={onComplete} />
+      <div className="relative h-full min-h-[480px]">
+        <ViewerStage model={model} onBack={onBackToPicker} />
+      </div>
+      <SeeItInActionSection />
+      <ContinueStrip
+        label="Next: Fabrication"
+        onClick={onComplete}
+        onSeeItInAction={scrollToSeeItInAction}
+      />
     </>
   );
 }
@@ -278,8 +391,15 @@ function FabricationProcess({
   }
   return (
     <>
-      <RevealStage model={model} onBack={onBackToPicker} />
-      <ContinueStrip label="Next: Audio Guide" onClick={onComplete} />
+      <div className="relative h-full min-h-[480px]">
+        <RevealStage model={model} onBack={onBackToPicker} />
+      </div>
+      <SeeItInActionSection />
+      <ContinueStrip
+        label="Next: Audio Guide"
+        onClick={onComplete}
+        onSeeItInAction={scrollToSeeItInAction}
+      />
     </>
   );
 }
@@ -312,11 +432,22 @@ function AudioProcess({
   }
   return (
     <>
-      <AudioPlayer model={model} onBack={onBackToPicker} />
+      <div className="relative h-full min-h-[480px]">
+        <AudioPlayer model={model} onBack={onBackToPicker} />
+      </div>
+      <SeeItInActionSection />
       {isLastProcess ? (
-        <ContinueStrip label="Explore another artwork" onClick={onBackToPicker} />
+        <ContinueStrip
+          label="Explore another artwork"
+          onClick={onBackToPicker}
+          onSeeItInAction={scrollToSeeItInAction}
+        />
       ) : (
-        <ContinueStrip label="Next: Artist Persona" onClick={onComplete} />
+        <ContinueStrip
+          label="Next: Artist Persona"
+          onClick={onComplete}
+          onSeeItInAction={scrollToSeeItInAction}
+        />
       )}
     </>
   );
@@ -370,28 +501,53 @@ function ArtistProcess({
 function ContinueStrip({
   label,
   onClick,
+  onSeeItInAction,
 }: {
   label: string;
   onClick: () => void;
+  onSeeItInAction?: () => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={label}
-      className="fixed left-1/2 -translate-x-1/2 z-50 px-5 sm:px-6 py-3 sm:py-3.5 rounded-full bg-accent text-[13.5px] sm:text-base shadow-xl transition-transform hover:scale-[1.03] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent whitespace-nowrap overflow-hidden text-ellipsis"
+    <div
+      className="fixed left-1/2 -translate-x-1/2 z-50 flex items-center justify-center gap-2.5 sm:gap-3"
       style={{
         bottom: "max(1.25rem, env(safe-area-inset-bottom) + 0.75rem)",
-        minHeight: 48,
-        maxWidth: "70vw",
-        letterSpacing: "-0.005em",
-        fontWeight: 400,
-        color: "#241A0E",
-        boxShadow:
-          "0 12px 34px -8px color-mix(in srgb, var(--color-accent) 45%, transparent)",
+        maxWidth: "94vw",
       }}
     >
-      {label} →
-    </button>
+      {onSeeItInAction && (
+        <button
+          type="button"
+          onClick={onSeeItInAction}
+          aria-label="See it in action"
+          className="px-4 sm:px-6 py-3 sm:py-3.5 rounded-full bg-white text-[13.5px] sm:text-base shadow-xl transition-transform hover:scale-[1.03] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent whitespace-nowrap"
+          style={{
+            minHeight: 48,
+            color: "#241A0E",
+            fontWeight: 400,
+            letterSpacing: "-0.005em",
+            boxShadow: "0 12px 34px -10px rgba(0,0,0,0.55)",
+          }}
+        >
+          See it in action ↓
+        </button>
+      )}
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={label}
+        className="px-4 sm:px-6 py-3 sm:py-3.5 rounded-full bg-accent text-[13.5px] sm:text-base shadow-xl transition-transform hover:scale-[1.03] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent whitespace-nowrap"
+        style={{
+          minHeight: 48,
+          letterSpacing: "-0.005em",
+          fontWeight: 400,
+          color: "#241A0E",
+          boxShadow:
+            "0 12px 34px -8px color-mix(in srgb, var(--color-accent) 45%, transparent)",
+        }}
+      >
+        {label} →
+      </button>
+    </div>
   );
 }

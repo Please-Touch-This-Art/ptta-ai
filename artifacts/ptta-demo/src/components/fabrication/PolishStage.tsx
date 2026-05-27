@@ -54,7 +54,7 @@ export function PolishStage({
   }, []);
 
   return (
-    <div className="h-full bg-stone-950 text-cream flex flex-col overflow-hidden relative">
+    <div className="h-full min-h-[480px] bg-stone-950 text-cream flex flex-col overflow-hidden relative">
       <div className="pt-4" />
       <ReferenceCard model={model} />
 

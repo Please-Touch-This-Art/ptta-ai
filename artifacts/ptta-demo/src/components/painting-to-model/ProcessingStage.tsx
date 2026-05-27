@@ -91,7 +91,7 @@ export function ProcessingStage({
   const isStep = (id: StepId) => currentStep.id === id;
 
   return (
-    <div className="h-full bg-transparent text-stone-100 flex flex-col overflow-hidden">
+    <div className="h-full min-h-[480px] bg-transparent text-stone-100 flex flex-col overflow-hidden">
       <div className="mx-auto w-full max-w-[440px] flex-1 min-h-0 flex flex-col pt-2 sm:pt-4">
         <div className="flex-1 min-h-0 flex items-center justify-center px-4 sm:px-6 py-2 sm:py-4">
           <div className="relative rounded-md overflow-hidden max-w-full max-h-full">

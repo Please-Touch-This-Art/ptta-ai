@@ -15,6 +15,7 @@ interface HeaderProps {
 const FONT_OPTIONS: { value: FontTheme; label: string }[] = [
   { value: "default", label: "Default" },
   { value: "editorial", label: "Editorial" },
+  { value: "content", label: "Content v2" },
 ];
 
 function FontThemeMenu() {
@@ -48,7 +49,7 @@ function FontThemeMenu() {
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label="Change font theme"
+        aria-label="Change site version"
         className="ptta-label inline-flex items-center gap-1.5 rounded-full border border-hairline px-3 py-1.5 text-[9.5pt] sm:text-[10pt] leading-none text-ink hover:bg-ink/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         style={{ minHeight: 32 }}
       >
