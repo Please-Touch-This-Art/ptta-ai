@@ -152,7 +152,11 @@
       "Bash(curl -s -o /dev/null -w '__TRACKED_VAR__: %{http_code}\\\\n' http://localhost:5173/__TRACKED_VAR__)",
       "Bash(curl -s -o /dev/null -w \"@vite/client: %{http_code}\\\\n\" \"http://localhost:5173/@vite/client\")",
       "Bash(curl -s -o /dev/null -w \"main.tsx time_total=%{time_total}s size=%{size_download}\\\\n\" \"http://localhost:5173/src/main.tsx\")",
-      "Bash(git commit -m 'Content v2 landing polish + demo \"See it in action\" gallery' -m 'Landing \\(Content v2 staging only; default version untouched\\): *)"
+      "Bash(git commit -m 'Content v2 landing polish + demo \"See it in action\" gallery' -m 'Landing \\(Content v2 staging only; default version untouched\\): *)",
+      "WebSearch",
+      "WebFetch(domain:unsplash.com)",
+      "Bash(curl -s -o /dev/null -w \"problem-blind-visitor.jpg: %{http_code}\\\\n\" \"http://localhost:5173/images/problem-blind-visitor.jpg\")",
+      "Bash(git commit -m 'Rework problem section + mobile sizing polish \\(Content v2\\)' -m '- Problem section trimmed to the core message \\(\"300 million people can'\\\\''t experience art\", 43M fully blind\\); removed \"Museums move us\" and the verbose copy *)"
     ]
   }
 }

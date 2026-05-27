@@ -21,10 +21,8 @@ const KATJA_IMG = `${BASE}/images/testimonials/Katja.jpg`;
 const PAINTING_IMG = `${BASE}/paintings/starry-night.webp`;
 const RELIEF_IMG = `${BASE}/printed/starry-night.png`;
 const EXPERIENCE_IMG = `${BASE}/images/hands-exploring-model.jpeg`;
-// Content v2 preview: emotional stand-in for the problem section. NOTE: this is a
-// placeholder from existing assets — replace with a sourced portrait of a blind /
-// low-vision visitor that conveys the feeling of being shut out from the art.
-const PROBLEM_EMOTION_IMG = `${BASE}/images/people-using-models/people-01.jpg`;
+// Content v2: portrait for the problem section (a blind / visually impaired person).
+const PROBLEM_IMG = `${BASE}/images/problem-blind-visitor.jpg`;
 const CONTACT_EMAIL = "contact@ptta.art";
 
 const PEOPLE_IMAGES = [
@@ -266,55 +264,42 @@ function ProblemSectionContentV2() {
     >
       <Eyebrow>The problem</Eyebrow>
 
-      <div className="mt-2 md:grid md:grid-cols-[1.05fr_1fr] md:gap-12 md:items-center">
-        {/* Emotional photo */}
-        <figure className="order-2 md:order-1 mt-8 md:mt-0">
+      <div className="mt-4 md:mt-2 flex flex-row items-center gap-4 sm:gap-6 md:grid md:grid-cols-[1.05fr_1fr] md:gap-12 md:items-center">
+        {/* Image: a blind / visually impaired person */}
+        <figure className="order-2 md:order-1 w-[40%] sm:w-[36%] shrink-0 md:w-auto">
           <div
             className="relative aspect-[4/5] overflow-hidden rounded-2xl"
             style={{ border: "1px solid var(--color-hairline)" }}
           >
             <img
-              src={PROBLEM_EMOTION_IMG}
-              alt="A blind visitor rests a hand on a tactile relief by a window — exploring art the only way a gallery allows"
+              src={PROBLEM_IMG}
+              alt="A blind person walking with a white cane"
               loading="lazy"
               className="h-full w-full object-cover"
-              style={{ filter: "grayscale(0.45) brightness(0.92) contrast(1.03)" }}
+              style={{ filter: "grayscale(0.9) brightness(0.85) contrast(1.06)" }}
             />
             <div
               aria-hidden
               className="absolute inset-0"
               style={{
                 background:
-                  "linear-gradient(180deg, rgba(3,5,8,0) 40%, rgba(3,5,8,0.55) 100%)",
+                  "linear-gradient(180deg, rgba(3,5,8,0) 45%, rgba(3,5,8,0.5) 100%)",
               }}
             />
           </div>
-          <figcaption className="text-muted-fg mt-2 text-sm">
-            For most, art is something you can only stand near.
-          </figcaption>
         </figure>
 
-        {/* Copy */}
-        <div className="order-1 md:order-2">
+        {/* Copy: minimal, problem-focused */}
+        <div className="order-1 md:order-2 flex-1 min-w-0">
           <h2
-            className="font-serif text-ink leading-[1.06] mb-5"
-            style={{ ...tight, fontSize: "clamp(2rem, 5vw, 3.25rem)" }}
+            className="font-serif text-ink leading-[1.05] mb-3 md:mb-5"
+            style={{ ...tight, fontSize: "clamp(1.95rem, 6vw, 3.75rem)" }}
           >
-            <span className="block">Museums move us.</span>
-            <span className="block text-accent">
-              300&nbsp;million can&rsquo;t reach the art.
-            </span>
+            <span className="block text-accent">300&nbsp;million people</span>
+            <span className="block">can&rsquo;t experience art.</span>
           </h2>
-          <p className="text-body-fg text-lg leading-relaxed max-w-xl">
-            Blind and low-vision visitors are welcome through the doors &mdash;
-            but the art itself has always lived behind glass. Present,
-            celebrated, and just out of reach.
-          </p>
-          <p className="text-muted-fg mt-5 text-base">
-            <strong className="text-ink font-medium">
-              300&nbsp;million people
-            </strong>{" "}
-            live with vision impairment, 43&nbsp;million of them fully blind.
+          <p className="text-body-fg text-base sm:text-lg leading-relaxed max-w-md">
+            Blind and visually impaired, 43&nbsp;million of them fully blind.
           </p>
           <p className="text-muted-fg mt-3" style={{ fontSize: "12px" }}>
             Source: World Health Organization, 2023
@@ -326,7 +311,7 @@ function ProblemSectionContentV2() {
           behind it. The label spells out what 86% measures so the whole card
           reads as one sentence leading into the quote. */}
       <figure
-        className="mt-14 md:mt-16 rounded-2xl px-6 md:px-12 py-9 md:py-11 md:grid md:grid-cols-[minmax(0,16rem)_1fr] md:gap-10 md:items-center"
+        className="mt-12 md:mt-16 rounded-2xl px-5 sm:px-6 md:px-12 py-8 md:py-11 md:grid md:grid-cols-[minmax(0,16rem)_1fr] md:gap-10 md:items-center"
         style={{
           background: "rgba(242,233,214,0.05)",
           border: "1px solid var(--color-hairline)",
@@ -344,7 +329,7 @@ function ProblemSectionContentV2() {
           >
             86%
           </p>
-          <p className="text-body-fg mt-3 text-base md:text-lg leading-snug">
+          <p className="text-body-fg mt-3 text-lg md:text-lg leading-snug">
             of blind and visually impaired visitors say:
           </p>
         </div>
@@ -363,7 +348,7 @@ function ProblemSectionContentV2() {
           <blockquote
             className="font-sans text-ink leading-snug -mt-4"
             style={{
-              fontSize: "clamp(1.2rem, 2.8vw, 1.6rem)",
+              fontSize: "clamp(1.2rem, 3.5vw, 1.5rem)",
               fontWeight: 400,
               letterSpacing: "-0.005em",
             }}
