@@ -2,8 +2,6 @@ import { useCallback } from "react";
 import { useLocation } from "wouter";
 import { Landmark } from "lucide-react";
 import {
-  PAINTINGS,
-  MONUMENTS,
   VISIBLE_ORDERED,
   type ModelEntry,
   type ModelId,
@@ -42,17 +40,6 @@ export default function ArtworkPicker() {
         </div>
 
         <section aria-label="Artworks">
-          <div className="flex items-center justify-between mb-3 md:mb-4">
-            <span className="ptta-label text-ink" style={{ fontSize: "10pt" }}>
-              Paintings & Monuments
-            </span>
-            <span
-              className="ptta-label text-muted-fg"
-              style={{ fontSize: "10pt" }}
-            >
-              {PAINTINGS.length + MONUMENTS.length} available
-            </span>
-          </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-5">
             {VISIBLE_ORDERED.map((m, i) => (
               <ArtworkCard

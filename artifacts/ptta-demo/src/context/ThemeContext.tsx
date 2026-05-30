@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 export type Theme = "light" | "dark";
-// "default" / "editorial" are font themes; "content" is a content-variant preview
-// (default fonts, but alternate copy/imagery) used to review proposed changes
-// before they replace the default.
+// "content" is the finalized site variant. The legacy values are preserved in
+// the type so any lingering callers still compile, but the provider always
+// returns "content".
 export type FontTheme = "default" | "editorial" | "content";
 
 interface ThemeContextValue {
@@ -15,7 +15,6 @@ interface ThemeContextValue {
 }
 
 const STORAGE_KEY = "ptta-theme";
-const FONT_STORAGE_KEY = "ptta-font-theme";
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
@@ -26,17 +25,9 @@ function readInitial(): Theme {
   return "dark";
 }
 
-function readInitialFont(): FontTheme {
-  if (typeof window === "undefined") return "default";
-  const stored = window.localStorage.getItem(FONT_STORAGE_KEY);
-  if (stored === "editorial" || stored === "default" || stored === "content")
-    return stored;
-  return "default";
-}
-
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(readInitial);
-  const [fontTheme, setFontThemeState] = useState<FontTheme>(readInitialFont);
+  const fontTheme: FontTheme = "content";
 
   useEffect(() => {
     const root = document.documentElement;
@@ -45,24 +36,20 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     try {
       window.localStorage.setItem(STORAGE_KEY, theme);
     } catch {
-      // ignore — private mode / quota
+      // ignore (private mode / quota)
     }
   }, [theme]);
 
   useEffect(() => {
-    const root = document.documentElement;
-    if (fontTheme === "editorial") root.classList.add("font-editorial");
-    else root.classList.remove("font-editorial");
-    try {
-      window.localStorage.setItem(FONT_STORAGE_KEY, fontTheme);
-    } catch {
-      // ignore — private mode / quota
-    }
-  }, [fontTheme]);
+    // Make sure no stale editorial font class lingers from a prior session.
+    document.documentElement.classList.remove("font-editorial");
+  }, []);
 
   const setTheme = (next: Theme) => setThemeState(next);
   const toggle = () => setThemeState((prev) => (prev === "light" ? "dark" : "light"));
-  const setFontTheme = (next: FontTheme) => setFontThemeState(next);
+  const setFontTheme = (_next: FontTheme) => {
+    // No-op: site variant is locked to "content".
+  };
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, toggle, fontTheme, setFontTheme }}>

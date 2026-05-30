@@ -74,6 +74,7 @@ export const MODELS: ModelEntry[] = [
     image: publicPath("paintings/starry-night.webp"),
     glb: publicPath("models/starry-night.glb"),
     available: true,
+    hidden: true,
     colored: true,
     // Authored lying flat (Y = shallow depth, Z = tall), same convention
     // as The Scream / Persistence. Rotate 90° around X to stand it upright
