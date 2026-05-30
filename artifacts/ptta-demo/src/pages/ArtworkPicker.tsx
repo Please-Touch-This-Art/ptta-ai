@@ -4,6 +4,7 @@ import { Landmark } from "lucide-react";
 import {
   PAINTINGS,
   MONUMENTS,
+  VISIBLE_ORDERED,
   type ModelEntry,
   type ModelId,
 } from "@/content/models";
@@ -40,48 +41,24 @@ export default function ArtworkPicker() {
           </p>
         </div>
 
-        <section className="mb-8 md:mb-10" aria-label="Paintings">
+        <section aria-label="Artworks">
           <div className="flex items-center justify-between mb-3 md:mb-4">
             <span className="ptta-label text-ink" style={{ fontSize: "10pt" }}>
-              Paintings
+              Paintings & Monuments
             </span>
             <span
               className="ptta-label text-muted-fg"
               style={{ fontSize: "10pt" }}
             >
-              {PAINTINGS.length} available
+              {PAINTINGS.length + MONUMENTS.length} available
             </span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-5">
-            {PAINTINGS.map((m, i) => (
+            {VISIBLE_ORDERED.map((m, i) => (
               <ArtworkCard
                 key={m.id}
                 model={m}
                 index={i}
-                onSelect={handleSelect}
-              />
-            ))}
-          </div>
-        </section>
-
-        <section aria-label="Monuments">
-          <div className="flex items-center justify-between mb-3 md:mb-4">
-            <span className="ptta-label text-ink" style={{ fontSize: "10pt" }}>
-              Monuments
-            </span>
-            <span
-              className="ptta-label text-muted-fg"
-              style={{ fontSize: "10pt" }}
-            >
-              {MONUMENTS.length} available
-            </span>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-5">
-            {MONUMENTS.map((m, i) => (
-              <ArtworkCard
-                key={m.id}
-                model={m}
-                index={PAINTINGS.length + i}
                 onSelect={handleSelect}
               />
             ))}

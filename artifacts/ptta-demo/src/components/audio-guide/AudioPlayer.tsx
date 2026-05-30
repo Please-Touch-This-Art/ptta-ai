@@ -405,7 +405,7 @@ function LanguageChip({ lang }: { lang: Language }) {
   return (
     <li>
       <div
-        className={`flex items-center justify-between gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg border ${
+        className={`flex items-center justify-between gap-2 px-3 py-2.5 sm:px-3.5 sm:py-2.5 rounded-lg border ${
           lang.active
             ? "border-accent/40 bg-accent/10 text-ink"
             : "border-hairline bg-page text-body-fg"
@@ -414,12 +414,14 @@ function LanguageChip({ lang }: { lang: Language }) {
         <span className="flex items-center gap-2 min-w-0">
           <span
             aria-hidden="true"
-            className="text-sm sm:text-base leading-none shrink-0"
+            className="text-lg sm:text-lg leading-none shrink-0"
             style={{ fontFamily: "system-ui, sans-serif" }}
           >
             {lang.flag}
           </span>
-          <span className="text-xs font-medium truncate">{lang.name}</span>
+          <span className="text-base sm:text-base font-medium truncate">
+            {lang.name}
+          </span>
         </span>
         {lang.active && (
           <span
@@ -442,7 +444,7 @@ function LanguageRail() {
       className="w-full max-w-[640px] rounded-2xl border border-hairline bg-surface p-3 sm:p-5"
     >
       <h2
-        className="font-serif text-ink text-base sm:text-lg md:text-xl leading-tight"
+        className="font-serif text-ink text-xl sm:text-2xl md:text-2xl leading-tight"
         style={titleStyle}
       >
         Available languages
@@ -454,7 +456,7 @@ function LanguageRail() {
       </ul>
 
       <h2
-        className="font-serif text-ink text-base sm:text-lg md:text-xl leading-tight mt-4 sm:mt-5"
+        className="font-serif text-ink text-xl sm:text-2xl md:text-2xl leading-tight mt-4 sm:mt-5"
         style={titleStyle}
       >
         Coming soon

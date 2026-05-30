@@ -1,14 +1,18 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { Landmark } from "lucide-react";
-import { MODELS, type ModelEntry, type ModelId } from "@/content/models";
+import {
+  VISIBLE_ORDERED,
+  type ModelEntry,
+  type ModelId,
+} from "@/content/models";
 import { cn } from "@/lib/utils";
 
 interface Props {
   currentId: ModelId;
 }
 
-const AVAILABLE = MODELS.filter((m) => m.available);
+const AVAILABLE = VISIBLE_ORDERED.filter((m) => m.available);
 
 const THUMB_W = 56; // px
 const THUMB_H = 64;

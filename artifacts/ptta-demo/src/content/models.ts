@@ -28,6 +28,8 @@ export interface ModelEntry {
   image: string;
   glb?: string;
   available: boolean;
+  /** Temporarily hide from the picker and journey nav without removing the data. */
+  hidden?: boolean;
   commissionedBy?: string;
   /** Override the default <model-viewer orientation> ("roll pitch yaw", in degrees). */
   orientation?: string;
@@ -100,6 +102,7 @@ export const MODELS: ModelEntry[] = [
     image: publicPath("paintings/girl-with-pearl-earring.jpg"),
     glb: publicPath("models/girl-with-pearl-earring.glb"),
     available: true,
+    hidden: true,
     colored: true,
     // Same lying-flat authoring convention as Starry Night — stand it up.
     orientation: "0 -90 0",
@@ -139,6 +142,7 @@ export const MODELS: ModelEntry[] = [
     image: publicPath("paintings/the-night-watch.jpg"),
     glb: publicPath("models/the-night-watch.glb"),
     available: true,
+    hidden: true,
     colored: true,
     // Same lying-flat authoring convention — stand it up to face the camera.
     orientation: "0 -90 0",
@@ -152,6 +156,7 @@ export const MODELS: ModelEntry[] = [
     image: publicPath("paintings/dogs-playing-poker.jpg"),
     glb: publicPath("models/dogs-playing-poker.glb"),
     available: true,
+    hidden: true,
     colored: true,
     // Same lying-flat authoring convention — stand it up to face the camera.
     orientation: "0 -90 0",
@@ -284,5 +289,17 @@ export const MODELS: ModelEntry[] = [
   },
 ];
 
-export const PAINTINGS = MODELS.filter((m) => m.type === "painting");
-export const MONUMENTS = MODELS.filter((m) => m.type === "monument");
+export const PAINTINGS = MODELS.filter(
+  (m) => m.type === "painting" && !m.hidden,
+);
+export const MONUMENTS = MODELS.filter(
+  (m) => m.type === "monument" && !m.hidden,
+);
+
+// Canonical display order shared by the picker and the journey nav strip:
+// first 4 paintings, then monuments, then the rest of paintings.
+export const VISIBLE_ORDERED: ModelEntry[] = [
+  ...PAINTINGS.slice(0, 4),
+  ...MONUMENTS,
+  ...PAINTINGS.slice(4),
+];

@@ -74,6 +74,10 @@ export function AudioProcessingStage({
   const fadeDur = FADE_TRANSITION_BASE / speedMultiplier;
   const scanDur = SCAN_SWEEP_BASE / speedMultiplier;
   const [stepIndex, setStepIndex] = useState(0);
+  const [aspect, setAspect] = useState<number>(2 / 3);
+  useEffect(() => {
+    setAspect(2 / 3);
+  }, [model.image]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -92,19 +96,36 @@ export function AudioProcessingStage({
   return (
     <div className="h-full min-h-[480px] bg-stone-950 text-stone-100 flex flex-col overflow-hidden">
       <div className="mx-auto w-full max-w-[440px] flex-1 min-h-0 flex flex-col pt-2 sm:pt-4">
-        <div className="flex-1 min-h-0 flex items-center justify-center px-4 sm:px-6 py-2 sm:py-4">
-          <div className="relative rounded-md overflow-hidden max-w-full max-h-full">
-            {/* Painting — full image, never cropped (object-contain). */}
-            <img
-              src={model.image}
-              alt=""
-              aria-hidden
-              className="block max-w-full max-h-full w-auto h-auto object-contain"
+        <div className="flex-1 min-h-0 px-4 sm:px-6 py-2 sm:py-4">
+          <div
+            className="w-full h-full flex items-center justify-center"
+            style={{ containerType: "size" }}
+          >
+            <div
+              className="relative rounded-md overflow-hidden"
               style={{
-                filter: currentStep.filter,
-                transition: `filter ${filterDur}s ease`,
+                width: `min(100cqw, calc(${aspect} * 100cqh))`,
+                height: `min(100cqh, calc(100cqw / ${aspect}))`,
               }}
-            />
+            >
+              {/* Painting — full image, never cropped. Wrapper sizes to the
+                  painting's aspect within available area; img fills wrapper. */}
+              <img
+                src={model.image}
+                alt=""
+                aria-hidden
+                onLoad={(e) => {
+                  const img = e.currentTarget;
+                  if (img.naturalWidth && img.naturalHeight) {
+                    setAspect(img.naturalWidth / img.naturalHeight);
+                  }
+                }}
+                className="block w-full h-full object-contain"
+                style={{
+                  filter: currentStep.filter,
+                  transition: `filter ${filterDur}s ease`,
+                }}
+              />
 
             {/* Accent frame */}
             <div
@@ -164,6 +185,7 @@ export function AudioProcessingStage({
                 animation: `ptta-scan-sweep ${scanDur}s linear infinite`,
               }}
             />
+            </div>
           </div>
         </div>
 
