@@ -28,6 +28,10 @@ export default function AudioGuide() {
     setState({ stage: "picker" });
   }, []);
 
+  const handleSwap = useCallback((id: ModelId) => {
+    setState({ stage: "processing", modelId: id });
+  }, []);
+
   if (state.stage === "picker") {
     return <AudioGuidePicker onSelect={handleSelect} />;
   }
@@ -45,5 +49,5 @@ export default function AudioGuide() {
     );
   }
 
-  return <AudioPlayer model={model} onBack={handleBack} />;
+  return <AudioPlayer model={model} onBack={handleBack} onSwap={handleSwap} />;
 }

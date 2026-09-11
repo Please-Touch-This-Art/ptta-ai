@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
-import type { ModelEntry } from "@/content/models";
+import type { ModelEntry, ModelId } from "@/content/models";
 import { fabricateRenders } from "@/content/fabrication-images";
 import { ReferenceCard } from "./ReferenceCard";
+import { PaintingCarousel } from "@/components/PaintingCarousel";
 
 interface Props {
   model: ModelEntry;
   onDone: () => void;
   onBack: () => void;
+  onSwap?: (id: ModelId) => void;
 }
 
 const FABRICATE_MS = 5500;
@@ -28,7 +30,7 @@ const IMAGE_WRAP_STYLE: CSSProperties = {
   overflow: "hidden",
 };
 
-export function FabricateStage({ model, onDone, onBack }: Props) {
+export function FabricateStage({ model, onDone, onBack, onSwap }: Props) {
   const [progress, setProgress] = useState(0);
   const [layerFake, setLayerFake] = useState(START_LAYER_FAKE);
   const startedAt = useRef<number>(Date.now());
@@ -81,6 +83,15 @@ export function FabricateStage({ model, onDone, onBack }: Props) {
           </p>
         </div>
       </header>
+
+      {onSwap && (
+        <PaintingCarousel
+          activeId={model.id}
+          onSelect={onSwap}
+          variant="dark"
+          className="relative z-20"
+        />
+      )}
 
       <ReferenceCard model={model} />
 

@@ -8,6 +8,12 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useDesign } from "@/context/DesignContext";
 import HermesLanding from "@/pages/HermesLanding";
 import PradaLanding from "@/pages/PradaLanding";
+import LoeweLanding from "@/pages/LoeweLanding";
+import SaintLaurentLanding from "@/pages/SaintLaurentLanding";
+import AesopLanding from "@/pages/AesopLanding";
+import MissionControlLanding from "@/pages/MissionControlLanding";
+import PitchDeckLanding from "@/pages/PitchDeckLanding";
+import SpotlightLanding from "@/pages/SpotlightLanding";
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 const VIDEO_SRC = `${BASE}/videos/people-using-tactile.mp4`;
@@ -42,6 +48,24 @@ export default function Landing() {
   }
   if (design.id === "prada") {
     return <PradaLanding />;
+  }
+  if (design.id === "loewe") {
+    return <LoeweLanding />;
+  }
+  if (design.id === "saintlaurent") {
+    return <SaintLaurentLanding />;
+  }
+  if (design.id === "aesop") {
+    return <AesopLanding />;
+  }
+  if (design.id === "mission") {
+    return <MissionControlLanding />;
+  }
+  if (design.id === "pitch") {
+    return <PitchDeckLanding />;
+  }
+  if (design.id === "spotlight") {
+    return <SpotlightLanding />;
   }
 
   return (

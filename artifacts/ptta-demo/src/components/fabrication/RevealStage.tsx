@@ -1,16 +1,18 @@
 import { ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLocation } from "wouter";
-import type { ModelEntry } from "@/content/models";
+import type { ModelEntry, ModelId } from "@/content/models";
 import { fabricationImage } from "@/content/fabrication-images";
+import { PaintingCarousel } from "@/components/PaintingCarousel";
 
 interface Props {
   model: ModelEntry;
   onBack: () => void;
   onPickAnother: () => void;
+  onSwap?: (id: ModelId) => void;
 }
 
-export function RevealStage({ model, onBack, onPickAnother }: Props) {
+export function RevealStage({ model, onBack, onPickAnother, onSwap }: Props) {
   const src = fabricationImage(model.id);
   const [, navigate] = useLocation();
 
@@ -74,6 +76,16 @@ export function RevealStage({ model, onBack, onPickAnother }: Props) {
           </p>
         </div>
       </header>
+
+      {onSwap && (
+        <div className="absolute top-[calc(max(1.5rem,env(safe-area-inset-top))+44px+0.5rem)] left-0 right-0 z-20 pointer-events-auto">
+          <PaintingCarousel
+            activeId={model.id}
+            onSelect={onSwap}
+            variant="dark"
+          />
+        </div>
+      )}
 
       {/* Bottom caption + CTA */}
       <motion.div

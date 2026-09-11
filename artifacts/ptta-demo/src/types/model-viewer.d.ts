@@ -5,6 +5,8 @@ type ModelViewerAttributes = HTMLAttributes<HTMLElement> & {
   alt?: string;
   poster?: string;
   "camera-controls"?: boolean | "";
+  "disable-zoom"?: boolean | "";
+  "disable-pan"?: boolean | "";
   "auto-rotate"?: boolean | "";
   "auto-rotate-delay"?: string | number;
   "rotation-per-second"?: string;

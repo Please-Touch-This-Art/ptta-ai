@@ -2,7 +2,8 @@ import { ModelViewerElement } from "@google/model-viewer";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useLocation } from "wouter";
-import type { ModelEntry } from "@/content/models";
+import type { ModelEntry, ModelId } from "@/content/models";
+import { PaintingCarousel } from "@/components/PaintingCarousel";
 
 // Our GLBs are produced by gltfpack with EXT_meshopt_compression +
 // KHR_mesh_quantization. model-viewer only wires the meshopt decoder into
@@ -15,6 +16,7 @@ ModelViewerElement.meshoptDecoderLocation =
 interface Props {
   model: ModelEntry;
   onBack: () => void;
+  onSwap?: (id: ModelId) => void;
 }
 
 type Status = "loading" | "ready" | "error";
@@ -24,7 +26,7 @@ const AUTO_ROTATE_DELAY_AFTER_INTERACTION_MS = 10000;
 
 const titleStyle = { letterSpacing: "-0.01em" } as const;
 
-export function ViewerStage({ model, onBack }: Props) {
+export function ViewerStage({ model, onBack, onSwap }: Props) {
   const viewerRef = useRef<HTMLElement>(null);
   const [, navigate] = useLocation();
   const [status, setStatus] = useState<Status>("loading");
@@ -177,6 +179,17 @@ export function ViewerStage({ model, onBack }: Props) {
           </p>
         </div>
       </header>
+
+      {/* Painting carousel — swap to another piece without leaving the viewer */}
+      {onSwap && (
+        <div className="absolute top-[calc(max(1.5rem,env(safe-area-inset-top))+44px+0.5rem)] left-0 right-0 z-20 pointer-events-auto">
+          <PaintingCarousel
+            activeId={model.id}
+            onSelect={onSwap}
+            variant="dark"
+          />
+        </div>
+      )}
 
       {/* Bottom overlay — commission, hint, CTA */}
       <div

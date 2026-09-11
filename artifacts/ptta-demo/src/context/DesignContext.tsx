@@ -1,6 +1,15 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-export type DesignId = "default" | "hermes" | "prada";
+export type DesignId =
+  | "default"
+  | "hermes"
+  | "prada"
+  | "loewe"
+  | "saintlaurent"
+  | "aesop"
+  | "mission"
+  | "pitch"
+  | "spotlight";
 
 export interface DesignOption {
   id: DesignId;
@@ -22,7 +31,37 @@ export const DESIGN_OPTIONS: DesignOption[] = [
   {
     id: "prada",
     name: "Prada",
-    description: "Prada — bold sans display, alternating grey panels, serif wordmark.",
+    description: "Prada — geometric sans display, alternating grey panels, serif wordmark.",
+  },
+  {
+    id: "loewe",
+    name: "Loewe",
+    description: "Loewe — editorial split layout, Untitled Sans body, monospaced annotations.",
+  },
+  {
+    id: "saintlaurent",
+    name: "Saint Laurent",
+    description: "Saint Laurent — couture brutalism, oversized compressed display, monochrome.",
+  },
+  {
+    id: "aesop",
+    name: "Aesop",
+    description: "Aesop — apothecary serif, lowercase, considered vertical rhythm.",
+  },
+  {
+    id: "mission",
+    name: "Mission Control",
+    description: "Dark demo console — IBM Plex Mono + Fraunces italic, live signals, specimen grid.",
+  },
+  {
+    id: "pitch",
+    name: "Pitch Deck",
+    description: "Dark slide deck — Untitled Sans + Fraunces italic, slide markers, NOW SHOWING pin.",
+  },
+  {
+    id: "spotlight",
+    name: "Spotlight",
+    description: "Dark warm-coal stage — Manrope + EB Garamond italic, amber glow, stage selector.",
   },
 ];
 
@@ -40,7 +79,19 @@ const DesignContext = createContext<DesignContextValue | null>(null);
 function readInitialId(): DesignId {
   if (typeof window === "undefined") return DEFAULT_DESIGN_ID;
   const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (stored === "default" || stored === "hermes" || stored === "prada") return stored;
+  if (
+    stored === "default" ||
+    stored === "hermes" ||
+    stored === "prada" ||
+    stored === "loewe" ||
+    stored === "saintlaurent" ||
+    stored === "aesop" ||
+    stored === "mission" ||
+    stored === "pitch" ||
+    stored === "spotlight"
+  ) {
+    return stored;
+  }
   return DEFAULT_DESIGN_ID;
 }
 

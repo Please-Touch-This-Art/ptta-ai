@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
-import type { ModelEntry } from "@/content/models";
+import type { ModelEntry, ModelId } from "@/content/models";
 import { polishRender } from "@/content/fabrication-images";
 import { ReferenceCard } from "./ReferenceCard";
+import { PaintingCarousel } from "@/components/PaintingCarousel";
 
 interface Props {
   model: ModelEntry;
   onDone: () => void;
   onBack: () => void;
+  onSwap?: (id: ModelId) => void;
 }
 
 const POLISH_MS = 3000;
@@ -23,7 +25,7 @@ const IMAGE_WRAP_STYLE: CSSProperties = {
   overflow: "hidden",
 };
 
-export function PolishStage({ model, onDone, onBack }: Props) {
+export function PolishStage({ model, onDone, onBack, onSwap }: Props) {
   const [pass, setPass] = useState(1);
   const startedAt = useRef<number>(Date.now());
 
@@ -69,6 +71,15 @@ export function PolishStage({ model, onDone, onBack }: Props) {
           </p>
         </div>
       </header>
+
+      {onSwap && (
+        <PaintingCarousel
+          activeId={model.id}
+          onSelect={onSwap}
+          variant="dark"
+          className="relative z-20"
+        />
+      )}
 
       <ReferenceCard model={model} />
 

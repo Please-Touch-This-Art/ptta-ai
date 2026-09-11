@@ -28,6 +28,10 @@ export default function PaintingToModel() {
     setState({ stage: "picker" });
   }, []);
 
+  const handleSwap = useCallback((id: ModelId) => {
+    setState({ stage: "processing", modelId: id });
+  }, []);
+
   if (state.stage === "picker") {
     return <ModelPicker onSelect={handleSelect} />;
   }
@@ -47,5 +51,5 @@ export default function PaintingToModel() {
     );
   }
 
-  return <ViewerStage model={model} onBack={handleBack} />;
+  return <ViewerStage model={model} onBack={handleBack} onSwap={handleSwap} />;
 }

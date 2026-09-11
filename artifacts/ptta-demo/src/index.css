@@ -5,6 +5,31 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Klim Test Untitled Sans — self-hosted from public/fonts/test-untitled.
+   Declared as "Untitled Sans" so existing font stacks that already reference
+   the family pick this up automatically. */
+@font-face {
+  font-family: "Untitled Sans";
+  src: url("/fonts/test-untitled/TestUntitledSans-Regular-BF664576c4080d1.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Untitled Sans";
+  src: url("/fonts/test-untitled/TestUntitledSans-Medium-BF664576c414505.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Untitled Sans";
+  src: url("/fonts/test-untitled/TestUntitledSans-Bold-BF664576c3d01a7.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @font-face {
   font-family: "Helvetica Neue";
   src: url("/fonts/HelveticaNeue-Thin.ttf") format("truetype");
@@ -602,25 +627,42 @@
 /* ─────────────────────────────────────────────────────────────────────────
  * PRADA LANDING — typography classes used by PradaLanding.tsx
  * Fonts:
- *   – Cormorant Garamond (Google Fonts) — elegant Garamond revival for the
- *     "Please Touch This Art" wordmark.
+ *   – Fraunces (Google Fonts) — the Aesop variant's display serif, reused here
+ *     for the "Please Touch This Art" wordmark.
  *   – Jost (Google Fonts) — open-source Futura-equivalent, designed on the
  *     same Bauhaus geometric principles. Used for ALL body / display / nav.
  * ───────────────────────────────────────────────────────────────────────── */
 
 .prada-root {
+  /* The beige band behind partners, the mission statement and contact. A
+     variable so dark mode can flip it; the utilities elsewhere ride on
+     --color-white / --color-black and flip automatically. */
+  --prada-band: #f6f5f3;
+  --prada-plate: #efedea;
   --prada-display-tracking: -0.01em;
   --prada-nav-tracking: 0.04em;
-  --prada-futura: "Jost", "Futura", "Futura PT", "Avenir", "Helvetica Neue", "Helvetica", "Arial", system-ui, sans-serif;
+  /* Untitled Sans first (commercial, Klim); General Sans (Fontshare, free) is
+     the closest free analogue and is what most viewers will actually render. */
+  --prada-futura: "Untitled Sans", "General Sans", "Söhne", "Inter", "Helvetica Neue", "Helvetica", "Arial", system-ui, sans-serif;
+  /* Mono used for every all-caps treatment on the page, matching the Loewe
+     nav row (WOMAN / MAN / CRAFT / JOURNAL / ATELIER). */
+  --prada-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 
+/* Wordmark typography is borrowed wholesale from the Aesop variant: Fraunces at
+   its 96 optical size, regular weight, near-neutral tracking, with the ss01/ss02
+   stylistic sets .aesop-root applies to it. Redeclared here rather than reusing
+   .aesop-wordmark because that class resolves --aesop-serif from .aesop-root,
+   which this page does not carry. */
 .prada-wordmark {
-  font-family: "Cormorant Garamond", "Garamond", "EB Garamond", "Georgia", serif;
-  font-weight: 500;
-  letter-spacing: 0.02em;
+  font-family: "Fraunces", "GT Sectra", "EB Garamond", "Cormorant Garamond", "Georgia", serif;
+  font-weight: 400;
+  letter-spacing: 0.005em;
   font-style: normal;
-  font-size: 22px;
+  font-size: 20px;
   line-height: 1;
+  font-variation-settings: "opsz" 96;
+  font-feature-settings: "ss01" on, "ss02" on;
 }
 
 /* Ken-Burns animated still that stands in for the missing hero/editorial
@@ -642,15 +684,58 @@
 @media (prefers-reduced-motion: reduce) {
   .prada-hero-img { animation: none; }
 }
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .prada-wordmark {
-    font-size: 26px;
+    font-size: 24px;
   }
+}
+
+/* Below lg the wordmark sits left-aligned beside the menu button rather than
+   in a centred third of the row. At 16px it measures ~164px, which clears the
+   two 44px controls and their gaps down to a 320px viewport; at the inherited
+   20px it needed 205px inside a 114px column and painted over the controls. */
+@media (max-width: 1023px) {
+  .prada-wordmark--compact {
+    font-size: 16px;
+  }
+}
+
+@font-face {
+  font-family: "Reenie Beanie";
+  src: url("/fonts/reenie-beanie/ReenieBeanie-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* The handwritten half of the mission statement. Reenie Beanie has a small
+   x-height and thin strokes, so it needs both a larger size and a tighter line
+   than the sans it sits under to carry the same weight on the page; the size is
+   set where it is used. */
+.prada-hand {
+  font-family: "Reenie Beanie", "Bradley Hand", "Segoe Print", cursive;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0.01em;
+}
+
+/* The wordmark's typeface at heading scale. Same family, weight, tracking and
+   OpenType settings as `.prada-wordmark`, but without its fixed 20px size, so a
+   heading can set its own. Currently worn by the galleries heading as an
+   experiment: swapping that element's class back to `prada-display` returns it
+   to the Futura-style display face with no other change. */
+.prada-wordmark-display {
+  font-family: "Fraunces", "GT Sectra", "EB Garamond", "Cormorant Garamond", "Georgia", serif;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  font-style: normal;
+  font-variation-settings: "opsz" 96;
+  font-feature-settings: "ss01" on, "ss02" on;
 }
 
 .prada-display {
   font-family: var(--prada-futura);
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: var(--prada-display-tracking);
   font-style: normal;
 }
@@ -661,17 +746,15 @@
   font-weight: 400;
 }
 
-.prada-caption {
-  font-weight: 500;
-}
-
 .prada-nav {
   font-family: var(--prada-futura);
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: var(--prada-nav-tracking);
 }
 
-/* Prada's signature underlined small-caps CTA ("ENTDECKEN", "FÜR SIE"). */
+/* Prada's signature underlined small-caps CTA ("ENTDECKEN", "FÜR SIE") —
+   rendered in the mono face shared with the Loewe nav, so every all-caps
+   string on the Prada page reads as the same typographic system. */
 .prada-link-cta {
   display: inline-block;
   background: transparent;
@@ -679,10 +762,10 @@
   border-bottom: 1.5px solid currentColor;
   border-radius: 0;
   color: #000;
-  font-family: var(--prada-futura);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-family: var(--prada-mono);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   padding: 0.25rem 0 0.35rem;
   cursor: pointer;
@@ -706,7 +789,7 @@
   padding: 0.4rem 0;
   font-family: var(--prada-futura);
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 400;
   color: rgba(0, 0, 0, 0.55);
   cursor: pointer;
   border-bottom: 2px solid transparent;
@@ -718,7 +801,296 @@
 .prada-tab--active {
   color: #000;
   border-bottom-color: #000;
-  font-weight: 700;
+}
+
+/* Soft-cornered media frame. The Prada system is otherwise square, so this is
+   used only where a rectangle of video or photography benefits from being read
+   as an object rather than a hole in the page. */
+.prada-video-frame {
+  border-radius: 14px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 24px 48px -28px rgba(0, 0, 0, 0.4);
+}
+.prada-video-frame > video,
+.prada-video-frame > img {
+  border-radius: inherit;
+}
+@media (min-width: 768px) {
+  .prada-video-frame {
+    border-radius: 18px;
+  }
+}
+
+/* ── Product section ("One artwork. Two ways in.") ──────────────────────────
+   Each plate is a photograph of one installation. The frame is square-cornered
+   and unshadowed, unlike .prada-video-frame: these read as pictures hung on a
+   wall, not as objects floating above the page. */
+.prada-plate {
+  position: relative;
+  overflow: hidden;
+  background: var(--prada-plate);
+}
+/* A hairline drawn inside the image rather than around it, so the photograph
+   keeps its edge against white without a visible border box. */
+.prada-plate::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.07);
+}
+.prada-plate__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.001);
+  transition: transform 1400ms cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+/* Hover only where there is a real pointer: on a touch screen this would fire
+   on tap and leave the image stuck at the zoomed size. */
+@media (hover: hover) and (pointer: fine) {
+  .prada-plate:hover .prada-plate__img {
+    transform: scale(1.04);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .prada-plate__img,
+  .prada-plate:hover .prada-plate__img {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ── Before/after comparison ────────────────────────────────────────────────
+   The drag control is a real <input type="range"> stretched over the frame,
+   left transparent and drawn by the divider below it. That buys native
+   keyboard support (arrows, Home/End), the slider role, and a value a screen
+   reader can announce, none of which a div with pointer handlers would have.
+   It matters more than usual here: the comparison is inherently visual, so the
+   control at least has to be operable and describable without sight. */
+.prada-compare {
+  position: relative;
+  overflow: hidden;
+  background: var(--prada-plate);
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: ew-resize;
+  /* Vertical scrolling still works when a touch starts on the frame. */
+  touch-action: pan-y;
+}
+.prada-compare::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+  z-index: 4;
+}
+.prada-compare__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* The relief sits above the painting and is clipped back to the divider, so
+   the wipe reveals rather than cross-fades. */
+.prada-compare__after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* Invisible, and deliberately not the pointer target: dragging is handled on
+   the frame itself. This stays in the tab order so the comparison can be
+   worked with arrow keys and announced with a value by a screen reader. */
+.prada-compare__range {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 3;
+  width: 100%;
+  height: 2px;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+.prada-compare__divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 1.5px;
+  margin-left: -0.75px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.16);
+  pointer-events: none;
+}
+.prada-compare__handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 46px;
+  height: 46px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #111;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.28);
+}
+/* Focus lands on the hidden input, so the ring has to be drawn on the handle. */
+.prada-compare__range:focus-visible ~ .prada-compare__divider .prada-compare__handle {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.45);
+}
+
+.prada-compare__tag {
+  position: absolute;
+  top: 12px;
+  z-index: 2;
+  padding: 5px 9px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  pointer-events: none;
+  backdrop-filter: blur(3px);
+}
+.prada-compare__tag--before { left: 12px; }
+.prada-compare__tag--after { right: 12px; }
+
+/* A real braille cell: two columns of three dots, filled to spell the plate
+   number (⠁ ⠃ ⠉ ⠙ = 1-4). Decorative here, but it is the same alphabet cast
+   into every plinth we ship, so it is drawn accurately rather than evoked. */
+.prada-braille {
+  display: grid;
+  grid-template-rows: repeat(3, 4px);
+  grid-auto-flow: column;
+  gap: 3px;
+  flex: none;
+}
+.prada-braille__dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.13);
+}
+.prada-braille__dot--raised {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Partner marquee. Two identical groups sit side by side and the track slides
+   exactly one group's width, so the seam is invisible and the loop never jumps.
+   Width is driven by content, not a hard-coded pixel total. */
+.prada-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
+}
+.prada-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: prada-marquee 38s linear infinite;
+}
+.prada-marquee:hover .prada-marquee__track {
+  animation-play-state: paused;
+}
+/* The customer strip runs quicker than the partners row: it carries fewer, and
+   larger, logos, so the same 38s reads as a crawl. */
+.prada-marquee--always .prada-marquee__track {
+  animation-duration: 28s;
+}
+/* Wider spacing than the partners row, whose logos are smaller and sit closer.
+   The left padding matches the gap so the seam between the two copies of the
+   group spaces exactly like every other pair. */
+.prada-marquee--always .prada-marquee__group {
+  gap: 6.5rem;
+  padding: 0 0 0 6.5rem;
+}
+.prada-marquee__group {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0 0 0 4rem;
+  gap: 4rem;
+  list-style: none;
+}
+/* Both logo rows run greyscale. Six unrelated brand palettes in a line read as
+   clutter; stripped of colour they sit as one band and no single logo shouts
+   over its neighbours. Applied to the row rather than per-logo so anything
+   added later inherits it. */
+.prada-marquee__group img {
+  filter: grayscale(1);
+}
+@keyframes prada-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+/* Reduced motion: stop the slide and centre the single visible group instead of
+   freezing it mid-scroll. */
+@media (prefers-reduced-motion: reduce) {
+  .prada-marquee {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .prada-marquee__track {
+    animation: none;
+    width: 100%;
+    justify-content: center;
+  }
+  .prada-marquee__group {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2.25rem 3rem;
+    padding: 0 1.5rem;
+  }
+  .prada-marquee__group[aria-hidden="true"] {
+    display: none;
+  }
+}
+
+/* The customer strip is a logo reel whose whole point is that it runs on its
+   own, so it keeps moving even when the reduced-motion rules above would stop
+   it. Scoped to this one marquee on purpose: the partners row further down the
+   page still stops and wraps for anyone who has that setting on. */
+@media (prefers-reduced-motion: reduce) {
+  .prada-marquee--always {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
+  }
+  .prada-marquee--always .prada-marquee__track {
+    animation: prada-marquee 28s linear infinite;
+    width: max-content;
+    justify-content: flex-start;
+  }
+  .prada-marquee--always .prada-marquee__group {
+    flex-wrap: nowrap;
+    gap: 6.5rem;
+    padding: 0 0 0 6.5rem;
+  }
+  .prada-marquee--always .prada-marquee__group[aria-hidden="true"] {
+    display: flex;
+  }
+}
+
+/* All-caps caption marker (e.g. footer "BERLIN · 2026") — mono to match
+   the Loewe nav family. */
+.prada-mono-caps {
+  font-family: var(--prada-mono);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 /* The signature Hermès CTA — underlined small-caps text link, not a button. */
@@ -879,4 +1251,630 @@
 [data-design="hermes"] .ptta-root footer p.font-serif {
   font-weight: 400;
   letter-spacing: -0.005em;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * LOEWE LANDING — editorial split layout, Untitled Sans body, mono details
+ * Fonts:
+ *   – Untitled Sans (Klim) — preferred grotesk for body / display, falls back
+ *     to Inter, then Söhne / system grotesks. The Klim face is commercial,
+ *     so installed users get it; everyone else sees Inter at the same
+ *     metrics — that's the whole reason Untitled Sans is the de-facto
+ *     "fashion-house neutral" of the moment.
+ *   – IBM Plex Mono (Google Fonts) — for running numerals and FIG. labels.
+ * ───────────────────────────────────────────────────────────────────────── */
+.loewe-root {
+  /* Untitled Sans first (commercial, Klim); General Sans (Fontshare, free)
+     is the closest free analogue and the one most viewers will actually see. */
+  --loewe-sans: "Untitled Sans", "General Sans", "Söhne", "Inter", "Helvetica Neue", "Arial", system-ui, sans-serif;
+  --loewe-serif: "Fraunces", "GT Sectra", "EB Garamond", "Cormorant Garamond", "Georgia", serif;
+  --loewe-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+/* The PTTA wordmark — refined Fraunces italic display, lowercase, with
+   high optical-size contrast. Stands in as a maison-style logotype. */
+.loewe-mark {
+  font-family: var(--loewe-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  letter-spacing: -0.025em;
+  font-size: 38px;
+  line-height: 0.92;
+}
+@media (min-width: 768px) {
+  .loewe-mark { font-size: 48px; }
+}
+.loewe-display {
+  font-family: var(--loewe-sans);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-style: normal;
+}
+.loewe-display-italic {
+  font-family: var(--loewe-sans);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.02em;
+}
+.loewe-body {
+  font-family: var(--loewe-sans);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.loewe-body-italic {
+  font-family: var(--loewe-sans);
+  font-style: italic;
+  font-weight: 400;
+}
+.loewe-mono {
+  font-family: var(--loewe-mono);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.loewe-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid currentColor;
+  border-radius: 0;
+  color: inherit;
+  font-family: var(--loewe-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.35rem 0 0.4rem;
+  cursor: pointer;
+  transition: opacity 200ms ease, gap 200ms ease;
+}
+.loewe-cta:hover { opacity: 0.6; gap: 0.75rem; }
+.loewe-cta:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * SAINT LAURENT LANDING — couture brutalism, oversized compressed display
+ * Fonts:
+ *   – Anton (Google Fonts) — single-weight compressed display sans, the
+ *     free analogue to Helvetica Now Display Compressed Black. Carries the
+ *     full-bleed all-caps headlines.
+ *   – Inter (already loaded) — body, all-caps small with wide tracking.
+ * ───────────────────────────────────────────────────────────────────────── */
+.ysl-root {
+  --ysl-display: "Anton", "Helvetica Neue Condensed", "Impact", "Helvetica Neue", "Arial Narrow", system-ui, sans-serif;
+  --ysl-body:    "Inter", "Helvetica Neue", "Helvetica", "Arial", system-ui, sans-serif;
+}
+.ysl-wordmark {
+  font-family: var(--ysl-display);
+  letter-spacing: 0.06em;
+  font-weight: 400;
+  font-size: 22px;
+}
+@media (min-width: 768px) {
+  .ysl-wordmark { font-size: 28px; }
+}
+.ysl-display {
+  font-family: var(--ysl-display);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+.ysl-display-accent {
+  color: var(--color-accent, #c8b896);
+}
+.ysl-body {
+  font-family: var(--ysl-body);
+  font-weight: 400;
+}
+.ysl-body-bold {
+  font-weight: 500;
+}
+.ysl-nav {
+  font-family: var(--ysl-body);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.ysl-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  color: inherit;
+  font-family: var(--ysl-body);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  padding: 0.85rem 1.4rem;
+  cursor: pointer;
+  transition: background 200ms ease, color 200ms ease, gap 200ms ease;
+}
+.ysl-cta:hover {
+  background: #fff;
+  color: #000;
+  gap: 0.75rem;
+}
+.ysl-cta:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * AESOP LANDING — apothecary serif, lowercase, considered vertical rhythm
+ * Fonts:
+ *   – Fraunces (Google Fonts) — display serif with calligraphic stress and
+ *     opsz axis; the open-source cousin of GT Sectra. Used for wordmark,
+ *     display and product captions.
+ *   – Inter (already loaded) — small body / nav grotesk.
+ * ───────────────────────────────────────────────────────────────────────── */
+.aesop-root {
+  --aesop-serif: "Fraunces", "GT Sectra", "EB Garamond", "Cormorant Garamond", "Georgia", serif;
+  --aesop-sans:  "Untitled Sans", "General Sans", "Inter", "Helvetica Neue", "Helvetica", "Arial", system-ui, sans-serif;
+  font-feature-settings: "ss01" on, "ss02" on;
+}
+.aesop-wordmark {
+  font-family: var(--aesop-serif);
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  font-size: 20px;
+  font-variation-settings: "opsz" 96;
+}
+@media (min-width: 768px) {
+  .aesop-wordmark { font-size: 24px; }
+}
+.aesop-display {
+  font-family: var(--aesop-serif);
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  font-variation-settings: "opsz" 96;
+}
+.aesop-display-italic {
+  font-family: var(--aesop-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+}
+.aesop-body {
+  font-family: var(--aesop-sans);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.aesop-caption {
+  font-family: var(--aesop-sans);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+.aesop-eyebrow {
+  font-family: var(--aesop-sans);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: lowercase;
+  font-feature-settings: "smcp" on;
+  display: inline-block;
+}
+.aesop-nav {
+  font-family: var(--aesop-sans);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+.aesop-cta {
+  display: inline-block;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid currentColor;
+  border-radius: 0;
+  color: inherit;
+  font-family: var(--aesop-sans);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  padding: 0.25rem 0 0.35rem;
+  cursor: pointer;
+  transition: opacity 200ms ease;
+}
+.aesop-cta:hover { opacity: 0.55; }
+.aesop-cta:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * MISSION CONTROL LANDING — dark demo console
+ * Sans: IBM Plex Mono (matches the Loewe nav). Serif: Fraunces italic.
+ * ───────────────────────────────────────────────────────────────────────── */
+.mc-root {
+  --mc-mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --mc-serif: "Fraunces", "GT Sectra", "EB Garamond", "Georgia", serif;
+  --mc-accent: var(--color-accent, #d93b3b);
+}
+.mc-mono { font-family: var(--mc-mono); font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; }
+.mc-display {
+  font-family: var(--mc-serif);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  font-variation-settings: "opsz" 144;
+}
+.mc-display-italic {
+  font-family: var(--mc-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+}
+.mc-mark {
+  font-family: var(--mc-mono);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+.mc-glyph {
+  font-family: var(--mc-mono);
+  color: var(--mc-accent);
+  letter-spacing: 0;
+}
+.mc-text-accent { color: var(--mc-accent); }
+
+.mc-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: transparent;
+  border: 1px solid rgba(232, 230, 223, 0.4);
+  border-radius: 0;
+  color: inherit;
+  font-family: var(--mc-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.1rem;
+  cursor: pointer;
+  transition: border-color 200ms ease, color 200ms ease, background 200ms ease;
+}
+.mc-cta:hover { border-color: rgba(232, 230, 223, 0.9); }
+.mc-cta--primary {
+  background: var(--mc-accent);
+  border-color: var(--mc-accent);
+  color: #0a0b0e;
+}
+.mc-cta--primary:hover { background: transparent; color: var(--mc-accent); border-color: var(--mc-accent); }
+.mc-cta:focus-visible { outline: 2px solid var(--mc-accent); outline-offset: 3px; }
+
+/* Live signal pulse */
+.mc-pulse {
+  width: 8px; height: 8px; border-radius: 999px;
+  background: var(--mc-accent);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--mc-accent) 60%, transparent);
+  animation: mc-pulse 1.8s ease-out infinite;
+  display: inline-block;
+}
+.mc-pulse--solid { animation: mc-pulse-solid 1.8s ease-in-out infinite; }
+.mc-signal-dot {
+  display: inline-block;
+  width: 7px; height: 7px; border-radius: 999px;
+  background: var(--mc-accent);
+  vertical-align: middle;
+}
+@keyframes mc-pulse {
+  0%   { box-shadow: 0 0 0 0   color-mix(in srgb, var(--mc-accent) 70%, transparent); }
+  70%  { box-shadow: 0 0 0 10px color-mix(in srgb, var(--mc-accent) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0   color-mix(in srgb, var(--mc-accent) 0%, transparent); }
+}
+@keyframes mc-pulse-solid {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mc-pulse, .mc-pulse--solid { animation: none; }
+}
+
+/* Viewport frame chrome — hairline cross-hairs */
+.mc-viewport { border: 1px solid rgba(232, 230, 223, 0.18); background: #0e1014; }
+.mc-viewport-chrome {
+  background:
+    linear-gradient(to right, transparent calc(50% - 0.5px), rgba(232,230,223,0.08) 50%, transparent calc(50% + 0.5px)),
+    linear-gradient(to bottom, transparent calc(50% - 0.5px), rgba(232,230,223,0.08) 50%, transparent calc(50% + 0.5px));
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * PITCH DECK LANDING — dark slide-by-slide deck
+ * Sans: Untitled Sans → General Sans → Inter. Serif: Fraunces italic.
+ * ───────────────────────────────────────────────────────────────────────── */
+.pd-root {
+  --pd-sans:  "Untitled Sans", "General Sans", "Söhne", "Inter", "Helvetica Neue", "Arial", system-ui, sans-serif;
+  --pd-serif: "Fraunces", "GT Sectra", "EB Garamond", "Georgia", serif;
+  --pd-mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --pd-accent: var(--color-accent, #c8a36a);
+  font-family: var(--pd-sans);
+}
+.pd-mono { font-family: var(--pd-mono); font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; }
+.pd-body { font-family: var(--pd-sans); font-weight: 400; }
+.pd-body-italic { font-family: var(--pd-serif); font-style: italic; font-weight: 400; }
+.pd-display {
+  font-family: var(--pd-sans);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+}
+.pd-display-italic {
+  font-family: var(--pd-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  font-variation-settings: "opsz" 144, "SOFT" 30;
+}
+.pd-mark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+.pd-mark-italic {
+  font-family: var(--pd-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+}
+
+/* Slide shading — alternating depth */
+.pd-slide--shade { background: #0a0e13; }
+
+/* Frame around media — soft inset, accent corner pin */
+.pd-frame {
+  background: #11161d;
+  outline: 1px solid rgba(237, 233, 224, 0.12);
+  outline-offset: -1px;
+}
+
+/* "NOW SHOWING" pin */
+.pd-pin {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid rgba(237, 233, 224, 0.18);
+  border-radius: 999px;
+}
+.pd-pin-dot {
+  display: inline-block;
+  width: 7px; height: 7px; border-radius: 999px;
+  background: var(--pd-accent);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--pd-accent) 70%, transparent);
+  animation: pd-pin-pulse 2.4s ease-out infinite;
+}
+@keyframes pd-pin-pulse {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--pd-accent) 70%, transparent); }
+  70%  { box-shadow: 0 0 0 7px color-mix(in srgb, var(--pd-accent) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--pd-accent) 0%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) { .pd-pin-dot { animation: none; } }
+
+.pd-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: transparent;
+  border: 1px solid rgba(237, 233, 224, 0.45);
+  border-radius: 999px;
+  color: inherit;
+  font-family: var(--pd-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 0.85rem 1.3rem;
+  cursor: pointer;
+  transition: border-color 200ms ease, background 200ms ease, color 200ms ease, gap 200ms ease;
+}
+.pd-cta:hover { border-color: rgba(237, 233, 224, 0.95); gap: 0.85rem; }
+.pd-cta--primary {
+  background: var(--pd-accent);
+  border-color: var(--pd-accent);
+  color: #0d1117;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 12px;
+}
+.pd-cta--primary:hover { background: transparent; color: var(--pd-accent); }
+.pd-cta:focus-visible { outline: 2px solid var(--pd-accent); outline-offset: 3px; }
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * SPOTLIGHT LANDING — dark warm-coal stage
+ * Sans: Manrope. Serif: EB Garamond italic (already loaded for the default
+ * editorial style). Accent: amber stage glow.
+ * ───────────────────────────────────────────────────────────────────────── */
+.sl-root {
+  --sl-sans:  "Manrope", "Inter", "Helvetica Neue", "Arial", system-ui, sans-serif;
+  --sl-serif: "EB Garamond", "Cormorant Garamond", "Garamond", "Georgia", serif;
+  --sl-amber: #e2b76b;
+  --sl-amber-soft: rgba(226, 183, 107, 0.18);
+  font-family: var(--sl-sans);
+  font-weight: 300;
+}
+.sl-nav { font-family: var(--sl-sans); font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; }
+.sl-body { font-family: var(--sl-sans); font-weight: 300; letter-spacing: 0; }
+.sl-body-italic { font-family: var(--sl-serif); font-style: italic; font-weight: 400; }
+.sl-display {
+  font-family: var(--sl-serif);
+  font-weight: 400;
+  letter-spacing: -0.005em;
+}
+.sl-display-italic {
+  font-family: var(--sl-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+}
+.sl-eyebrow {
+  display: inline-block;
+  font-family: var(--sl-sans);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-size: 10.5px;
+  color: var(--sl-amber);
+}
+
+/* Mark — small star + italic wordmark */
+.sl-mark { display: inline-flex; align-items: baseline; gap: 0.55rem; }
+.sl-mark-symbol { color: var(--sl-amber); font-size: 14px; }
+.sl-mark-italic {
+  font-family: var(--sl-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 19px;
+  letter-spacing: 0.005em;
+}
+@media (min-width: 768px) {
+  .sl-mark-italic { font-size: 22px; }
+}
+
+/* Spotlight gradient over hero video */
+.sl-spotlight {
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 25%, var(--sl-amber-soft) 0%, transparent 60%),
+    radial-gradient(ellipse 85% 70% at 50% 80%, rgba(20, 15, 10, 0.85) 0%, rgba(20, 15, 10, 0.2) 60%, transparent 100%);
+}
+.sl-vignette {
+  background: radial-gradient(ellipse 110% 90% at 50% 50%, transparent 50%, rgba(13, 9, 7, 0.85) 100%);
+}
+.sl-stage-dot {
+  display: inline-block;
+  width: 8px; height: 8px; border-radius: 999px;
+  background: var(--sl-amber);
+  box-shadow: 0 0 12px var(--sl-amber);
+  animation: sl-pulse 2.4s ease-in-out infinite;
+}
+@keyframes sl-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 12px var(--sl-amber); }
+  50%      { opacity: 0.55; box-shadow: 0 0 4px var(--sl-amber); }
+}
+@media (prefers-reduced-motion: reduce) { .sl-stage-dot { animation: none; } }
+
+/* Stage tabs */
+.sl-stage-tab {
+  background: transparent;
+  border: none;
+  padding: 0.5rem 1rem 0.9rem;
+  cursor: pointer;
+  text-align: left;
+  border-bottom: 2px solid transparent;
+  color: rgba(241, 232, 213, 0.6);
+  transition: color 200ms ease, border-color 200ms ease;
+}
+.sl-stage-tab:hover { color: rgba(241, 232, 213, 0.9); }
+.sl-stage-tab--active {
+  color: rgba(241, 232, 213, 1);
+  border-bottom-color: var(--sl-amber);
+}
+
+.sl-frame {
+  background: #1a130c;
+  outline: 1px solid rgba(241, 232, 213, 0.12);
+  outline-offset: -1px;
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.6);
+}
+
+.sl-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: transparent;
+  border: 1px solid rgba(241, 232, 213, 0.45);
+  border-radius: 999px;
+  color: inherit;
+  font-family: var(--sl-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 0.85rem 1.4rem;
+  cursor: pointer;
+  transition: border-color 200ms ease, background 200ms ease, color 200ms ease, gap 200ms ease;
+}
+.sl-cta:hover { border-color: rgba(241, 232, 213, 0.95); gap: 0.85rem; }
+.sl-cta--primary {
+  background: var(--sl-amber);
+  border-color: var(--sl-amber);
+  color: #140f0a;
+  box-shadow: 0 12px 32px -10px var(--sl-amber-soft);
+}
+.sl-cta--primary:hover { background: transparent; color: var(--sl-amber); }
+.sl-cta-glyph { color: inherit; font-size: 10px; }
+.sl-cta:focus-visible { outline: 2px solid var(--sl-amber); outline-offset: 3px; }
+
+/* Curtain call backdrop — gentle radial warmth */
+.sl-curtain {
+  background: radial-gradient(ellipse 80% 90% at 50% 100%, var(--sl-amber-soft) 0%, transparent 65%);
+}
+
+
+/* Dark mode for the Prada direction.
+ *
+ * The page is written almost entirely in bg-white / text-black / border-black
+ * utilities, which Tailwind v4 compiles to var(--color-white) and
+ * var(--color-black) (opacity variants go through color-mix on the same
+ * variables). Redefining those two inside .prada-root therefore flips the whole
+ * palette — page ground, ink, rules, and the filled buttons, which correctly
+ * invert to light-on-dark — instead of adding a dark: variant to some seventy
+ * utilities. Values written as raw hex get their own overrides.
+ */
+.dark .prada-root {
+  --color-white: #100e0c;
+  --color-black: #f2efe9;
+  --prada-band: #17140f;
+  --prada-plate: #1c1815;
+  color-scheme: dark;
+}
+
+/* Regions that are dark in BOTH themes — the hero over its video, the model
+   stage — opt out of the flip by restoring the light-mode values inside their
+   own subtree. Anything written as text-white/text-black in there then means
+   what it says, rather than inverting into the background. */
+.dark .prada-root [data-on-dark] {
+  --color-white: #fff;
+  --color-black: #000;
+}
+
+/* Muted text needs more of the ink on a dark ground than on a light one: 50%
+   black on white reads comfortably, 50% white on near-black does not. These lift
+   the tiers the page actually uses; the ratios are chosen to land near the same
+   perceived contrast as their light-mode counterparts. */
+.dark .prada-root .text-black\/30 { color: color-mix(in oklab, var(--color-black) 45%, transparent); }
+.dark .prada-root .text-black\/45 { color: color-mix(in oklab, var(--color-black) 60%, transparent); }
+.dark .prada-root .text-black\/50 { color: color-mix(in oklab, var(--color-black) 65%, transparent); }
+.dark .prada-root .text-black\/55 { color: color-mix(in oklab, var(--color-black) 70%, transparent); }
+.dark .prada-root .text-black\/60 { color: color-mix(in oklab, var(--color-black) 74%, transparent); }
+.dark .prada-root .text-black\/65 { color: color-mix(in oklab, var(--color-black) 78%, transparent); }
+.dark .prada-root .text-black\/70 { color: color-mix(in oklab, var(--color-black) 82%, transparent); }
+
+/* Partner and customer logos keep their own colours in dark mode. The multiply
+   blend that drops their white boxes onto the light ground erases them against a
+   dark one, and greyscale on top left almost nothing; both come off, and each
+   mark sits on a light plate so its real colours stay legible. */
+.dark .prada-root .prada-marquee__group img {
+  filter: none;
+  mix-blend-mode: normal;
+}
+.dark .prada-root .prada-marquee__group li {
+  background: #f2efe9;
+  padding: 14px 20px;
+}
+
+/* The filled buttons. Flipping --color-black would make these near-white; a
+   softer grey sits better against the dark ground while keeping the contrast a
+   solid control needs. */
+.prada-btn-solid {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+.dark .prada-root .prada-btn-solid {
+  background: #d7d3ca;
+  color: #100e0c;
 }

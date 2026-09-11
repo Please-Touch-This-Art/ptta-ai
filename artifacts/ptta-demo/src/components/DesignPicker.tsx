@@ -18,7 +18,10 @@ export function DesignPicker() {
         <button
           type="button"
           aria-label={`Design: ${design.name}. Open design picker.`}
-          className="flex items-center justify-center w-7 h-7 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream"
+          /* 28px is a small target for a 17px glyph. The pseudo-element takes the
+             hit area to ~40x44 without changing the header's height, which the
+             button's own box currently sets. */
+          className="relative flex items-center justify-center w-7 h-7 [touch-action:manipulation] before:absolute before:content-[''] before:-inset-x-1.5 before:-inset-y-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream"
         >
           <Type className="w-4 h-4" aria-hidden="true" />
         </button>

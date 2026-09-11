@@ -47,6 +47,10 @@ export default function Fabrication() {
   const toPicker = useCallback(() => setState({ stage: "picker" }), []);
   const toHub = useCallback(() => navigate("/demo-hub"), [navigate]);
 
+  const handleSwap = useCallback((id: ModelId) => {
+    setState({ stage: "fabricate", modelId: id });
+  }, []);
+
   if (state.stage === "picker") {
     return <FabricationPicker onSelect={handleSelect} />;
   }
@@ -64,12 +68,18 @@ export default function Fabrication() {
             model={model}
             onDone={toPolish}
             onBack={toPicker}
+            onSwap={handleSwap}
           />
         </motion.div>
       )}
       {state.stage === "polish" && (
         <motion.div key="polish" {...FADE}>
-          <PolishStage model={model} onDone={toReveal} onBack={toPicker} />
+          <PolishStage
+            model={model}
+            onDone={toReveal}
+            onBack={toPicker}
+            onSwap={handleSwap}
+          />
         </motion.div>
       )}
       {state.stage === "reveal" && (
@@ -78,6 +88,7 @@ export default function Fabrication() {
             model={model}
             onBack={toHub}
             onPickAnother={toPicker}
+            onSwap={handleSwap}
           />
         </motion.div>
       )}

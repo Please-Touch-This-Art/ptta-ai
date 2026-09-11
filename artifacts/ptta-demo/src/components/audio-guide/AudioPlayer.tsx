@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, Pause, Play } from "lucide-react";
-import type { ModelEntry } from "@/content/models";
+import type { ModelEntry, ModelId } from "@/content/models";
 import { AUDIO_SRC } from "@/content/audio-guide";
 import { Marker } from "@/components/editorial";
 import { NextModuleCta } from "@/components/NextModuleCta";
+import { PaintingCarousel } from "@/components/PaintingCarousel";
 
 const titleStyle = { letterSpacing: "-0.01em" } as const;
 
 interface Props {
   model: ModelEntry;
   onBack: () => void;
+  onSwap?: (id: ModelId) => void;
 }
 
 const BAR_COUNT = 32;
@@ -21,7 +23,7 @@ function formatTime(seconds: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
-export function AudioPlayer({ model, onBack }: Props) {
+export function AudioPlayer({ model, onBack, onSwap }: Props) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -165,6 +167,14 @@ export function AudioPlayer({ model, onBack }: Props) {
           </span>
         </div>
       </header>
+
+      {onSwap && (
+        <PaintingCarousel
+          activeId={model.id}
+          onSelect={onSwap}
+          variant="light"
+        />
+      )}
 
       {/* Main body */}
       <main className="flex-1 flex flex-col items-center justify-start px-5 pt-2 pb-10 mx-auto w-full max-w-[440px]">

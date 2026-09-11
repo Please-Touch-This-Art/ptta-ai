@@ -14,6 +14,7 @@ import Fabrication from "@/pages/Fabrication";
 import AudioGuide from "@/pages/AudioGuide";
 import ArtistPersonaPage from "@/pages/ArtistPersonaPage";
 import FutureFeatures from "@/pages/FutureFeatures";
+import LegalPage from "@/pages/LegalPage";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,9 @@ function Router() {
       <Route path="/audio-guide" component={AudioGuide} />
       <Route path="/artist-persona" component={ArtistPersonaPage} />
       <Route path="/future-features" component={FutureFeatures} />
+      <Route path="/impressum">{() => <LegalPage doc="impressum" />}</Route>
+      <Route path="/datenschutz">{() => <LegalPage doc="datenschutz" />}</Route>
+      <Route path="/accessibility">{() => <LegalPage doc="accessibility" />}</Route>
       <Route path="/demo/:slug" component={DemoPlaceholder} />
       <Route component={NotFound} />
     </Switch>
