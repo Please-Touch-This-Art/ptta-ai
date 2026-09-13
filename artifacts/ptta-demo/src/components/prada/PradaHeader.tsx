@@ -3,6 +3,8 @@ import { Menu, X } from "lucide-react";
 import { LanguageSelect } from "@/components/LanguageSelect";
 import { siteCopy, type SiteLang } from "@/content/pradaCopy";
 import { useSiteGo } from "@/components/prada/useSiteGo";
+import { useTheme } from "@/context/ThemeContext";
+import { ThemeToggle } from "@/components/prada/ThemeToggle";
 
 interface Props {
   lang: SiteLang;
@@ -21,6 +23,7 @@ export function PradaHeader({ lang, onLangChange }: Props) {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuPanelRef = useRef<HTMLDivElement>(null);
   const go = useSiteGo(() => setMenuOpen(false));
+  const { theme, toggle } = useTheme();
 
   /* The drawer is the only navigation on a phone, so it has to be operable from
      the keyboard: Escape closes it and focus returns to the button that opened it. */
@@ -111,6 +114,7 @@ export function PradaHeader({ lang, onLangChange }: Props) {
               </a>
             ))}
           </nav>
+          <ThemeToggle theme={theme} onToggle={toggle} />
         </div>
       </div>
 

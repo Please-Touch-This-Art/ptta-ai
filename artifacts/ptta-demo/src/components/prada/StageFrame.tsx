@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { ModelEntry, ModelId } from "@/content/models";
-import { PieceStrip } from "./PieceStrip";
+import { PieceStrip } from "@/components/prada/PieceStrip";
 
 interface Props {
   /** What the stage is doing: Fabricating, Finishing, Finished piece. */
@@ -52,9 +52,10 @@ export function StageFrame({
         <div className="mt-8 grid grid-cols-1 items-start gap-8 md:grid-cols-[minmax(0,1fr)_300px] md:gap-12">
           <div>
             {/* Square, and no taller than the viewport allows, so the whole
-                plate is in view while it works. */}
+                plate is in view while it works. The plate's own ground shows
+                through wherever a stage does not paint. */}
             <div
-              className="prada-plate mx-auto aspect-square w-full bg-[#0a0806]"
+              className="prada-plate mx-auto aspect-square w-full"
               style={{ maxWidth: "min(100%, 72vh)" }}
             >
               {children}

@@ -29,7 +29,7 @@ export function PieceStrip({ activeId, onSelect, label }: Props) {
                 className={cn(
                   "prada-plate block h-12 w-12 transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black",
                   isActive
-                    ? "ring-1 ring-black ring-offset-2 ring-offset-white"
+                    ? "ring-1 ring-black ring-offset-2 ring-offset-(--color-white)"
                     : "opacity-55 hover:opacity-100",
                 )}
               >

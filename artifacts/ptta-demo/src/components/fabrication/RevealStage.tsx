@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useLocation } from "wouter";
 import type { ModelEntry, ModelId } from "@/content/models";
 import { fabricationImage } from "@/content/fabrication-images";
-import { StageFrame } from "./StageFrame";
+import { StageFrame } from "@/components/prada/StageFrame";
 
 interface Props {
   model: ModelEntry;

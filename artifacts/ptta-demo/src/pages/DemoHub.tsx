@@ -1,6 +1,5 @@
 import { useLocation } from "wouter";
-import { PradaHeader } from "@/components/prada/PradaHeader";
-import { PradaFooter } from "@/components/prada/PradaFooter";
+import { SiteShell } from "@/components/prada/SiteShell";
 import { useLanguage } from "@/context/LanguageContext";
 import type { DemoCard } from "@/content/copy";
 
@@ -70,16 +69,14 @@ function DemoPlate({
 }
 
 export default function DemoHub() {
-  const { lang, setLang, t } = useLanguage();
+  const { t } = useLanguage();
   const [, navigate] = useLocation();
   const { demoHub } = t;
   const cards = demoHub.cards.filter(isLive);
 
   return (
-    <div className="prada-root min-h-screen bg-white text-black">
-      <PradaHeader lang={lang} onLangChange={setLang} />
-
-      <main>
+    <SiteShell>
+      <>
         <section className="pt-14 md:pt-20 px-6 md:px-10" aria-labelledby="demo-hub-heading">
           <div className="mx-auto max-w-[1140px]">
             <h1
@@ -110,9 +107,7 @@ export default function DemoHub() {
             ))}
           </ol>
         </section>
-      </main>
-
-      <PradaFooter lang={lang} />
-    </div>
+      </>
+    </SiteShell>
   );
 }

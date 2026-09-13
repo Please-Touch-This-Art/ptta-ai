@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowLeft, Pause, Play } from "lucide-react";
+import { Pause, Play } from "lucide-react";
 import type { ModelEntry, ModelId } from "@/content/models";
 import { AUDIO_SRC } from "@/content/audio-guide";
-import { Marker } from "@/components/editorial";
 import { NextModuleCta } from "@/components/NextModuleCta";
-import { PaintingCarousel } from "@/components/PaintingCarousel";
-
-const titleStyle = { letterSpacing: "-0.01em" } as const;
+import { StageFrame } from "@/components/prada/StageFrame";
 
 interface Props {
   model: ModelEntry;
@@ -25,7 +22,6 @@ function formatTime(seconds: number): string {
 
 export function AudioPlayer({ model, onBack, onSwap }: Props) {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
@@ -140,87 +136,40 @@ export function AudioPlayer({ model, onBack, onSwap }: Props) {
     setCurrentTime(next);
   };
 
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const playState = isPlaying ? "Playing" : currentTime > 0 ? "Paused" : "Play the guide";
 
   return (
-    <div
-      ref={containerRef}
-      className="ptta-root min-h-[100dvh] bg-page text-ink flex flex-col"
-    >
-      {/* Custom minimal header with back arrow (full-screen player context) */}
-      <header className="flex items-center gap-3 px-5 pt-6 pb-3">
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label="Back to picker"
-          className="w-11 h-11 flex items-center justify-center rounded-full text-ink hover:bg-surface-muted transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <div className="flex items-center gap-2">
-          <Marker size={6} />
-          <span
-            className="ptta-label text-accent"
-            style={{ fontSize: "10pt" }}
-          >
-            Audio Guide · 03
-          </span>
-        </div>
-      </header>
-
-      {onSwap && (
-        <PaintingCarousel
-          activeId={model.id}
-          onSelect={onSwap}
-          variant="light"
-        />
-      )}
-
-      {/* Main body */}
-      <main className="flex-1 flex flex-col items-center justify-start px-5 pt-2 pb-10 mx-auto w-full max-w-[440px]">
-        {/* Album art */}
-        <div className="relative w-full max-w-[300px] aspect-[3/4] overflow-hidden rounded-2xl bg-surface-muted shadow-lg mb-8">
-          <img
-            src={model.image}
-            alt={`${model.title} by ${model.artist}`}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        </div>
-
-        {/* Title / artist */}
-        <div className="text-center mb-8">
-          <h1
-            className="font-serif text-ink text-2xl md:text-3xl leading-tight mb-1"
-            style={titleStyle}
-          >
-            — {model.title}
-          </h1>
-          <p className="text-muted-fg text-sm">
-            {model.artist} · {model.year}
+    <StageFrame
+      label="Audio guide"
+      model={model}
+      onBack={onBack}
+      backLabel="Pick another piece"
+      onSwap={onSwap}
+      status={{ left: formatTime(currentTime), right: formatTime(duration) }}
+      aside={
+        <div className="flex flex-col gap-6">
+          <p className="prada-body text-[14px] md:text-[15px] leading-[1.6] text-black/65">
+            A narrated description written to be heard with the relief under your
+            hands: what sits where, what it is made of, and what to feel for.
           </p>
-        </div>
-
-        {/* Visualizer — 32 accent bars driven by live frequency data */}
-        <div
-          aria-hidden="true"
-          className="w-full flex items-center justify-center gap-[2px] h-16 mb-6"
-        >
-          {bars.map((h, i) => (
-            <span
-              key={i}
-              className="flex-1 bg-accent rounded-full transition-[height] duration-[90ms] ease-out"
-              style={{
-                height: `${h}%`,
-                minHeight: 3,
-                maxWidth: 6,
-                opacity: 0.4 + (h / 100) * 0.6,
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Scrubber + times */}
-        <div className="w-full mb-6">
+          <div className="flex items-center gap-5">
+            <button
+              type="button"
+              onClick={handlePlayPause}
+              aria-label={isPlaying ? "Pause the audio guide" : "Play the audio guide"}
+              aria-pressed={isPlaying}
+              className="prada-btn-solid flex h-14 w-14 shrink-0 items-center justify-center rounded-full transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
+            >
+              {isPlaying ? (
+                <Pause size={20} fill="currentColor" />
+              ) : (
+                <Play size={20} fill="currentColor" className="ml-0.5" />
+              )}
+            </button>
+            <span className="prada-mono-caps text-[10px] text-black/60" aria-live="polite">
+              {playState}
+            </span>
+          </div>
           <input
             type="range"
             min={0}
@@ -229,47 +178,32 @@ export function AudioPlayer({ model, onBack, onSwap }: Props) {
             value={currentTime}
             onChange={handleScrub}
             aria-label="Seek"
-            className="ptta-scrubber w-full"
-            style={{
-              // @ts-expect-error — custom CSS var used by the stylesheet rule
-              "--progress": `${progress}%`,
-            }}
+            className="w-full"
+            style={{ accentColor: "var(--color-black)" }}
           />
-          <div className="flex items-center justify-between mt-2">
-            <span
-              className="ptta-label text-muted-fg"
-              style={{ fontSize: "9pt" }}
-            >
-              {formatTime(currentTime)}
-            </span>
-            <span
-              className="ptta-label text-muted-fg"
-              style={{ fontSize: "9pt" }}
-            >
-              {formatTime(duration)}
-            </span>
-          </div>
-        </div>
-
-        {/* Play / pause */}
-        <button
-          type="button"
-          onClick={handlePlayPause}
-          aria-label={isPlaying ? "Pause audio" : "Play audio"}
-          aria-pressed={isPlaying}
-          className="w-16 h-16 rounded-full bg-accent text-cream flex items-center justify-center shadow-lg transition-transform hover:scale-[1.04] active:scale-[0.96] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          {isPlaying ? (
-            <Pause size={24} fill="currentColor" />
-          ) : (
-            <Play size={24} fill="currentColor" className="ml-1" />
-          )}
-        </button>
-
-        <div className="w-full mt-10">
           <NextModuleCta fromSlug="audio-guide" />
         </div>
-      </main>
+      }
+    >
+      <img
+        src={model.image}
+        alt={`${model.title} by ${model.artist}`}
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      {/* Live frequency bars over the foot of the plate. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 flex h-1/3 items-end justify-center gap-[3px] px-8 pb-8"
+        style={{ background: "linear-gradient(to top, rgba(10,8,6,0.85), transparent)" }}
+      >
+        {bars.map((h, i) => (
+          <span
+            key={i}
+            className="flex-1 rounded-full bg-white transition-[height] duration-[90ms] ease-out"
+            style={{ height: `${h}%`, minHeight: 3, maxWidth: 6, opacity: 0.35 + (h / 100) * 0.65 }}
+          />
+        ))}
+      </div>
 
       {/* Hidden audio element driving playback */}
       <audio
@@ -281,6 +215,6 @@ export function AudioPlayer({ model, onBack, onSwap }: Props) {
         preload="metadata"
         crossOrigin="anonymous"
       />
-    </div>
+    </StageFrame>
   );
 }

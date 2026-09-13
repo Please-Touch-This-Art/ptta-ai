@@ -6,41 +6,28 @@ interface Props {
   messages: ChatMessage[];
   status: "idle" | "streaming" | "error";
   artistShortName: string;
-  accentColor: string;
 }
 
-function ThinkingDots({ color }: { color: string }) {
+const NEAR_BOTTOM_PX = 40;
+
+function ThinkingDots() {
   return (
-    <span
-      aria-label="Thinking"
-      className="inline-flex gap-1 items-center px-2 py-1"
-    >
+    <span aria-label="Thinking" className="inline-flex items-center gap-1 px-1 py-1">
       {[0, 1, 2].map((i) => (
         <motion.span
           key={i}
-          className="w-1.5 h-1.5 rounded-full"
-          style={{ backgroundColor: color }}
+          className="h-1.5 w-1.5 rounded-full bg-black/60"
           animate={{ opacity: [0.25, 1, 0.25] }}
-          transition={{
-            duration: 1.1,
-            repeat: Infinity,
-            delay: i * 0.15,
-            ease: "easeInOut",
-          }}
+          transition={{ duration: 1.1, repeat: Infinity, delay: i * 0.15, ease: "easeInOut" }}
         />
       ))}
     </span>
   );
 }
 
-export function ChatTranscript({
-  messages,
-  status,
-  artistShortName,
-  accentColor,
-}: Props) {
+/** The conversation: the reader's lines set solid, the painter's on the page. */
+export function ChatTranscript({ messages, status, artistShortName }: Props) {
   const reduceMotion = useReducedMotion() ?? false;
-  const endRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const userScrolledUp = useRef(false);
 
@@ -48,25 +35,23 @@ export function ChatTranscript({
     const el = scrollRef.current;
     if (!el) return;
     const handler = () => {
-      const nearBottom =
-        el.scrollHeight - el.scrollTop - el.clientHeight < 40;
-      userScrolledUp.current = !nearBottom;
+      userScrolledUp.current = el.scrollHeight - el.scrollTop - el.clientHeight >= NEAR_BOTTOM_PX;
     };
     el.addEventListener("scroll", handler);
     return () => el.removeEventListener("scroll", handler);
   }, []);
 
+  /* Scroll the log itself, not the page: scrollIntoView walks every ancestor,
+     and on an empty log at mount it dragged the whole page down to the panel. */
   useEffect(() => {
-    if (!userScrolledUp.current) {
-      endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-    }
+    const el = scrollRef.current;
+    if (!el || messages.length === 0 || userScrolledUp.current) return;
+    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
   const lastMessage = messages[messages.length - 1];
   const showThinkingDots =
-    status === "streaming" &&
-    lastMessage?.role === "assistant" &&
-    lastMessage.content.length === 0;
+    status === "streaming" && lastMessage?.role === "assistant" && lastMessage.content.length === 0;
 
   return (
     <div
@@ -76,59 +61,52 @@ export function ChatTranscript({
       aria-live="polite"
       aria-atomic="false"
       aria-label={`Chat with ${artistShortName}`}
-      className="flex-1 overflow-y-auto px-4 py-4 bg-surface rounded-2xl border border-hairline"
-      style={{ minHeight: 200, maxHeight: "48vh" }}
+      className="flex-1 overflow-y-auto border border-black/10 px-5 py-5"
+      style={{ minHeight: 260, maxHeight: "52vh", background: "var(--prada-band)" }}
     >
       {messages.length === 0 && (
-        <div className="h-full flex items-center justify-center text-center px-3">
-          <p
-            className="text-muted-fg text-sm md:text-base italic font-serif leading-snug"
-            style={{ letterSpacing: "-0.005em" }}
-          >
-            Tap a suggestion below, or ask {artistShortName} anything.
+        <div className="flex h-full min-h-[200px] items-center justify-center px-3 text-center">
+          <p className="prada-body text-[15px] leading-[1.6] text-black/45">
+            Choose a question below, or ask {artistShortName} anything.
           </p>
         </div>
       )}
       <ul className="flex flex-col gap-3">
-        {messages.map((m, i) => (
-          <motion.li
-            key={i}
-            initial={reduceMotion ? false : { opacity: 0, y: 6 }}
-            animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-            className={`max-w-[82%] px-3.5 py-2.5 rounded-2xl text-sm md:text-base leading-snug whitespace-pre-wrap ${
-              m.role === "user"
-                ? "self-end bg-ink text-page rounded-br-md"
-                : "self-start bg-page text-ink border border-hairline rounded-bl-md"
-            }`}
-          >
-            {showThinkingDots && i === messages.length - 1 ? (
-              <ThinkingDots color={accentColor} />
-            ) : (
-              <>
-                {m.content}
-                {m.role === "assistant" &&
-                  status === "streaming" &&
-                  i === messages.length - 1 &&
-                  m.content.length > 0 && (
+        {messages.map((m, i) => {
+          const isLast = i === messages.length - 1;
+          const streamingHere =
+            m.role === "assistant" && status === "streaming" && isLast && m.content.length > 0;
+          return (
+            <motion.li
+              key={i}
+              initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+              animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className={`prada-body max-w-[82%] whitespace-pre-wrap px-4 py-3 text-[15px] leading-[1.55] ${
+                m.role === "user"
+                  ? "self-end bg-black text-white"
+                  : "self-start border border-black/15 bg-white text-black"
+              }`}
+            >
+              {showThinkingDots && isLast ? (
+                <ThinkingDots />
+              ) : (
+                <>
+                  {m.content}
+                  {streamingHere && (
                     <motion.span
                       aria-hidden
-                      className="inline-block ml-0.5 w-[2px] h-[1em] align-middle"
-                      style={{ backgroundColor: accentColor }}
+                      className="ml-0.5 inline-block h-[1em] w-[2px] align-middle bg-black"
                       animate={{ opacity: [1, 0, 1] }}
-                      transition={{
-                        duration: 1,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
                     />
                   )}
-              </>
-            )}
-          </motion.li>
-        ))}
+                </>
+              )}
+            </motion.li>
+          );
+        })}
       </ul>
-      <div ref={endRef} />
     </div>
   );
 }

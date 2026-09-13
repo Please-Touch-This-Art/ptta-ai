@@ -2,7 +2,8 @@ import { useCallback, useState } from "react";
 import { useLocation } from "wouter";
 import { AnimatePresence, motion } from "framer-motion";
 import { MODELS, type ModelId } from "@/content/models";
-import { FabricationShell } from "@/components/fabrication/FabricationShell";
+import { SiteShell } from "@/components/prada/SiteShell";
+import { STAGE_FADE } from "@/components/prada/stageFade";
 import { FabricationPicker } from "@/components/fabrication/FabricationPicker";
 import { FabricateStage } from "@/components/fabrication/FabricateStage";
 import { PolishStage } from "@/components/fabrication/PolishStage";
@@ -14,12 +15,6 @@ type Stage =
   | { stage: "polish"; modelId: ModelId }
   | { stage: "reveal"; modelId: ModelId };
 
-const FADE = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-  transition: { duration: 0.25 },
-} as const;
 
 export default function Fabrication() {
   const [, navigate] = useLocation();
@@ -49,25 +44,25 @@ export default function Fabrication() {
 
   /* The header and footer stay put; only the stage between them crossfades. */
   return (
-    <FabricationShell>
+    <SiteShell>
       <AnimatePresence mode="wait">
         {(!model || state.stage === "picker") && (
-          <motion.div key="picker" {...FADE}>
+          <motion.div key="picker" {...STAGE_FADE}>
             <FabricationPicker onSelect={handleSelect} />
           </motion.div>
         )}
         {model && state.stage === "fabricate" && (
-          <motion.div key="fabricate" {...FADE}>
+          <motion.div key="fabricate" {...STAGE_FADE}>
             <FabricateStage key={model.id} model={model} onDone={toPolish} onBack={toPicker} onSwap={handleSelect} />
           </motion.div>
         )}
         {model && state.stage === "polish" && (
-          <motion.div key="polish" {...FADE}>
+          <motion.div key="polish" {...STAGE_FADE}>
             <PolishStage key={model.id} model={model} onDone={toReveal} onBack={toPicker} onSwap={handleSelect} />
           </motion.div>
         )}
         {model && state.stage === "reveal" && (
-          <motion.div key="reveal" {...FADE}>
+          <motion.div key="reveal" {...STAGE_FADE}>
             <RevealStage
               key={model.id}
               model={model}
@@ -78,6 +73,6 @@ export default function Fabrication() {
           </motion.div>
         )}
       </AnimatePresence>
-    </FabricationShell>
+    </SiteShell>
   );
 }

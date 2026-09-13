@@ -1,30 +1,21 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Send } from "lucide-react";
 
 interface Props {
   placeholder: string;
   suggested: [string, string];
   showSuggested: boolean;
   disabled: boolean;
-  accentColor: string;
   onSend: (text: string) => void;
 }
 
 const MAX_CHARS = 500;
+const COUNTER_FROM = 400;
 
-export function ChatInput({
-  placeholder,
-  suggested,
-  showSuggested,
-  disabled,
-  accentColor,
-  onSend,
-}: Props) {
+/** A question for the painter: two openers as links, then a hairline field. */
+export function ChatInput({ placeholder, suggested, showSuggested, disabled, onSend }: Props) {
   const [text, setText] = useState("");
-  const [focused, setFocused] = useState(false);
   const reduceMotion = useReducedMotion() ?? false;
-  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const submit = () => {
     const trimmed = text.trim();
@@ -34,9 +25,9 @@ export function ChatInput({
   };
 
   return (
-    <div className="mt-4 flex flex-col gap-3">
+    <div className="mt-5 flex flex-col gap-4">
       {showSuggested && (
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex flex-wrap gap-x-8 gap-y-3">
           {suggested.map((s, i) => (
             <motion.button
               key={s}
@@ -46,14 +37,9 @@ export function ChatInput({
               initial={reduceMotion ? false : { opacity: 0, y: 4 }}
               animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: i * 0.08 }}
-              className="text-xs md:text-sm px-3.5 py-2 rounded-full border bg-page text-body-fg hover:bg-surface transition-colors disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-              style={{
-                borderColor: `${accentColor}55`,
-              }}
+              className="prada-link-cta text-left normal-case tracking-normal disabled:opacity-40"
+              style={{ fontFamily: "var(--prada-futura)", fontSize: 14 }}
             >
-              <span aria-hidden className="mr-1.5" style={{ color: accentColor }}>
-                ›
-              </span>
               {s}
             </motion.button>
           ))}
@@ -64,40 +50,31 @@ export function ChatInput({
           e.preventDefault();
           submit();
         }}
-        className="flex items-center gap-2 p-1.5 rounded-full border-2 bg-page transition-colors"
-        style={{
-          borderColor: focused ? accentColor : "var(--color-hairline, #d6cfc0)",
-        }}
+        className="flex items-center gap-4 border-b border-black/25 transition-colors focus-within:border-black"
       >
         <label htmlFor="artist-chat-input" className="sr-only">
           Your message
         </label>
         <input
           id="artist-chat-input"
-          ref={inputRef}
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value.slice(0, MAX_CHARS))}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
           placeholder={placeholder}
           disabled={disabled}
-          className="flex-1 px-4 py-2.5 bg-transparent text-ink placeholder:text-muted-fg outline-none text-sm md:text-base"
+          className="prada-body flex-1 bg-transparent py-3 text-[15px] text-black outline-none placeholder:text-black/30 disabled:opacity-50"
         />
         <button
           type="submit"
           disabled={disabled || text.trim().length === 0}
           aria-label="Send message"
-          className="w-10 h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full text-page disabled:opacity-40 transition-transform hover:scale-105 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-          style={{
-            backgroundColor: accentColor,
-          }}
+          className="prada-link-cta shrink-0 disabled:opacity-30"
         >
-          <Send size={18} />
+          Send
         </button>
       </form>
-      {text.length >= 400 && (
-        <p className="text-xs text-muted-fg self-end -mt-1">
+      {text.length >= COUNTER_FROM && (
+        <p className="prada-mono-caps -mt-1 self-end text-[10px] text-black/45">
           {text.length} / {MAX_CHARS}
         </p>
       )}

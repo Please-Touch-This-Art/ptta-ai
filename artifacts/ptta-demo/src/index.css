@@ -761,7 +761,9 @@
   border: none;
   border-bottom: 1.5px solid currentColor;
   border-radius: 0;
-  color: #000;
+  /* The page's ink, so the link flips with the palette in dark mode instead
+     of staying black on a dark ground. */
+  color: var(--color-black);
   font-family: var(--prada-mono);
   font-size: 12px;
   font-weight: 400;
