@@ -864,13 +864,13 @@ export default function PradaLanding() {
               leads in the markup so a phone reads the point before the
               demonstration; `order` puts the stage back on the left from md up. */}
           <div ref={processRef} className="relative h-[300vh]">
-            <div className="sticky top-[61px] flex min-h-[calc(100vh-61px)] items-center py-10">
+            <div className="sticky top-[61px] flex min-h-[calc(100vh-61px)] items-center py-6 md:py-10">
               <div className="w-full">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-9 md:gap-14 lg:gap-20">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-6 md:gap-14 lg:gap-20">
                 <div className="md:order-2 md:flex-1 md:max-w-[36ch]">
                   <h2
                     id="product-heading"
-                    className="prada-display text-[27px] md:text-[40px] leading-[1.1] mb-4"
+                    className="prada-display text-[24px] md:text-[40px] leading-[1.1] mb-3 md:mb-4"
                   >
                     {c.product.heading}
                   </h2>
@@ -883,7 +883,7 @@ export default function PradaLanding() {
                       reference has it. The chevrons scroll the page rather than
                       setting the step directly, so scroll stays authoritative
                       and they cannot fall out of sync with it. */}
-                  <div className="mt-7 md:mt-8 flex items-stretch gap-5 md:gap-6">
+                  <div className="mt-5 md:mt-8 flex items-stretch gap-5 md:gap-6">
                       <ol className="min-w-0 flex-1 border-t border-black/10">
                       {c.product.steps.map((stepCopy, i) => {
                         const isActive = i === processStep;
@@ -891,7 +891,7 @@ export default function PradaLanding() {
                           <li
                             key={stepCopy.title}
                             aria-current={isActive ? "step" : undefined}
-                            className="border-b border-black/10 py-3.5"
+                            className="border-b border-black/10 py-2.5 md:py-3.5"
                           >
                             <span className="block min-w-0">
                               <span
@@ -973,10 +973,12 @@ export default function PradaLanding() {
                     the stage is a tall 800:972, and on a short window a fixed
                     440px pushed the caption and the 3D link past the bottom of
                     the pinned panel. */}
-                <div
-                  className="mx-auto w-full"
-                  style={{ maxWidth: "min(440px, 52vh)" }}
-                >
+                {/* On a phone the heading, the steps, the caption and the link
+                    take about 420px of the pinned panel between them; the stage
+                    gets what is left of the viewport, so the whole panel stays
+                    in view while the page scrolls past. From md up, where the
+                    stage sits beside the text, it is capped as before. */}
+                <div className="mx-auto w-full max-w-[max(220px,min(100%,calc((100svh-61px-420px)/1.215)))] md:max-w-[min(440px,52vh)]">
                     {/* One stage, three visuals crossfading inside it. The box keeps
                         the comparison's aspect so nothing jumps between steps. */}
                     <div
@@ -1002,10 +1004,10 @@ export default function PradaLanding() {
 
                     {/* The painting keeps its credit — that line is attribution,
                         not marketing. */}
-                    <p className="prada-mono-caps text-[9.5px] text-black/45 mt-5 text-center">
+                    <p className="prada-mono-caps text-[9.5px] text-black/45 mt-3 md:mt-5 text-center">
                       {c.compare.caption}
                     </p>
-                    <div className="pt-5 text-center">
+                    <div className="pt-3 md:pt-5 text-center">
                       <button
                         type="button"
                         onClick={() => setModelOpen(true)}

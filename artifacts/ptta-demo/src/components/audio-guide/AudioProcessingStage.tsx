@@ -1,7 +1,7 @@
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState } from "react";
 import type { ModelEntry, ModelId } from "@/content/models";
 import { StageFrame } from "@/components/prada/StageFrame";
-import { cn } from "@/lib/utils";
+import { StepList, FadeLayer, ScanLine, type ProcessStep } from "@/components/prada/ProcessSteps";
 
 /*
  * The audio guide being composed: four passes over the painting — analyse,
@@ -18,16 +18,7 @@ interface Props {
   onSwap?: (id: ModelId) => void;
 }
 
-type StepId = "analyze" | "context" | "narrate" | "voice";
-
-interface Step {
-  id: StepId;
-  label: string;
-  hint: string;
-  filter: string;
-}
-
-const STEPS: Step[] = [
+const STEPS: ProcessStep[] = [
   {
     id: "analyze",
     label: "Analyse",
@@ -55,7 +46,6 @@ const STEPS: Step[] = [
 ];
 
 const STEP_MS = 2500;
-const ACCENT = "var(--color-accent)";
 const ACCENT_RGB = "var(--accent-rgb)";
 const pad2 = (n: number) => String(n).padStart(2, "0");
 
@@ -71,7 +61,7 @@ export function AudioProcessingStage({ model, onDone, onBack, onSwap }: Props) {
   }, [stepIndex, onDone]);
 
   const current = STEPS[stepIndex];
-  const isStep = (id: StepId) => current.id === id;
+  const isStep = (id: string) => current.id === id;
 
   return (
     <StageFrame
@@ -122,70 +112,10 @@ export function AudioProcessingStage({ model, onDone, onBack, onSwap }: Props) {
           {/* VOICE — a waveform along the bottom */}
           <VoiceWaveformOverlay visible={isStep("voice")} />
 
-          <div
-            className="pointer-events-none absolute left-0 right-0"
-            style={{
-              height: 2,
-              top: 0,
-              background: `linear-gradient(90deg, transparent, ${ACCENT}, transparent)`,
-              boxShadow: `0 0 12px ${ACCENT}, 0 0 24px rgba(${ACCENT_RGB},0.5)`,
-              animation: "ptta-scan-sweep 2.8s linear infinite",
-            }}
-          />
+          <ScanLine />
         </div>
       </div>
     </StageFrame>
-  );
-}
-
-function StepList({ steps, activeIndex }: { steps: Step[]; activeIndex: number }) {
-  return (
-    <ol className="flex flex-col border-t border-black/10" aria-label="Steps">
-      {steps.map((s, i) => {
-        const state = i < activeIndex ? "done" : i === activeIndex ? "active" : "idle";
-        return (
-          <li
-            key={s.id}
-            aria-current={state === "active" ? "step" : undefined}
-            className="border-b border-black/10 py-3"
-          >
-            <div className="flex items-baseline justify-between">
-              <span
-                className={cn(
-                  "prada-mono-caps text-[10px] transition-colors duration-500",
-                  state === "active" && "text-black",
-                  state === "done" && "text-black/45",
-                  state === "idle" && "text-black/25",
-                )}
-              >
-                {pad2(i + 1)} · {s.label}
-              </span>
-              {state === "done" && (
-                <span className="prada-mono-caps text-[10px] text-black/45">Done</span>
-              )}
-            </div>
-            <p
-              className={cn(
-                "prada-body overflow-hidden text-[14px] leading-[1.6] text-black/65 transition-all duration-500",
-                state === "active" ? "mt-1.5 max-h-24 opacity-100" : "max-h-0 opacity-0",
-              )}
-            >
-              {s.hint}
-            </p>
-          </li>
-        );
-      })}
-    </ol>
-  );
-}
-
-function FadeLayer({ visible, style }: { visible: boolean; style: CSSProperties }) {
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0"
-      style={{ ...style, opacity: visible ? 1 : 0, transition: "opacity 0.85s ease" }}
-    />
   );
 }
 

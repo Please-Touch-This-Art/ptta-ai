@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useLocation } from "wouter";
-import { LanguageSelect } from "@/components/LanguageSelect";
-import { siteCopy, type SiteLang } from "@/content/pradaCopy";
+import { SiteShell } from "@/components/prada/SiteShell";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   legalCopy,
   PLACEHOLDER_NOTE,
@@ -24,9 +24,10 @@ const LEGAL_NAV: { id: LegalDocId; path: string }[] = [
  * speaking.
  */
 export default function LegalPage({ doc }: { doc: LegalDocId }) {
-  const [lang, setLang] = useState<SiteLang>("de");
+  /* The site's language, shared with the header: a German reader who arrived
+     in German reads the Impressum in German, and vice versa. */
+  const { lang } = useLanguage();
   const [, navigate] = useLocation();
-  const c = siteCopy[lang];
   const content = legalCopy[lang][doc];
 
   useEffect(() => {
@@ -41,22 +42,7 @@ export default function LegalPage({ doc }: { doc: LegalDocId }) {
   const hasPlaceholders = JSON.stringify(content).includes("[");
 
   return (
-    <div className="prada-root min-h-screen bg-white text-black">
-      <header className="prada-header sticky top-0 z-50 bg-white border-b border-black/10">
-        <div className="mx-auto flex max-w-[900px] items-center justify-between gap-4 px-6 md:px-10 py-3 md:py-4">
-          <a
-            href="/"
-            onClick={go("/")}
-            className="text-black leading-none whitespace-nowrap min-w-0"
-            aria-label="Please Touch This Art"
-          >
-            <span className="prada-wordmark prada-wordmark--compact block">
-              Please Touch This Art
-            </span>
-          </a>
-          <LanguageSelect lang={lang} onChange={setLang} label={c.menu.language} />
-        </div>
-      </header>
+    <SiteShell>
 
       <main className="mx-auto max-w-[900px] px-6 md:px-10 pt-14 md:pt-20 pb-20 md:pb-28">
         <h1 className="prada-display text-[30px] md:text-[44px] leading-[1.1]">
@@ -131,6 +117,6 @@ export default function LegalPage({ doc }: { doc: LegalDocId }) {
           </a>
         </nav>
       </main>
-    </div>
+    </SiteShell>
   );
 }

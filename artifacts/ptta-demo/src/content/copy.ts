@@ -127,12 +127,13 @@ const en: PageCopy = {
   howItWorks: {
     eyebrow: "How it works",
     headline: "From painting to fingertips.",
-    subline: "",
+    subline:
+      "Six steps take a painting from the gallery wall to a relief a visitor can read by hand. Here is what happens at each.",
     steps: [
       {
         num: "01",
         title: "High-resolution image acquisition",
-        body: "",
+        body: "A museum-grade photograph of the work, sharp enough to read individual brushstrokes. Everything downstream is only as good as this image.",
         illoAlt:
           "Museum-quality scan of a painting on an archival imaging rig",
         imageVariant: "dark",
@@ -140,7 +141,7 @@ const en: PageCopy = {
       {
         num: "02",
         title: "AI-assisted image analysis",
-        body: "",
+        body: "The image is read for depth: which passages sit forward, which recede, and where an edge should be felt rather than seen.",
         illoAlt:
           "Colorized depth map overlaid on the source painting",
         imageVariant: "accent",

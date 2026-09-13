@@ -1,9 +1,8 @@
 import { ModelViewerElement } from "@google/model-viewer";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft } from "lucide-react";
-import { useLocation } from "wouter";
 import type { ModelEntry, ModelId } from "@/content/models";
-import { PaintingCarousel } from "@/components/PaintingCarousel";
+import { StageFrame } from "@/components/prada/StageFrame";
+import { NextModuleCta } from "@/components/NextModuleCta";
 
 // Our GLBs are produced by gltfpack with EXT_meshopt_compression +
 // KHR_mesh_quantization. model-viewer only wires the meshopt decoder into
@@ -24,11 +23,8 @@ type Status = "loading" | "ready" | "error";
 const AUTO_ROTATE_DELAY_INITIAL_MS = 800;
 const AUTO_ROTATE_DELAY_AFTER_INTERACTION_MS = 10000;
 
-const titleStyle = { letterSpacing: "-0.01em" } as const;
-
 export function ViewerStage({ model, onBack, onSwap }: Props) {
   const viewerRef = useRef<HTMLElement>(null);
-  const [, navigate] = useLocation();
   const [status, setStatus] = useState<Status>("loading");
   const [progress, setProgress] = useState(0);
   const [errorDetail, setErrorDetail] = useState("");
@@ -124,7 +120,35 @@ export function ViewerStage({ model, onBack, onSwap }: Props) {
   const orientation = model.orientation ?? "0 0 0";
 
   return (
-    <div className="fixed inset-0 bg-stone-950 text-stone-100 overflow-hidden">
+    <StageFrame
+      label="The tactile model"
+      model={model}
+      onBack={onBack}
+      backLabel="Pick another piece"
+      onSwap={onSwap}
+      status={{
+        left: status === "ready" ? "Drag to rotate · Pinch to zoom" : status === "loading" ? `Loading ${Math.round(progress * 100)}%` : "Could not load",
+        right: status === "ready" ? "● Live" : status === "loading" ? "● Loading" : "● Error",
+      }}
+      aside={
+        <div className="flex flex-col gap-6">
+          <p className="prada-body text-[14px] md:text-[15px] leading-[1.6] text-black/65">
+            The relief as it will be printed: the painting's depth turned into a
+            surface a hand can read. Turn it to see how the brushwork stands off
+            the ground.
+          </p>
+          {model.commissionedBy && (
+            <p className="prada-mono-caps text-[10px] text-black/45">{model.commissionedBy}</p>
+          )}
+          <div className="flex flex-col items-start gap-4">
+            <button type="button" onClick={onBack} className="prada-link-cta">
+              View another
+            </button>
+            <NextModuleCta fromSlug="3d-model" />
+          </div>
+        </div>
+      }
+    >
       <model-viewer
         ref={viewerRef}
         alt={`3D tactile model of ${model.title} by ${model.artist}`}
@@ -149,121 +173,27 @@ export function ViewerStage({ model, onBack, onSwap }: Props) {
         }}
       />
 
-      {/* Top overlay — back + title */}
-      <header
-        className="absolute top-0 left-0 right-0 z-10 flex items-center gap-3 px-5 pt-[max(1.5rem,env(safe-area-inset-top))] pb-6 pointer-events-none"
-        style={{
-          background:
-            "linear-gradient(to bottom, rgba(10,8,6,0.85), rgba(10,8,6,0))",
-        }}
-      >
-        <button
-          onClick={onBack}
-          aria-label="Back to picker"
-          className="pointer-events-auto w-11 h-11 flex items-center justify-center rounded-full bg-black/40 backdrop-blur text-white/90 hover:bg-black/60 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <div className="min-w-0 pointer-events-none">
-          <h1
-            className="font-serif text-lg sm:text-xl leading-tight truncate text-white drop-shadow"
-            style={titleStyle}
-          >
-            — {model.title}
-          </h1>
-          <p
-            className="ptta-label text-white/65 truncate mt-0.5"
-            style={{ fontSize: "10pt" }}
-          >
-            {model.artist} · {model.year}
-          </p>
-        </div>
-      </header>
-
-      {/* Painting carousel — swap to another piece without leaving the viewer */}
-      {onSwap && (
-        <div className="absolute top-[calc(max(1.5rem,env(safe-area-inset-top))+44px+0.5rem)] left-0 right-0 z-20 pointer-events-auto">
-          <PaintingCarousel
-            activeId={model.id}
-            onSelect={onSwap}
-            variant="dark"
-          />
-        </div>
-      )}
-
-      {/* Bottom overlay — commission, hint, CTA */}
-      <div
-        className="absolute bottom-0 left-0 right-0 z-10 px-5 pt-16 pb-[max(2rem,env(safe-area-inset-bottom))] pointer-events-none"
-        style={{
-          background:
-            "linear-gradient(to top, rgba(10,8,6,0.88) 40%, rgba(10,8,6,0))",
-        }}
-      >
-        <div className="mx-auto w-full max-w-[440px] text-center">
-          {model.commissionedBy && (
-            <p
-              className="ptta-label text-accent mb-3"
-              style={{ fontSize: "10pt" }}
-            >
-              {model.commissionedBy}
-            </p>
-          )}
-          <p
-            className="ptta-label text-white/55 mb-5"
-            style={{ fontSize: "9pt" }}
-          >
-            Drag to rotate · Pinch to zoom
-          </p>
-          <button
-            onClick={onBack}
-            aria-label="View another model"
-            className="pointer-events-auto w-full flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-accent text-cream text-base tracking-wide transition-transform hover:scale-[1.02] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            style={{ minHeight: 56, letterSpacing: "-0.02em" }}
-          >
-            View another
-          </button>
-          <button
-            onClick={() => navigate("/fabrication")}
-            aria-label="Continue to 3D Fabrication"
-            className="pointer-events-auto mt-3 w-full px-6 py-3 rounded-full bg-white/10 border border-white/30 text-white/90 text-sm hover:bg-white/20 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-          >
-            Next: 3D Fabrication →
-          </button>
-        </div>
-      </div>
-
-      {/* Loading / error overlay */}
       {status !== "ready" && (
         <div
-          className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-stone-950/90 backdrop-blur-sm"
+          className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-[#0a0806]/90"
           aria-live="polite"
         >
           {status === "loading" && (
             <>
-              <div className="w-10 h-10 rounded-full border-2 border-accent/25 border-t-accent animate-spin" />
-              <p
-                className="ptta-label text-white/75"
-                style={{ fontSize: "10pt" }}
-              >
-                Loading 3D model — {Math.round(progress * 100)}%
+              <div className="h-8 w-8 animate-spin rounded-full border border-white/20 border-t-white/80" />
+              <p className="prada-mono-caps text-[10px] text-white/70">
+                Loading the model · {Math.round(progress * 100)}%
               </p>
             </>
           )}
           {status === "error" && (
-            <div className="px-6 text-center max-w-[440px]">
-              <p
-                className="font-serif italic text-accent text-lg mb-2"
-                style={titleStyle}
-              >
-                Couldn&rsquo;t load the 3D model
-              </p>
-              <p className="text-white/65 text-xs break-words">
-                {errorDetail}
-              </p>
+            <div className="max-w-[36ch] px-6 text-center">
+              <p className="prada-display text-[17px] text-white/90">Couldn&rsquo;t load the 3D model</p>
+              <p className="prada-body mt-2 break-words text-[12px] text-white/55">{errorDetail}</p>
             </div>
           )}
         </div>
       )}
-    </div>
+    </StageFrame>
   );
 }
