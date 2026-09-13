@@ -65,8 +65,10 @@ export const DESIGN_OPTIONS: DesignOption[] = [
   },
 ];
 
+/* The Prada landing is the site. The picker came off the header on 2026-09-13;
+   a value an earlier visit left in storage must not switch the page back to a
+   retired variant, so nothing is read from storage here. */
 const DEFAULT_DESIGN_ID: DesignId = "prada";
-const STORAGE_KEY = "ptta-design";
 
 interface DesignContextValue {
   design: DesignOption;
@@ -77,21 +79,6 @@ interface DesignContextValue {
 const DesignContext = createContext<DesignContextValue | null>(null);
 
 function readInitialId(): DesignId {
-  if (typeof window === "undefined") return DEFAULT_DESIGN_ID;
-  const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (
-    stored === "default" ||
-    stored === "hermes" ||
-    stored === "prada" ||
-    stored === "loewe" ||
-    stored === "saintlaurent" ||
-    stored === "aesop" ||
-    stored === "mission" ||
-    stored === "pitch" ||
-    stored === "spotlight"
-  ) {
-    return stored;
-  }
   return DEFAULT_DESIGN_ID;
 }
 
@@ -105,11 +92,6 @@ export function DesignProvider({ children }: { children: ReactNode }) {
       root.removeAttribute("data-design");
     } else {
       root.setAttribute("data-design", design.id);
-    }
-    try {
-      window.localStorage.setItem(STORAGE_KEY, design.id);
-    } catch {
-      // ignore
     }
   }, [design]);
 

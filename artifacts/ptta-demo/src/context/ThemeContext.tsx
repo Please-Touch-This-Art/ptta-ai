@@ -8,15 +8,13 @@ interface ThemeContextValue {
   toggle: () => void;
 }
 
-const STORAGE_KEY = "ptta-theme";
-
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
+/* The site ships in one theme. The toggle came off the header on 2026-09-13,
+   and a value an earlier visit left in storage must not bring dark mode back,
+   so nothing is read from storage here. */
 function readInitial(): Theme {
-  if (typeof window === "undefined") return "dark";
-  const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (stored === "light" || stored === "dark") return stored;
-  return "dark";
+  return "light";
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
@@ -26,11 +24,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const root = document.documentElement;
     if (theme === "dark") root.classList.add("dark");
     else root.classList.remove("dark");
-    try {
-      window.localStorage.setItem(STORAGE_KEY, theme);
-    } catch {
-      // ignore — private mode / quota
-    }
   }, [theme]);
 
   const setTheme = (next: Theme) => setThemeState(next);

@@ -3,8 +3,6 @@ import type { CSSProperties, ReactNode, RefObject } from "react";
 import { useLocation } from "wouter";
 import { ChevronDown, ChevronUp, Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
-import { useTheme } from "@/context/ThemeContext";
-import { DesignPicker } from "@/components/DesignPicker";
 import { LanguageSelect } from "@/components/LanguageSelect";
 import { ModelPreviewDialog } from "@/components/ModelPreviewDialog";
 import { CountUpNumber } from "@/components/CountUpNumber";
@@ -103,12 +101,25 @@ const COLLAGE_PAIR = [
    scaled to the same frame so the wipe lands on the same composition. */
 const COMPARE_BEFORE = `${BASE}/compare/vangogh-painting.jpg`;
 const COMPARE_AFTER = `${BASE}/compare/vangogh-relief.jpg`;
-/* The same GLB the demo's viewer loads, so the preview shows the real model
-   rather than a second copy that could drift out of sync. */
 /* The coloured relief: a "painting" material with the artwork baked on as a
    base-colour texture, so it turns in full colour rather than in the cream of
-   the untextured print model. */
+   the untextured print model.
+
+   Two cuts of the same model. The full print mesh (946k triangles, 2.8M
+   unwelded vertices, 18 MB) is what the Preview in 3D dialog opens, where the
+   reader has asked for it and the model fills the screen. The pinned stage
+   turns the preview cut: the same mesh welded and simplified to 189k triangles
+   (1.1 MB), which renders identically at the stage's ~440px and, unlike the
+   full mesh, neither stalls the main thread for ~300ms while it parses nor
+   saturates the GPU while it turns — both of which showed up as the page
+   lagging as the reader scrolled through this section.
+
+   Rebuilt with glTF Transform 4.5 from the full file:
+     gltf-transform weld     van-gogh-colored.glb welded.glb
+     gltf-transform simplify --ratio 0.2 --error 0.0005 welded.glb simp.glb
+     gltf-transform meshopt  --level medium simp.glb van-gogh-colored-preview.glb */
 const COMPARE_MODEL = `${BASE}/models/van-gogh-colored.glb`;
+const COMPARE_MODEL_PREVIEW = `${BASE}/models/van-gogh-colored-preview.glb`;
 
 function CompareSlider({
   copy,
@@ -401,7 +412,7 @@ function ScanLayer({ visible, style }: { visible: boolean; style: CSSProperties 
  * behind the Preview in 3D button.
  *
  * `warm` runs the import and the download ahead of the step being reached, so
- * arriving at it does not stall on an 18MB fetch.
+ * arriving at it does not wait on the fetch.
  */
 /* Positive theta puts the camera to the viewer's right, which is the side that
    shows the face's own left. Verified against the model rather than assumed:
@@ -423,6 +434,12 @@ function RotatingModel({
 }) {
   const [defined, setDefined] = useState(false);
   const viewerRef = useRef<HTMLElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
+  /* `active` is the step index, and the index stays on this step once the
+     reader has scrolled past the whole section, so on its own it would keep the
+     sweep turning for the rest of the page. This is whether the stage itself is
+     still in view. */
+  const onScreen = useOnScreen(frameRef);
 
   useEffect(() => {
     if (!(active || warm) || defined) return;
@@ -447,24 +464,29 @@ function RotatingModel({
   useEffect(() => {
     if (!warm) return;
     const controller = new AbortController();
-    fetch(COMPARE_MODEL, { signal: controller.signal, cache: "force-cache" }).catch(
+    fetch(COMPARE_MODEL_PREVIEW, { signal: controller.signal, cache: "force-cache" }).catch(
       () => {},
     );
     return () => controller.abort();
   }, [warm]);
 
   /* The sweep, driven here rather than by `auto-rotate`, which only does full
-     revolutions. It yields permanently the moment the visitor drags. */
+     revolutions. It yields permanently the moment the visitor drags.
+
+     It runs only while this step is the one on screen. Every camera-orbit write
+     makes model-viewer redraw the whole model, so a sweep that kept going while
+     the layer sat at opacity 0, or after the reader had scrolled on, held the
+     GPU busy for the rest of the visit and every scroll on the page paid for it. */
+  const takenRef = useRef(false);
   useEffect(() => {
     const el = viewerRef.current;
-    if (!el || !defined) return;
+    if (!el || !defined || !active || !onScreen) return;
 
     let frame = 0;
-    let taken = false;
     const start = performance.now();
 
     const step = (now: number) => {
-      if (taken) return;
+      if (takenRef.current) return;
       const t = ((now - start) / 1000 / SWEEP_SECONDS) * Math.PI * 2;
       /* cos, not sin: at t=0 this is the far end of the arc, which is the angle
          the element already carries as its starting `camera-orbit`. With sin it
@@ -477,7 +499,7 @@ function RotatingModel({
     const onCameraChange = (event: Event) => {
       const detail = (event as CustomEvent<{ source?: string }>).detail;
       if (detail?.source === "user-interaction") {
-        taken = true;
+        takenRef.current = true;
         cancelAnimationFrame(frame);
       }
     };
@@ -488,7 +510,7 @@ function RotatingModel({
       el.removeEventListener("camera-change", onCameraChange);
       cancelAnimationFrame(frame);
     };
-  }, [defined]);
+  }, [defined, active, onScreen]);
 
   const envUrl = `${import.meta.env.BASE_URL || "/"}environments/studio.hdr`.replace(
     /\/{2,}/g,
@@ -496,11 +518,11 @@ function RotatingModel({
   );
 
   return (
-    <div className="absolute inset-0 bg-[#0a0806]">
+    <div ref={frameRef} className="absolute inset-0 bg-[#0a0806]">
       {defined && (
         <model-viewer
           ref={viewerRef}
-          src={COMPARE_MODEL}
+          src={COMPARE_MODEL_PREVIEW}
           alt={alt}
           camera-controls
           /* Zoom off, so the wheel is left alone and the page keeps scrolling
@@ -557,6 +579,28 @@ function useNearViewport(ref: RefObject<HTMLElement | null>, rootMargin: string)
   }, [ref, rootMargin, near]);
 
   return near;
+}
+
+/* Whether the element currently intersects the viewport. Unlike useNearViewport
+   this follows it both ways, so work tied to it stops when it scrolls out. */
+function useOnScreen(ref: RefObject<HTMLElement | null>) {
+  const [onScreen, setOnScreen] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setOnScreen(true);
+      return;
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      setOnScreen(entry?.isIntersecting ?? false);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [ref]);
+
+  return onScreen;
 }
 
 /* Turns scroll position through a tall section into a step index. The section
@@ -619,7 +663,6 @@ function useMediaQuery(query: string): boolean {
 }
 
 export default function PradaLanding() {
-  const { theme, toggle } = useTheme();
   const [, navigate] = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [videoPaused, setVideoPaused] = useState(false);
@@ -744,24 +787,6 @@ export default function PradaLanding() {
     { label: c.nav.contact, href: "#contact" },
   ];
 
-  const themeIcon =
-    theme === "light" ? (
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-      </svg>
-    ) : (
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="4" />
-        <line x1="12" y1="2" x2="12" y2="4" />
-        <line x1="12" y1="20" x2="12" y2="22" />
-        <line x1="4.93" y1="4.93" x2="6.34" y2="6.34" />
-        <line x1="17.66" y1="17.66" x2="19.07" y2="19.07" />
-        <line x1="2" y1="12" x2="4" y2="12" />
-        <line x1="20" y1="12" x2="22" y2="12" />
-        <line x1="4.93" y1="19.07" x2="6.34" y2="17.66" />
-        <line x1="17.66" y1="6.34" x2="19.07" y2="4.93" />
-      </svg>
-    );
 
   return (
     <div className="prada-root min-h-screen bg-white text-black">
@@ -822,21 +847,6 @@ export default function PradaLanding() {
                 </a>
               ))}
             </nav>
-            <button
-              type="button"
-              onClick={toggle}
-              aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
-              /* From lg up the button collapses to the bare 17px icon, which is
-                 below the 24px minimum target and easy to miss. The pseudo-element
-                 grows the hit area to ~29x41 without moving anything: the inset
-                 stops short of half the 14px gap so it never overlaps the picker
-                 beside it. */
-              className="relative flex items-center justify-center min-h-11 min-w-11 lg:min-h-0 lg:min-w-0 -mr-2 lg:mr-0 lg:ml-1 [touch-action:manipulation] lg:before:absolute lg:before:content-[''] lg:before:-inset-x-1.5 lg:before:-inset-y-3"
-            >
-              {themeIcon}
-            </button>
-            {/* Variant switcher, local development only. */}
-            {import.meta.env.DEV && <DesignPicker />}
           </div>
         </div>
 
