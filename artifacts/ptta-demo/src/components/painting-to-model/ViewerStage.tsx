@@ -224,10 +224,10 @@ export function ViewerStage({ model, onBack, onSwap }: Props) {
           </button>
           <button
             onClick={() => navigate("/fabrication")}
-            aria-label="Continue to 3D Printing"
+            aria-label="Continue to 3D Fabrication"
             className="pointer-events-auto mt-3 w-full px-6 py-3 rounded-full bg-white/10 border border-white/30 text-white/90 text-sm hover:bg-white/20 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
-            Next: 3D Printing →
+            Next: 3D Fabrication →
           </button>
         </div>
       </div>

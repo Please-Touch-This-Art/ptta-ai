@@ -156,8 +156,8 @@ const en: PageCopy = {
       },
       {
         num: "04",
-        title: "3D printing",
-        body: "Printed in durable PLA, tuned for tactile clarity under the hand.",
+        title: "3D fabrication",
+        body: "Built in durable PLA, then finished by hand and tuned for tactile clarity under the fingertips.",
         illoAlt: "Photograph of a 3D-printed tactile model of St. Nikolai Church",
         imageSrc: "printed/st-nikolai-photo.jpg",
       },
@@ -182,25 +182,28 @@ const en: PageCopy = {
     continueCta: "Explore the demo",
   },
   demoHub: {
-    eyebrow: "Demo",
+    eyebrow: "Demos",
     headline: "Pick a process to explore.",
-    subline: "",
+    subline:
+      "Four short, hands-on demos follow an artwork from a flat image to a model in a visitor's hands. Open any of them, in any order.",
     openLabel: "Open",
-    ariaOpenModule: (title) => `Open ${title} module`,
+    ariaOpenModule: (title) => `Open the ${title} demo`,
     cards: [
       {
         slug: "3d-model",
         title: "AI 3D Model Maker",
-        description: "See how a flat painting becomes a layered 3D form.",
+        description:
+          "Watch a flat painting read for depth, stroke by stroke, and become a layered relief.",
         illoAlt: "Van Gogh Self-Portrait painting, the source for a tactile conversion",
         imageSrc: "paintings/van-gogh.webp",
         route: "/painting-to-model",
-        nextModule: "3d-printing",
+        nextModule: "3d-fabrication",
       },
       {
-        slug: "3d-printing",
-        title: "3D Printing",
-        description: "Watch the model take physical shape, layer by layer.",
+        slug: "3d-fabrication",
+        title: "3D Fabrication",
+        description:
+          "Follow the relief off the screen: built up layer by layer, then finished by hand.",
         illoAlt: "3D-printed tactile relief of Dalí's The Persistence of Memory",
         imageSrc: "printed/persistence-of-memory.png",
         route: "/fabrication",
@@ -210,7 +213,7 @@ const en: PageCopy = {
         slug: "audio-guide",
         title: "AI Audio Guide Curator",
         description:
-          "Hear how audio descriptions are crafted alongside the tactile experience.",
+          "Hear how the spoken description is written to travel alongside the tactile model.",
         illoAlt: "Audio guide device and headphones for museum visitors",
         imageSrc: "images/audio-guide.jpg",
         route: "/audio-guide",
@@ -220,26 +223,14 @@ const en: PageCopy = {
         slug: "artist-persona",
         title: "AI Artist Persona",
         description:
-          "Talk with Leonardo, Vincent, Salvador or Edvard — in their own voice, about their own work.",
+          "Talk with Leonardo, Vincent, Salvador or Edvard about their own work, in their own voice.",
         illoAlt: "Engraved portrait of Leonardo da Vinci",
         imageSrc: "artists/leonardo.webp",
         route: "/artist-persona",
-        nextModule: "future",
-      },
-      {
-        slug: "future",
-        title: "Future Features",
-        description:
-          "What’s next: scaling to more museums, more languages, more formats.",
-        illoAlt:
-          "Surrealist portrait of a woman wearing a VR headset surrounded by floating museum objects",
-        imageSrc: "images/future-of-art.jpg",
-        variant: "future",
-        route: "/future-features",
       },
     ],
     footer: {
-      note: "More modules coming as the demo expands.",
+      note: "",
       returnLink: "Return to start",
     },
   },

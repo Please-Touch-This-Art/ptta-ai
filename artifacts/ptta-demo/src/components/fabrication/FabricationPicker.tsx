@@ -1,4 +1,3 @@
-import { Landmark } from "lucide-react";
 import {
   PAINTINGS,
   MONUMENTS,
@@ -6,164 +5,126 @@ import {
   type ModelId,
 } from "@/content/models";
 import { cn } from "@/lib/utils";
-import { Header } from "@/components/Header";
-import { SectionLabel, Marker } from "@/components/editorial";
-
-const titleStyle = { letterSpacing: "-0.01em" } as const;
 
 interface Props {
   onSelect: (id: ModelId) => void;
 }
 
+const pad2 = (n: number) => String(n).padStart(2, "0");
+
 /**
- * Fabrication flow picker. Structurally mirrors ModelPicker but carries
- * fabrication-specific copy. Forked (not extended) so changes on either
- * branch don't collide during merge.
+ * First screen of the fabrication demo: the pieces on offer, as rows of
+ * plates under a hairline, the way the demo hub and the homepage set theirs.
  */
 export function FabricationPicker({ onSelect }: Props) {
   return (
-    <div className="ptta-root min-h-[100dvh] bg-page text-ink">
-      <Header showBack backHref="/demo-hub" tag="FABRICATION · 02" />
-
-      <div className="mx-auto w-full max-w-[440px] px-5 pt-6 pb-10">
-        <SectionLabel label="Fabrication" tag="Module · 02" />
-
-        <div className="text-center mb-6">
+    <>
+      <section className="pt-14 md:pt-20 px-6 md:px-10" aria-labelledby="fabrication-heading">
+        <div className="mx-auto max-w-[1140px]">
           <h1
-            className="font-serif text-ink text-3xl md:text-4xl leading-[1.02]"
-            style={titleStyle}
+            id="fabrication-heading"
+            className="prada-display text-[30px] md:text-[44px] leading-[1.08] max-w-[22ch]"
           >
-            — Pick a piece to fabricate.
+            Pick a piece to fabricate.
           </h1>
+          <p className="prada-body mt-5 text-[15px] md:text-[16px] leading-[1.65] text-black/65 max-w-[56ch]">
+            Choose a painting or a monument and follow its tactile relief into the
+            physical world: built up layer by layer, then finished by hand.
+          </p>
         </div>
+      </section>
 
-        {/* Paintings — 2-col grid (matches ModelPicker) */}
-        <section className="mb-6" aria-label="Paintings">
-          <div className="flex items-center justify-between mb-3">
-            <span className="ptta-label text-ink" style={{ fontSize: "10pt" }}>
-              Paintings
-            </span>
-            <span className="ptta-label text-muted-fg" style={{ fontSize: "10pt" }}>
-              {PAINTINGS.length} available
-            </span>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {PAINTINGS.map((m, i) => (
-              <ModelCard key={m.id} model={m} index={i} onSelect={onSelect} />
-            ))}
-          </div>
-        </section>
-
-        {/* Monuments — 2-col grid */}
-        <section aria-label="Monuments">
-          <div className="flex items-center justify-between mb-3">
-            <span className="ptta-label text-ink" style={{ fontSize: "10pt" }}>
-              Monuments
-            </span>
-            <span className="ptta-label text-muted-fg" style={{ fontSize: "10pt" }}>
-              {MONUMENTS.length} available
-            </span>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {MONUMENTS.map((m, i) => (
-              <ModelCard
-                key={m.id}
-                model={m}
-                index={PAINTINGS.length + i}
-                onSelect={onSelect}
-              />
-            ))}
-          </div>
-        </section>
-      </div>
-    </div>
+      <section className="pt-10 md:pt-14 pb-20 md:pb-28 px-6 md:px-10">
+        <div className="mx-auto flex max-w-[1140px] flex-col gap-14 md:gap-16">
+          <PieceGroup title="Paintings" models={PAINTINGS} indexOffset={0} onSelect={onSelect} />
+          <PieceGroup
+            title="Monuments"
+            models={MONUMENTS}
+            indexOffset={PAINTINGS.length}
+            onSelect={onSelect}
+          />
+        </div>
+      </section>
+    </>
   );
 }
 
-interface CardProps {
+function PieceGroup({
+  title,
+  models,
+  indexOffset,
+  onSelect,
+}: {
+  title: string;
+  models: ModelEntry[];
+  indexOffset: number;
+  onSelect: (id: ModelId) => void;
+}) {
+  const available = models.filter((m) => m.available).length;
+  return (
+    <section aria-label={title}>
+      <div className="flex items-baseline justify-between border-b border-black/10 pb-3">
+        <h2 className="prada-mono-caps text-[10px] text-black">{title}</h2>
+        <span className="prada-mono-caps text-[10px] text-black/45">{pad2(available)} available</span>
+      </div>
+      <ol className="mt-8 grid grid-cols-2 gap-6 sm:gap-8 lg:grid-cols-4 lg:gap-10">
+        {models.map((m, i) => (
+          <PieceCard key={m.id} model={m} index={indexOffset + i} onSelect={onSelect} />
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+function PieceCard({
+  model,
+  index,
+  onSelect,
+}: {
   model: ModelEntry;
   index: number;
   onSelect: (id: ModelId) => void;
-}
-
-function ModelCard({ model, index, onSelect }: CardProps) {
+}) {
   const disabled = !model.available;
   return (
-    <button
-      type="button"
-      onClick={() => {
-        if (!disabled) onSelect(model.id);
-      }}
-      disabled={disabled}
-      aria-label={
-        disabled
-          ? `${model.title} — coming soon`
-          : `Fabricate ${model.title} by ${model.artist}`
-      }
-      className={cn(
-        "group relative w-full flex flex-col text-left rounded-2xl overflow-hidden bg-surface border border-hairline shadow-sm transition-all",
-        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-        !disabled && "hover:-translate-y-0.5 hover:shadow-md active:translate-y-0",
-        disabled && "opacity-70 cursor-not-allowed"
-      )}
-      style={{ minHeight: 56 }}
-    >
-      <div className="relative w-full aspect-[3/4] overflow-hidden bg-surface-muted">
-        {model.image ? (
+    <li>
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => onSelect(model.id)}
+        aria-label={
+          disabled
+            ? `${model.title} — coming soon`
+            : `Fabricate ${model.title} by ${model.artist}`
+        }
+        className="group flex w-full flex-col text-left disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
+      >
+        <figure className={cn("prada-plate m-0 aspect-[3/4] w-full", disabled && "opacity-50")}>
           <img
             src={model.image}
-            alt={`${model.title} by ${model.artist}`}
-            loading="lazy"
-            className={cn(
-              "w-full h-full object-cover transition-transform duration-500",
-              !disabled && "group-hover:scale-[1.03]"
-            )}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-stone-800 text-cream">
-            <Landmark size={60} strokeWidth={1.1} aria-hidden />
-          </div>
-        )}
-        {disabled && (
-          <div className="absolute inset-0 flex items-start justify-end p-2 bg-stone-950/40">
-            <span
-              className="ptta-label inline-flex items-center px-2 py-0.5 rounded-full bg-stone-950 text-accent"
-              style={{ fontSize: "9pt" }}
-            >
-              Soon
-            </span>
-          </div>
-        )}
-      </div>
-
-      <div className="p-3">
-        <div className="flex items-center justify-between mb-2">
-          <Marker size={6} />
-          <span className="ptta-label text-muted-fg" style={{ fontSize: "9pt" }}>
-            {String(index + 1).padStart(2, "0")}
-          </span>
-        </div>
-
-        <h3
-          className="font-sans text-ink text-sm md:text-base leading-tight"
-          style={titleStyle}
-        >
-          — {model.title}
-        </h3>
-        <p className="text-muted-fg text-xs mt-0.5 truncate">
-          {model.artist} · {model.year}
-        </p>
-
-        {!disabled && (
-          <span
+            alt=""
             aria-hidden="true"
-            className="ptta-label text-accent inline-block mt-2 transition-transform duration-200 group-hover:translate-x-0.5"
-            style={{ fontSize: "9pt" }}
-          >
-            Fabricate →
-          </span>
-        )}
-      </div>
-    </button>
+            loading="lazy"
+            decoding="async"
+            className="prada-plate__img"
+          />
+        </figure>
+        <div className="mt-4 w-full border-t border-black/10 pt-3">
+          <div className="flex items-baseline justify-between">
+            <span className="prada-mono-caps text-[10px] text-black/45">{pad2(index + 1)}</span>
+            {disabled && <span className="prada-mono-caps text-[10px] text-black/45">Soon</span>}
+          </div>
+          <h3 className="prada-display mt-2 text-[16px] md:text-[18px] leading-[1.25]">{model.title}</h3>
+          <p className="prada-body mt-1 text-[13px] text-black/55">
+            {model.artist} · {model.year}
+          </p>
+          {!disabled && (
+            <span className="prada-link-cta mt-4 group-hover:opacity-65" aria-hidden="true">
+              Fabricate
+            </span>
+          )}
+        </div>
+      </button>
+    </li>
   );
 }

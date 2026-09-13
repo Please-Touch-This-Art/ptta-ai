@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { useLocation } from "wouter";
 import { AnimatePresence, motion } from "framer-motion";
 import { MODELS, type ModelId } from "@/content/models";
+import { FabricationShell } from "@/components/fabrication/FabricationShell";
 import { FabricationPicker } from "@/components/fabrication/FabricationPicker";
 import { FabricateStage } from "@/components/fabrication/FabricateStage";
 import { PolishStage } from "@/components/fabrication/PolishStage";
@@ -30,68 +31,53 @@ export default function Fabrication() {
 
   const toPolish = useCallback(() => {
     setState((prev) =>
-      prev.stage === "fabricate"
-        ? { stage: "polish", modelId: prev.modelId }
-        : prev
+      prev.stage === "fabricate" ? { stage: "polish", modelId: prev.modelId } : prev,
     );
   }, []);
 
   const toReveal = useCallback(() => {
     setState((prev) =>
-      prev.stage === "polish"
-        ? { stage: "reveal", modelId: prev.modelId }
-        : prev
+      prev.stage === "polish" ? { stage: "reveal", modelId: prev.modelId } : prev,
     );
   }, []);
 
   const toPicker = useCallback(() => setState({ stage: "picker" }), []);
   const toHub = useCallback(() => navigate("/demo-hub"), [navigate]);
 
-  const handleSwap = useCallback((id: ModelId) => {
-    setState({ stage: "fabricate", modelId: id });
-  }, []);
+  const model =
+    state.stage === "picker" ? undefined : MODELS.find((m) => m.id === state.modelId);
 
-  if (state.stage === "picker") {
-    return <FabricationPicker onSelect={handleSelect} />;
-  }
-
-  const model = MODELS.find((m) => m.id === state.modelId);
-  if (!model) {
-    return <FabricationPicker onSelect={handleSelect} />;
-  }
-
+  /* The header and footer stay put; only the stage between them crossfades. */
   return (
-    <AnimatePresence mode="wait">
-      {state.stage === "fabricate" && (
-        <motion.div key="fabricate" {...FADE}>
-          <FabricateStage
-            model={model}
-            onDone={toPolish}
-            onBack={toPicker}
-            onSwap={handleSwap}
-          />
-        </motion.div>
-      )}
-      {state.stage === "polish" && (
-        <motion.div key="polish" {...FADE}>
-          <PolishStage
-            model={model}
-            onDone={toReveal}
-            onBack={toPicker}
-            onSwap={handleSwap}
-          />
-        </motion.div>
-      )}
-      {state.stage === "reveal" && (
-        <motion.div key="reveal" {...FADE}>
-          <RevealStage
-            model={model}
-            onBack={toHub}
-            onPickAnother={toPicker}
-            onSwap={handleSwap}
-          />
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <FabricationShell>
+      <AnimatePresence mode="wait">
+        {(!model || state.stage === "picker") && (
+          <motion.div key="picker" {...FADE}>
+            <FabricationPicker onSelect={handleSelect} />
+          </motion.div>
+        )}
+        {model && state.stage === "fabricate" && (
+          <motion.div key="fabricate" {...FADE}>
+            <FabricateStage key={model.id} model={model} onDone={toPolish} onBack={toPicker} onSwap={handleSelect} />
+          </motion.div>
+        )}
+        {model && state.stage === "polish" && (
+          <motion.div key="polish" {...FADE}>
+            <PolishStage key={model.id} model={model} onDone={toReveal} onBack={toPicker} onSwap={handleSelect} />
+          </motion.div>
+        )}
+        {model && state.stage === "reveal" && (
+          <motion.div key="reveal" {...FADE}>
+            <RevealStage
+              key={model.id}
+              model={model}
+              onBack={toHub}
+              onPickAnother={toPicker}
+              onSwap={handleSelect}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </FabricationShell>
   );
 }
