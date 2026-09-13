@@ -65,7 +65,7 @@ export const DESIGN_OPTIONS: DesignOption[] = [
   },
 ];
 
-const DEFAULT_DESIGN_ID: DesignId = "default";
+const DEFAULT_DESIGN_ID: DesignId = "prada";
 const STORAGE_KEY = "ptta-design";
 
 interface DesignContextValue {
