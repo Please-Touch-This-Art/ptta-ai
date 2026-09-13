@@ -1,9 +1,8 @@
 import { useRef, useEffect, useCallback, useState } from "react";
 import type { CSSProperties, ReactNode, RefObject } from "react";
 import { useLocation } from "wouter";
-import { ChevronDown, ChevronUp, Menu, X } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { motion } from "framer-motion";
-import { LanguageSelect } from "@/components/LanguageSelect";
 import { ModelPreviewDialog } from "@/components/ModelPreviewDialog";
 import { CountUpNumber } from "@/components/CountUpNumber";
 import { ContactForm } from "@/components/ContactForm";
@@ -14,7 +13,12 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { siteCopy, type SiteLang } from "@/content/pradaCopy";
+import { siteCopy } from "@/content/pradaCopy";
+import { useLanguage } from "@/context/LanguageContext";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { PradaHeader } from "@/components/prada/PradaHeader";
+import { PradaFooter } from "@/components/prada/PradaFooter";
+import { useSiteGo, useScrollToHashOnMount } from "@/components/prada/useSiteGo";
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -647,26 +651,13 @@ function useScrollStep(ref: RefObject<HTMLElement | null>, count: number) {
   return step;
 }
 
-/** Tracks a media query and re-evaluates on resize, unlike <source media>. */
-function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(() =>
-    typeof window !== "undefined" ? window.matchMedia(query).matches : false,
-  );
-  useEffect(() => {
-    const mq = window.matchMedia(query);
-    const onChange = () => setMatches(mq.matches);
-    onChange();
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, [query]);
-  return matches;
-}
 
 export default function PradaLanding() {
   const [, navigate] = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [videoPaused, setVideoPaused] = useState(false);
-  const [lang, setLang] = useState<SiteLang>("en");
+  /* Shared with the header, and with every other page, so a language chosen
+     here is the one the reader arrives with elsewhere. */
+  const { lang, setLang } = useLanguage();
   const [modelOpen, setModelOpen] = useState(false);
   /* Drives the pinned product steps below. */
   const processRef = useRef<HTMLDivElement>(null);
@@ -710,8 +701,6 @@ export default function PradaLanding() {
   );
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const menuPanelRef = useRef<HTMLDivElement>(null);
 
   /* The hero plays regardless of prefers-reduced-motion: it carries the argument
      of the page rather than decorating it. Reduced motion is honoured where it
@@ -737,158 +726,13 @@ export default function PradaLanding() {
     }
   }, []);
 
-  /* The drawer is the only navigation on a phone, so it has to be operable from
-     the keyboard: Escape closes it and focus returns to the button that opened it. */
-  useEffect(() => {
-    if (!menuOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setMenuOpen(false);
-        menuButtonRef.current?.focus();
-      }
-    };
-    document.addEventListener("keydown", onKey);
-    menuPanelRef.current?.querySelector<HTMLElement>("a,button")?.focus();
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prevOverflow;
-    };
-  }, [menuOpen]);
-
-  const go = useCallback(
-    (href: string) => (e?: React.MouseEvent) => {
-      e?.preventDefault();
-      setMenuOpen(false);
-      if (href.startsWith("#")) {
-        /* "instant", not "auto": `auto` defers to the CSS `scroll-behavior:
-           smooth` on <html>, so the nav animated for exactly the people who
-           asked not to be animated at — and never arrived at all if the frames
-           were not running. */
-        document.querySelector(href)?.scrollIntoView({
-          behavior: reduceMotion ? "instant" : "smooth",
-          block: "start",
-        });
-        return;
-      }
-      navigate(href);
-    },
-    [navigate, reduceMotion],
-  );
-
-  const navLinks = [
-    /* The impact band is archived, so #impact resolves to nothing. Impact points
-       at the portfolio section for now; Portfolio moves to its own page later,
-       at which point these two stop sharing a target. */
-    { label: c.nav.impact, href: "#portfolio" },
-    { label: c.nav.portfolio, href: "#portfolio" },
-    { label: c.nav.partners, href: "#partners" },
-    { label: c.nav.contact, href: "#contact" },
-  ];
+  const go = useSiteGo();
+  useScrollToHashOnMount();
 
 
   return (
     <div className="prada-root min-h-screen bg-white text-black">
-      {/* HEADER — language menu left on desktop, hamburger left on a phone. The
-          wordmark is centred from md up and left-aligned beside the menu below it. */}
-      <header
-        className="prada-header sticky top-0 left-0 right-0 z-50 bg-white border-b border-black/10"
-        role="banner"
-      >
-        <div className="flex lg:grid lg:grid-cols-3 items-center gap-3 px-5 md:px-10 py-3 md:py-4">
-          <div className="flex items-center text-black">
-            <button
-              ref={menuButtonRef}
-              type="button"
-              aria-label={c.menu.open}
-              aria-expanded={menuOpen}
-              aria-controls="prada-menu"
-              onClick={() => setMenuOpen((v) => !v)}
-              className="lg:hidden flex items-center justify-center min-h-11 min-w-11 -ml-2"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-            <div className="hidden lg:block">
-              <LanguageSelect lang={lang} onChange={setLang} label={c.menu.language} />
-            </div>
-          </div>
-
-          {/* Wordmark — Fraunces, borrowed from the Aesop variant. */}
-          <a
-            href="/"
-            onClick={go("/")}
-            className="flex-1 lg:text-center text-black leading-none whitespace-nowrap min-w-0"
-            aria-label="Please Touch This Art"
-          >
-            <span className="prada-wordmark prada-wordmark--compact block">
-              Please Touch This Art
-            </span>
-          </a>
-
-          <div className="flex items-center justify-end gap-3.5 text-black">
-            {/* Measured: the four labels run 210px, and with the icon buttons
-                the row needs ~293px against a centre-third that is only 315px
-                at lg. So the wide gap waits for xl, where the third grows to
-                400px. Below lg the row does not fit at all and the drawer
-                takes over instead, which is why this is lg: and not md:. */}
-            <nav
-              className="hidden lg:flex items-center gap-4 xl:gap-8 xl:mr-3"
-              aria-label="Sections"
-            >
-              {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={go(link.href)}
-                  className="prada-nav text-[13px] hover:opacity-60 transition-opacity"
-                >
-                  {link.label}
-                </a>
-              ))}
-            </nav>
-          </div>
-        </div>
-
-        {/* MENU DRAWER — the whole navigation on a phone. */}
-        {menuOpen && (
-          <div
-            id="prada-menu"
-            ref={menuPanelRef}
-            className="absolute inset-x-0 top-full bg-white border-b border-black/10 shadow-sm"
-          >
-            <nav className="flex flex-col px-5 py-2" aria-label="Main">
-              {[
-                ...navLinks,
-                { label: c.menu.experience, href: "/demo-hub" },
-                { label: c.menu.howItWorks, href: "/how-it-works" },
-              ].map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={go(link.href)}
-                  className="prada-body text-[16px] py-3.5 border-b border-black/5"
-                >
-                  {link.label}
-                </a>
-              ))}
-            </nav>
-            <div className="flex items-center justify-between px-5 py-4">
-              <LanguageSelect lang={lang} onChange={setLang} label={c.menu.language} />
-              <button
-                type="button"
-                onClick={() => {
-                  setMenuOpen(false);
-                  menuButtonRef.current?.focus();
-                }}
-                className="flex items-center gap-2 prada-mono-caps text-[11px] text-black/60"
-              >
-                <X className="w-3.5 h-3.5" /> {c.menu.close}
-              </button>
-            </div>
-          </div>
-        )}
-      </header>
+      <PradaHeader lang={lang} onLangChange={setLang} />
 
       {/* HERO */}
       {/* data-on-dark: this section is dark in both themes, so its white text
@@ -1636,87 +1480,7 @@ export default function PradaLanding() {
         </a>
       </section>
 
-      {/* FOOTER */}
-      <footer
-        className="border-t border-black/10 py-14 md:py-20 px-6 md:px-10 bg-white"
-        role="contentinfo"
-      >
-        <div className="mx-auto max-w-5xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10 text-left mb-14">
-            <div className="col-span-2 md:col-span-1">
-              <p className="prada-wordmark mb-3" style={{ fontSize: 22 }}>
-                Please Touch This Art
-              </p>
-              <p className="prada-body text-[13px] text-black/60 max-w-[28ch]">
-                {c.footer.tagline}
-              </p>
-            </div>
-            {[
-              {
-                title: c.footer.explore,
-                links: [
-                  { label: c.nav.product, href: "#product" },
-                  { label: c.footer.links.portfolio, href: "#portfolio" },
-                  { label: c.footer.links.voices, href: "#voices" },
-                  { label: c.footer.links.experience, href: "/demo-hub" },
-                  { label: c.footer.links.howItWorks, href: "/how-it-works" },
-                ],
-              },
-              {
-                title: c.footer.company,
-                links: [
-                  { label: c.footer.links.impact, href: "#portfolio" },
-                  { label: c.footer.links.partners, href: "#partners" },
-                  { label: c.footer.links.next, href: "/future-features" },
-                ],
-              },
-              {
-                title: c.footer.contact,
-                links: [
-                  { label: c.contact.email, href: `mailto:${c.contact.email}` },
-                  { label: c.footer.links.place, href: "#contact" },
-                ],
-              },
-            ].map((col) => (
-              <div key={col.title}>
-                <p className="prada-mono-caps text-[10px] text-black/45 mb-4">{col.title}</p>
-                <ul className="flex flex-col gap-2.5">
-                  {col.links.map((l) => (
-                    <li key={l.label}>
-                      <a
-                        href={l.href}
-                        onClick={l.href.startsWith("mailto:") ? undefined : go(l.href)}
-                        className="prada-body text-[13.5px] text-black/70 hover:text-black transition-colors"
-                      >
-                        {l.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <div className="border-t border-black/10 pt-7 flex flex-col md:flex-row items-center justify-between gap-3">
-            <p className="prada-mono-caps text-[10px] text-black/50">{c.footer.stamp}</p>
-            <nav className="flex items-center gap-4" aria-label={c.footer.legal}>
-              {[
-                { href: "/impressum", label: "Impressum" },
-                { href: "/datenschutz", label: "Datenschutz" },
-                { href: "/accessibility", label: lang === "de" ? "Barrierefreiheit" : "Accessibility" },
-              ].map((entry) => (
-                <a
-                  key={entry.href}
-                  href={entry.href}
-                  onClick={go(entry.href)}
-                  className="prada-mono-caps text-[10px] text-black/50 underline underline-offset-4 hover:text-black"
-                >
-                  {entry.label}
-                </a>
-              ))}
-            </nav>
-          </div>
-        </div>
-      </footer>
+      <PradaFooter lang={lang} />
     </div>
   );
 }
