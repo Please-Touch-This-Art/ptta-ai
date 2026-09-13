@@ -47,10 +47,10 @@ export function PradaHeader({ lang, onLangChange }: Props) {
 
   const navLinks = [
     /* The impact band is archived, so #impact resolves to nothing. Impact points
-       at the portfolio section for now; Portfolio moves to its own page later,
-       at which point these two stop sharing a target. */
+       at the portfolio section for now. */
     { label: c.nav.impact, href: "#portfolio" },
-    { label: c.nav.portfolio, href: "#portfolio" },
+    /* Hidden until Portfolio gets its own page. */
+    // { label: c.nav.portfolio, href: "#portfolio" },
     { label: c.nav.partners, href: "#partners" },
     { label: c.nav.contact, href: "#contact" },
   ];

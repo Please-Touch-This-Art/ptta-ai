@@ -298,7 +298,6 @@ const CUSTOMER_LOGOS = [
   /* Shipped white for a dark header, so the file is recoloured to the page's
      ink — the mark itself is untouched. */
   { src: `${BASE}/partners/esa.svg`, name: "European Space Agency", h: 32 },
-  { src: `${BASE}/partners/tvibit.webp`, name: "Tvibit, Tromsø", h: 50 },
   { src: `${BASE}/partners/lwl.jpg`, name: "LWL-Museum", h: 62 },
 ];
 
