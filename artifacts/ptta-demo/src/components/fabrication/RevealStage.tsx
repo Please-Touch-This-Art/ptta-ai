@@ -64,7 +64,7 @@ export function RevealStage({ model, onBack, onPickAnother, onSwap }: Props) {
             className="max-h-full max-w-full object-contain"
           />
         ) : (
-          <p className="prada-body text-[14px] text-white/60">Finished piece not on file yet.</p>
+          <p className="prada-body text-[14px] text-black/60">Finished piece not on file yet.</p>
         )}
       </div>
     </StageFrame>

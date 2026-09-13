@@ -896,7 +896,9 @@ export default function PradaLanding() {
                             <span className="block min-w-0">
                               <span
                                 className="prada-mono-caps block text-[10px] transition-colors duration-500"
-                                style={{ color: isActive ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.4)" }}
+                                /* Mixed from the page's ink rather than written as black, so the
+                                   labels flip with the palette in dark mode. */
+                                style={{ color: `color-mix(in oklab, var(--color-black) ${isActive ? 80 : 40}%, transparent)` }}
                               >
                                 {stepCopy.title}
                               </span>
@@ -941,8 +943,8 @@ export default function PradaLanding() {
                                 height: 9,
                                 backgroundColor:
                                   i === processStep
-                                    ? "#000"
-                                    : "rgba(0,0,0,0.16)",
+                                    ? "var(--color-black)"
+                                    : "color-mix(in oklab, var(--color-black) 16%, transparent)",
                               }}
                             />
                             <span className="sr-only">

@@ -985,10 +985,10 @@
   width: 4px;
   height: 4px;
   border-radius: 9999px;
-  background: rgba(0, 0, 0, 0.13);
+  background: color-mix(in oklab, var(--color-black) 13%, transparent);
 }
 .prada-braille__dot--raised {
-  background: rgba(0, 0, 0, 0.7);
+  background: color-mix(in oklab, var(--color-black) 70%, transparent);
 }
 
 /* Partner marquee. Two identical groups sit side by side and the track slides
