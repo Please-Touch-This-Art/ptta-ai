@@ -1,0 +1,67 @@
+# Builds the site (artifacts/ptta-demo) and publishes it to GitHub Pages on
+# every push to main. The repo root is a pnpm monorepo, not a static site, so
+# Pages must be set to Source: "GitHub Actions" in the repo settings.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # vite.config.ts refuses to run without PORT and BASE_PATH. The custom
+      # domain serves the site from the root, so BASE_PATH is "/".
+      - name: Build site
+        run: pnpm --filter @workspace/ptta-demo run build
+        env:
+          NODE_ENV: production
+          PORT: 3000
+          BASE_PATH: /
+
+      # CNAME keeps the custom domain attached. 404.html is a copy of the app so
+      # client-side routes (e.g. /demo) load on a direct visit or refresh.
+      - name: Prepare Pages output
+        run: |
+          cp CNAME artifacts/ptta-demo/dist/public/CNAME
+          cp artifacts/ptta-demo/dist/public/index.html artifacts/ptta-demo/dist/public/404.html
+          touch artifacts/ptta-demo/dist/public/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: artifacts/ptta-demo/dist/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
