@@ -104,14 +104,17 @@ export interface SiteCopy {
       institution: string;
       institutionOptional: string;
       message: string;
-      /** Subject line on the composed mail — it lands in an inbox, so it says
-          where the message came from rather than repeating the heading. */
+      /** Subject line on the notification mail — it lands in an inbox, so it
+          says where the message came from rather than repeating the heading. */
       subject: string;
       send: string;
+      sending: string;
       required: string;
       invalidEmail: string;
-      /** Shown once the draft has been handed to the visitor's mail client. */
-      handoff: string;
+      /** Shown once the message has been delivered. */
+      sent: string;
+      /** Shown when delivery fails; the address sits right below the form. */
+      failed: string;
     };
   };
   footer: {
@@ -286,9 +289,11 @@ const en: SiteCopy = {
         "message": "Message",
         "subject": "Website enquiry",
         "send": "Send",
+        "sending": "Sending…",
         "required": "Please fill this in.",
         "invalidEmail": "Please check this email address.",
-        "handoff": "Your message is ready in your email app. Send it there and we will come back to you."
+        "sent": "Thank you. Your message is on its way and we will come back to you soon.",
+        "failed": "Your message could not be sent. Please try again, or write to us at the address below."
       }
     },
     "footer": {
@@ -477,9 +482,11 @@ const de: SiteCopy = {
         "message": "Nachricht",
         "subject": "Anfrage über die Website",
         "send": "Schicken",
+        "sending": "Wird gesendet…",
         "required": "Bitte ausfüllen.",
         "invalidEmail": "Bitte prüfen Sie diese E-Mail-Adresse.",
-        "handoff": "Ihre Nachricht liegt in Ihrem E-Mail-Programm bereit. Schicken Sie sie ab, wir melden uns."
+        "sent": "Vielen Dank. Ihre Nachricht ist unterwegs, wir melden uns bald bei Ihnen.",
+        "failed": "Ihre Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns an die Adresse unten."
       }
     },
     "footer": {

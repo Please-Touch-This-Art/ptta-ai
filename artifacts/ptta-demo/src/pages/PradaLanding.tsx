@@ -1469,7 +1469,6 @@ export default function PradaLanding() {
 
         <ContactForm
           copy={c.contact.form}
-          to={c.contact.email}
           subject={c.contact.form.subject}
         />
 

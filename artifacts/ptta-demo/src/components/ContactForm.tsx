@@ -7,35 +7,39 @@ interface ContactCopy {
   institutionOptional: string;
   message: string;
   send: string;
+  sending: string;
   required: string;
   invalidEmail: string;
-  handoff: string;
+  sent: string;
+  failed: string;
 }
 
 interface Props {
   copy: ContactCopy;
-  /** Where the composed message is addressed. */
-  to: string;
   subject: string;
 }
 
 type FieldName = "name" | "email" | "institution" | "message";
 type Errors = Partial<Record<FieldName, string>>;
+type Status = "idle" | "sending" | "sent" | "failed";
 
 /* Deliberately permissive: something@something.tld is as much as a front end can
    honestly check, and anything stricter starts rejecting addresses that work. */
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
+/* Web3Forms relays each submission to the inbox registered with this key. The
+   key is public by design: it can only send to that one inbox. */
+const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
+const WEB3FORMS_ACCESS_KEY = "022186a6-e997-481d-8042-3e92bbfdde17";
+
 /**
  * The enquiry form for the contact band.
  *
- * It composes a mail draft rather than posting anywhere: there is no contact
- * endpoint on the API server and no mail provider configured, and a form that
- * reports success while dropping the message on the floor is worse than one
- * that is honest about where it hands off. Swapping this for a POST is a small
- * change once somewhere exists to send to.
+ * Posts to Web3Forms, which emails the message on. GitHub Pages serves static
+ * files only, so a hosted relay is the whole backend. The visitor's address is
+ * sent as the reply-to, so answering the notification writes back to them.
  */
-export function ContactForm({ copy, to, subject }: Props) {
+export function ContactForm({ copy, subject }: Props) {
   const [values, setValues] = useState({
     name: "",
     email: "",
@@ -43,7 +47,9 @@ export function ContactForm({ copy, to, subject }: Props) {
     message: "",
   });
   const [errors, setErrors] = useState<Errors>({});
-  const [handedOff, setHandedOff] = useState(false);
+  const [status, setStatus] = useState<Status>("idle");
+  /* Hidden from people and screen readers; a bot filling every field ticks it. */
+  const [trap, setTrap] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   const set = (field: FieldName) => (value: string) => {
@@ -52,8 +58,9 @@ export function ContactForm({ copy, to, subject }: Props) {
     setErrors((e) => (e[field] ? { ...e, [field]: undefined } : e));
   };
 
-  const onSubmit = (event: FormEvent) => {
+  const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    if (status === "sending") return;
 
     const next: Errors = {};
     if (!values.name.trim()) next.name = copy.required;
@@ -73,20 +80,46 @@ export function ContactForm({ copy, to, subject }: Props) {
       return;
     }
 
-    const lines = [
-      values.institution.trim() && `${copy.institution}: ${values.institution.trim()}`,
-      values.message.trim(),
-      "",
-      `${copy.name}: ${values.name.trim()}`,
-      `${copy.email}: ${values.email.trim()}`,
-    ].filter(Boolean);
+    // Let the bot believe it worked; nothing is sent.
+    if (trap) {
+      setStatus("sent");
+      return;
+    }
 
-    window.location.href =
-      `mailto:${to}` +
-      `?subject=${encodeURIComponent(subject)}` +
-      `&body=${encodeURIComponent(lines.join("\n"))}`;
-    setHandedOff(true);
+    setStatus("sending");
+    try {
+      const response = await fetch(WEB3FORMS_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          subject,
+          from_name: "Please Touch This Art website",
+          name: values.name.trim(),
+          email: values.email.trim(),
+          replyto: values.email.trim(),
+          institution: values.institution.trim() || "-",
+          message: values.message.trim(),
+        }),
+      });
+      const result = await response.json().catch(() => null);
+      if (!response.ok || !result?.success) throw new Error(result?.message);
+
+      setStatus("sent");
+      setValues({ name: "", email: "", institution: "", message: "" });
+    } catch {
+      setStatus("failed");
+    }
   };
+
+  const note =
+    status === "sending"
+      ? copy.sending
+      : status === "sent"
+        ? copy.sent
+        : status === "failed"
+          ? copy.failed
+          : "";
 
   return (
     <form
@@ -136,25 +169,40 @@ export function ContactForm({ copy, to, subject }: Props) {
         </div>
       </div>
 
+      <input
+        type="checkbox"
+        name="botcheck"
+        tabIndex={-1}
+        aria-hidden="true"
+        autoComplete="off"
+        checked={trap}
+        onChange={(e) => setTrap(e.target.checked)}
+        className="hidden"
+      />
+
       {/* Filled and square, not the page's underlined text-link CTA: next to a
           "Contact" nav item in the same small caps, an underlined word did not
           read as the thing you press to send. */}
       <div className="mt-9 text-center">
         <button
           type="submit"
-          className="prada-btn-solid prada-mono-caps inline-block px-9 py-3.5 text-[10.5px] transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+          disabled={status === "sending"}
+          className="prada-btn-solid prada-mono-caps inline-block px-9 py-3.5 text-[10.5px] transition-opacity hover:opacity-80 disabled:opacity-50 disabled:cursor-wait focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
         >
-          {copy.send}
+          {status === "sending" ? copy.sending : copy.send}
         </button>
       </div>
 
-      {/* Polite, not assertive: the mail client is already opening, so this is
-          confirmation rather than something needing to interrupt. */}
+      {/* Polite, not assertive: the visitor pressed Send and is waiting for this,
+          so it confirms rather than interrupts. */}
       <p
         aria-live="polite"
-        className="prada-body mt-6 text-center text-[13px] leading-[1.6] text-black/60 min-h-[1.6em]"
+        className={
+          "prada-body mt-6 text-center text-[13px] leading-[1.6] min-h-[1.6em] " +
+          (status === "failed" ? "text-[#8a2a1c]" : "text-black/60")
+        }
       >
-        {handedOff ? copy.handoff : ""}
+        {note}
       </p>
     </form>
   );
