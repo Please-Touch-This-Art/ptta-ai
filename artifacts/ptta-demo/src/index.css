@@ -690,13 +690,13 @@
   }
 }
 
-/* Below lg the wordmark sits left-aligned beside the menu button rather than
-   in a centred third of the row. At 16px it measures ~164px, which clears the
-   two 44px controls and their gaps down to a 320px viewport; at the inherited
-   20px it needed 205px inside a 114px column and painted over the controls. */
+/* Below lg the wordmark sits centred between the two 44px controls. It runs
+   about 8.5x its font size wide, so the size tracks the viewport: the room
+   left after the side padding, controls and gaps (144px) divided by a little
+   more than that ratio, floored at 16px and capped at the desktop 24px. */
 @media (max-width: 1023px) {
   .prada-wordmark--compact {
-    font-size: 16px;
+    font-size: clamp(16px, calc((100vw - 144px) / 9.5), 24px);
   }
 }
 

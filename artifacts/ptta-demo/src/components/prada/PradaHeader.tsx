@@ -58,12 +58,13 @@ export function PradaHeader({ lang, onLangChange }: Props) {
   return (
     <>
     {/* HEADER — language menu left on desktop, hamburger left on a phone. The
-        wordmark is centred from md up and left-aligned beside the menu below it. */}
+        wordmark is centred at every width: below lg the side columns are fixed
+        at the 44px control width, so the middle column is truly centred. */}
     <header
       className="prada-header sticky top-0 left-0 right-0 z-50 bg-white border-b border-black/10"
       role="banner"
     >
-      <div className="flex lg:grid lg:grid-cols-3 items-center gap-3 px-5 md:px-10 py-3 md:py-4">
+      <div className="grid grid-cols-[2.75rem_1fr_2.75rem] lg:grid-cols-3 items-center gap-2 lg:gap-3 px-5 md:px-10 py-3 md:py-4">
         <div className="flex items-center text-black">
           <button
             ref={menuButtonRef}
@@ -85,7 +86,7 @@ export function PradaHeader({ lang, onLangChange }: Props) {
         <a
           href="/"
           onClick={go("/")}
-          className="flex-1 lg:text-center text-black leading-none whitespace-nowrap min-w-0"
+          className="text-center text-black leading-none whitespace-nowrap min-w-0"
           aria-label="Please Touch This Art"
         >
           <span className="prada-wordmark prada-wordmark--compact block">
