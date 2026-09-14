@@ -50,6 +50,8 @@ export function ViewerStage({ model, onBack, onSwap }: Props) {
 
     const handleLoad = () => {
       setStatus("ready");
+      // A coloured model already carries its painting; tinting would muddy it.
+      if (model.colored) return;
       const isLowRelief = model.type === "painting";
       const baseColor: [number, number, number, number] = isLowRelief
         ? [0.72, 0.66, 0.57, 1]
@@ -106,7 +108,7 @@ export function ViewerStage({ model, onBack, onSwap }: Props) {
       el.removeEventListener("error", handleError);
       el.removeEventListener("camera-change", handleCameraChange);
     };
-  }, [model.id, model.glb]);
+  }, [model.id, model.glb, model.colored]);
 
   if (!model.glb) return null;
 

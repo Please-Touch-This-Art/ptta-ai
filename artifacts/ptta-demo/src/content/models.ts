@@ -14,9 +14,13 @@ export interface ModelEntry {
   year: string;
   image: string;
   glb?: string;
+  /** The GLB carries the painting as a base-colour texture, so the viewer keeps
+      its colours instead of tinting the relief cream. */
+  colored?: boolean;
   available: boolean;
   commissionedBy?: string;
-  /** Override the default <model-viewer orientation> ("roll pitch yaw", in degrees). */
+  /** Override the default <model-viewer orientation> ("roll pitch yaw"). Give
+      units: bare numbers are read as radians, so "0 -90 0" tilts ~27° off. */
   orientation?: string;
 }
 
@@ -44,7 +48,14 @@ export const MODELS: ModelEntry[] = [
     artist: "Vincent van Gogh",
     year: "1887",
     image: publicPath("paintings/van-gogh.webp"),
-    glb: publicPath("models/van-gogh.glb"),
+    /* The coloured relief (see COMPARE_MODEL in PradaLanding.tsx), welded and
+       simplified for the stage; it renders the same as the 18 MB full cut.
+         gltf-transform weld     van-gogh-colored.glb welded.glb
+         gltf-transform simplify --ratio 0.35 --error 0.0002 welded.glb simp.glb
+         gltf-transform meshopt  --level medium simp.glb van-gogh-colored-viewer.glb
+       The untextured van-gogh.glb is kept alongside. */
+    glb: publicPath("models/van-gogh-colored-viewer.glb"),
+    colored: true,
     available: true,
   },
   {
@@ -54,11 +65,15 @@ export const MODELS: ModelEntry[] = [
     artist: "Edvard Munch",
     year: "1893",
     image: publicPath("paintings/the-scream.jpg"),
-    glb: publicPath("models/the-scream.glb"),
+    /* the-scream.glb with the painting projected front-on (u from X, v from Z)
+       as a base-colour texture, then welded, simplified at --ratio 0.4
+       --error 0.0002 and meshopt-compressed. The untextured file is kept. */
+    glb: publicPath("models/the-scream-colored.glb"),
+    colored: true,
     available: true,
     // Authored lying flat (Y = shallow depth, Z = tall). Rotate 90°
     // around X so it stands upright with its face toward the camera.
-    orientation: "0 -90 0",
+    orientation: "0deg -90deg 0deg",
   },
   {
     id: "persistence-of-memory",
@@ -70,7 +85,7 @@ export const MODELS: ModelEntry[] = [
     glb: publicPath("models/persistence-of-memory.glb"),
     available: true,
     // Same axis convention as The Scream — stand it up via X rotation.
-    orientation: "0 -90 0",
+    orientation: "0deg -90deg 0deg",
   },
   {
     id: "st-nikolai",
