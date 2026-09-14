@@ -64,6 +64,10 @@ export function FadeLayer({ visible, style }: { visible: boolean; style: CSSProp
   );
 }
 
+/** How tall a scanned artwork may grow: most of the viewport, so the whole
+    piece stays in view while it is read, but capped on very tall screens. */
+export const SCAN_MAX_HEIGHT = "min(72vh, 820px)";
+
 /** The scan line every staged process runs across its plate. */
 export function ScanLine() {
   return (

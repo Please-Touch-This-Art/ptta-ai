@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import type { ModelEntry, ModelId } from "@/content/models";
 import { StageFrame } from "@/components/prada/StageFrame";
-import { StepList, FadeLayer, ScanLine, type ProcessStep } from "@/components/prada/ProcessSteps";
+import {
+  StepList,
+  FadeLayer,
+  ScanLine,
+  SCAN_MAX_HEIGHT,
+  type ProcessStep,
+} from "@/components/prada/ProcessSteps";
 
 /*
  * The audio guide being composed: four passes over the painting — analyse,
@@ -72,48 +78,49 @@ export function AudioProcessingStage({ model, onDone, onBack, onSwap }: Props) {
       onSwap={onSwap}
       status={{ left: `Step ${pad2(stepIndex + 1)} of ${pad2(STEPS.length)} · ${current.label}`, right: "● Composing" }}
       aside={<StepList steps={STEPS} activeIndex={stepIndex} />}
+      bare
     >
-      <div className="absolute inset-0 flex items-center justify-center p-6">
-        <div className="relative h-full max-w-full aspect-[3/4] overflow-hidden">
-          <img
-            src={model.image}
-            alt=""
-            aria-hidden
-            className="h-full w-full object-cover"
-            style={{ filter: current.filter, transition: "filter 1.1s ease" }}
-          />
+      {/* Just the artwork, at its own proportions: the overlays and scan line
+          cover the painting and nothing around it. */}
+      <div className="relative mx-auto w-fit max-w-full overflow-hidden">
+        <img
+          src={model.image}
+          alt=""
+          aria-hidden
+          className="block h-auto w-auto max-w-full"
+          style={{ maxHeight: SCAN_MAX_HEIGHT, filter: current.filter, transition: "filter 1.1s ease" }}
+        />
 
-          {/* ANALYSE — sampling grid */}
-          <FadeLayer
-            visible={isStep("analyze")}
-            style={{
-              backgroundImage: `radial-gradient(circle, rgba(${ACCENT_RGB},0.8) 1px, transparent 1.6px)`,
-              backgroundSize: "14px 14px",
-              mixBlendMode: "screen",
-            }}
-          />
-          {/* CONTEXT — text-scan lines */}
-          <FadeLayer
-            visible={isStep("context")}
-            style={{
-              backgroundImage: `repeating-linear-gradient(0deg, rgba(${ACCENT_RGB},0.55) 0 1px, transparent 1px 5px)`,
-              mixBlendMode: "screen",
-            }}
-          />
-          {/* NARRATE — a story radiating out */}
-          <FadeLayer
-            visible={isStep("narrate")}
-            style={{
-              background: `radial-gradient(circle at 50% 50%, transparent 0%, transparent 22%, rgba(${ACCENT_RGB},0.3) 35%, transparent 48%, rgba(${ACCENT_RGB},0.25) 60%, transparent 72%, rgba(${ACCENT_RGB},0.2) 86%, transparent 100%)`,
-              mixBlendMode: "screen",
-              animation: "ptta-audio-ripple 2.4s ease-in-out infinite",
-            }}
-          />
-          {/* VOICE — a waveform along the bottom */}
-          <VoiceWaveformOverlay visible={isStep("voice")} />
+        {/* ANALYSE — sampling grid */}
+        <FadeLayer
+          visible={isStep("analyze")}
+          style={{
+            backgroundImage: `radial-gradient(circle, rgba(${ACCENT_RGB},0.8) 1px, transparent 1.6px)`,
+            backgroundSize: "14px 14px",
+            mixBlendMode: "screen",
+          }}
+        />
+        {/* CONTEXT — text-scan lines */}
+        <FadeLayer
+          visible={isStep("context")}
+          style={{
+            backgroundImage: `repeating-linear-gradient(0deg, rgba(${ACCENT_RGB},0.55) 0 1px, transparent 1px 5px)`,
+            mixBlendMode: "screen",
+          }}
+        />
+        {/* NARRATE — a story radiating out */}
+        <FadeLayer
+          visible={isStep("narrate")}
+          style={{
+            background: `radial-gradient(circle at 50% 50%, transparent 0%, transparent 22%, rgba(${ACCENT_RGB},0.3) 35%, transparent 48%, rgba(${ACCENT_RGB},0.25) 60%, transparent 72%, rgba(${ACCENT_RGB},0.2) 86%, transparent 100%)`,
+            mixBlendMode: "screen",
+            animation: "ptta-audio-ripple 2.4s ease-in-out infinite",
+          }}
+        />
+        {/* VOICE — a waveform along the bottom */}
+        <VoiceWaveformOverlay visible={isStep("voice")} />
 
-          <ScanLine />
-        </div>
+        <ScanLine />
       </div>
     </StageFrame>
   );

@@ -15,6 +15,9 @@ interface Props {
   status?: { left: string; right: string };
   /** Copy and calls to action in the column beside the plate. */
   aside?: ReactNode;
+  /** Drop the square plate: the children size the stage themselves (the
+      artwork at its own proportions) and the status line matches their width. */
+  bare?: boolean;
 }
 
 /**
@@ -32,7 +35,10 @@ export function StageFrame({
   children,
   status,
   aside,
+  bare = false,
 }: Props) {
+  const plateWidth = bare ? undefined : { maxWidth: "min(100%, 72vh)" };
+
   return (
     <section className="pt-10 md:pt-14 pb-16 md:pb-24 px-6 md:px-10" aria-label={`${label}: ${model.title}`}>
       <div className="mx-auto max-w-[1140px]">
@@ -50,20 +56,21 @@ export function StageFrame({
         </div>
 
         <div className="mt-8 grid grid-cols-1 items-start gap-8 md:grid-cols-[minmax(0,1fr)_300px] md:gap-12">
-          <div>
-            {/* Square, and no taller than the viewport allows, so the whole
-                plate is in view while it works. The plate's own ground shows
-                through wherever a stage does not paint. */}
-            <div
-              className="prada-plate mx-auto aspect-square w-full"
-              style={{ maxWidth: "min(100%, 72vh)" }}
-            >
-              {children}
-            </div>
+          <div className={bare ? "mx-auto w-fit max-w-full" : undefined}>
+            {bare ? (
+              children
+            ) : (
+              /* Square, and no taller than the viewport allows, so the whole
+                 plate is in view while it works. The plate's own ground shows
+                 through wherever a stage does not paint. */
+              <div className="prada-plate mx-auto aspect-square w-full" style={plateWidth}>
+                {children}
+              </div>
+            )}
             {status && (
               <div
-                className="mx-auto mt-4 flex items-center justify-between border-t border-black/10 pt-3"
-                style={{ maxWidth: "min(100%, 72vh)" }}
+                className="mx-auto mt-4 flex items-center justify-between gap-4 border-t border-black/10 pt-3"
+                style={plateWidth}
                 aria-live="polite"
               >
                 <span className="prada-mono-caps text-[10px] text-black/60">{status.left}</span>
