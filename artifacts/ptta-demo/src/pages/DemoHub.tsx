@@ -28,7 +28,10 @@ function DemoPlate({
 }) {
   const route = card.route ?? `/demo/${card.slug}`;
   return (
-    <li className="flex flex-col">
+    /* In the two-column rows below lg, an odd card out would sit alone at the
+       left edge; it spans the row instead and centres at a single column's
+       width, which is half the row less half the gap (--hub-gap on the list). */
+    <li className="flex flex-col last:odd:col-span-2 last:odd:justify-self-center last:odd:w-[calc(50%-var(--hub-gap)/2)] lg:last:odd:col-span-1 lg:last:odd:w-auto lg:last:odd:justify-self-stretch">
       <a
         href={route}
         onClick={(e) => {
@@ -49,17 +52,19 @@ function DemoPlate({
             />
           )}
         </figure>
-        <div className="mt-5 flex flex-1 flex-col border-t border-black/10 pt-4">
+        {/* Phones set two cards to a row at ~155px each, so the copy steps
+            down a size there and the spacing tightens to match. */}
+        <div className="mt-3 sm:mt-5 flex flex-1 flex-col border-t border-black/10 pt-3 sm:pt-4">
           <span className="prada-mono-caps text-[10px] text-black/45">
             {String(index + 1).padStart(2, "0")}
           </span>
-          <h2 className="prada-display mt-3 text-[19px] md:text-[21px] leading-[1.2]">
+          <h2 className="prada-display mt-2 sm:mt-3 text-[16px] sm:text-[19px] md:text-[21px] leading-[1.2]">
             {card.title}
           </h2>
-          <p className="prada-body mt-2 flex-1 text-[14px] md:text-[15px] leading-[1.6] text-black/65">
+          <p className="prada-body mt-1.5 sm:mt-2 flex-1 text-[13px] sm:text-[14px] md:text-[15px] leading-[1.5] sm:leading-[1.6] text-black/65">
             {card.description}
           </p>
-          <span className="prada-link-cta mt-5 self-start group-hover:opacity-65" aria-hidden="true">
+          <span className="prada-link-cta mt-3 sm:mt-5 self-start group-hover:opacity-65" aria-hidden="true">
             {openLabel}
           </span>
         </div>
@@ -77,7 +82,7 @@ export default function DemoHub() {
   return (
     <SiteShell>
       <>
-        <section className="pt-14 md:pt-20 px-6 md:px-10" aria-labelledby="demo-hub-heading">
+        <section className="pt-10 md:pt-20 px-5 sm:px-6 md:px-10" aria-labelledby="demo-hub-heading">
           <div className="mx-auto max-w-[1140px]">
             <h1
               id="demo-hub-heading"
@@ -93,8 +98,8 @@ export default function DemoHub() {
           </div>
         </section>
 
-        <section className="pt-10 md:pt-14 pb-20 md:pb-28 px-6 md:px-10" aria-label={demoHub.eyebrow}>
-          <ol className="mx-auto grid max-w-[1140px] grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-10">
+        <section className="pt-8 md:pt-14 pb-16 md:pb-28 px-5 sm:px-6 md:px-10" aria-label={demoHub.eyebrow}>
+          <ol className="mx-auto grid max-w-[1140px] grid-cols-2 [--hub-gap:1rem] sm:[--hub-gap:2rem] lg:[--hub-gap:2.5rem] gap-x-[var(--hub-gap)] gap-y-10 sm:gap-y-8 lg:grid-cols-3 lg:gap-y-10">
             {cards.map((card, i) => (
               <DemoPlate
                 key={card.slug}
