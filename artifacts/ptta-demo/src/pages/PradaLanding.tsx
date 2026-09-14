@@ -1197,12 +1197,24 @@ export default function PradaLanding() {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-8 md:gap-12">
+          {/* On mobile this tiles like the galleries collage above: the first
+              frame runs full width as a 1.45 landscape and the other two sit
+              under it as a pair of 0.75 portraits. From md up it is the
+              justified row, so the flex and aspect come in through variables
+              that only the md classes read. */}
+          <div className="grid grid-cols-2 gap-8 md:flex md:flex-row md:gap-12">
             {COMMUNITY_ROW.map((cell, i) => (
               <figure
                 key={cell.src}
-                className="prada-plate m-0 min-w-0"
-                style={{ flex: `${cell.aspect} 1 0%`, aspectRatio: cell.aspect }}
+                className={`prada-plate m-0 min-w-0 md:[flex:var(--row-flex)] md:[aspect-ratio:var(--row-aspect)] ${
+                  i === 0 ? "col-span-2 aspect-[1.45]" : "aspect-[0.75]"
+                }`}
+                style={
+                  {
+                    "--row-flex": `${cell.aspect} 1 0%`,
+                    "--row-aspect": cell.aspect,
+                  } as CSSProperties
+                }
               >
                 <img
                   src={cell.src}
