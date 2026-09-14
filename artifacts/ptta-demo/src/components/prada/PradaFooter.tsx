@@ -30,7 +30,8 @@ export function PradaFooter({ lang }: { lang: SiteLang }) {
               title: c.footer.explore,
               links: [
                 { label: c.nav.product, href: "#product" },
-                { label: c.footer.links.portfolio, href: "#portfolio" },
+                /* Hidden until Portfolio gets its own page, as in the header. */
+                // { label: c.footer.links.portfolio, href: "#portfolio" },
                 { label: c.footer.links.voices, href: "#voices" },
                 { label: c.footer.links.experience, href: "/demo-hub" },
                 { label: c.footer.links.howItWorks, href: "/how-it-works" },
