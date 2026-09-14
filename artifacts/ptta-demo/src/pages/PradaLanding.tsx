@@ -1158,16 +1158,6 @@ export default function PradaLanding() {
               </div>
             </div>
           </motion.div>
-
-          <div className="pt-12 md:pt-16 text-center">
-            <button
-              type="button"
-              onClick={go("#portfolio")}
-              className="prada-btn-solid prada-mono-caps inline-block px-9 py-3.5 text-[10.5px] transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-            >
-              {c.product.cta}
-            </button>
-          </div>
         </div>
       </section>
 
