@@ -12,7 +12,10 @@ import DemoPlaceholder from "@/pages/DemoPlaceholder";
 import PaintingToModel from "@/pages/PaintingToModel";
 import Fabrication from "@/pages/Fabrication";
 import AudioGuide from "@/pages/AudioGuide";
-import ArtistPersonaPage from "@/pages/ArtistPersonaPage";
+/* Artist persona is hidden while the site is a static GitHub Pages build: its
+   chat needs the API server. Restore this import and the route below to bring
+   it back. */
+// import ArtistPersonaPage from "@/pages/ArtistPersonaPage";
 import FutureFeatures from "@/pages/FutureFeatures";
 import LegalPage from "@/pages/LegalPage";
 import NotFound from "@/pages/not-found";
@@ -28,7 +31,7 @@ function Router() {
       <Route path="/painting-to-model" component={PaintingToModel} />
       <Route path="/fabrication" component={Fabrication} />
       <Route path="/audio-guide" component={AudioGuide} />
-      <Route path="/artist-persona" component={ArtistPersonaPage} />
+      {/* <Route path="/artist-persona" component={ArtistPersonaPage} /> */}
       <Route path="/future-features" component={FutureFeatures} />
       <Route path="/impressum">{() => <LegalPage doc="impressum" />}</Route>
       <Route path="/datenschutz">{() => <LegalPage doc="datenschutz" />}</Route>

@@ -94,7 +94,7 @@ export default function DemoHub() {
         </section>
 
         <section className="pt-10 md:pt-14 pb-20 md:pb-28 px-6 md:px-10" aria-label={demoHub.eyebrow}>
-          <ol className="mx-auto grid max-w-[1140px] grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4 lg:gap-10">
+          <ol className="mx-auto grid max-w-[1140px] grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-10">
             {cards.map((card, i) => (
               <DemoPlate
                 key={card.slug}

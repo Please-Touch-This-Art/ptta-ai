@@ -186,7 +186,7 @@ const en: PageCopy = {
     eyebrow: "Demos",
     headline: "Pick a process to explore.",
     subline:
-      "Four short, hands-on demos follow an artwork from a flat image to a model in a visitor's hands. Open any of them, in any order.",
+      "Three short, hands-on demos follow an artwork from a flat image to a model in a visitor's hands. Open any of them, in any order.",
     openLabel: "Open",
     ariaOpenModule: (title) => `Open the ${title} demo`,
     cards: [
@@ -218,17 +218,21 @@ const en: PageCopy = {
         illoAlt: "Audio guide device and headphones for museum visitors",
         imageSrc: "images/audio-guide.jpg",
         route: "/audio-guide",
-        nextModule: "artist-persona",
+        // nextModule: "artist-persona",
       },
-      {
-        slug: "artist-persona",
-        title: "AI Artist Persona",
-        description:
-          "Talk with Leonardo, Vincent, Salvador or Edvard about their own work, in their own voice.",
-        illoAlt: "Engraved portrait of Leonardo da Vinci",
-        imageSrc: "artists/leonardo.webp",
-        route: "/artist-persona",
-      },
+      /* Hidden while the site is a static GitHub Pages build: the persona chat
+         needs the API server. Restore this card, the nextModule above, the
+         route in App.tsx, "Four short" in the subline and lg:grid-cols-4 in
+         DemoHub.tsx to bring it back. */
+      // {
+      //   slug: "artist-persona",
+      //   title: "AI Artist Persona",
+      //   description:
+      //     "Talk with Leonardo, Vincent, Salvador or Edvard about their own work, in their own voice.",
+      //   illoAlt: "Engraved portrait of Leonardo da Vinci",
+      //   imageSrc: "artists/leonardo.webp",
+      //   route: "/artist-persona",
+      // },
     ],
     footer: {
       note: "",
